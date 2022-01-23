@@ -1,7 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-namespace Movement {
+namespace _Scripts.Movement {
 
     public class PlayerMovement : MonoBehaviour
     {
@@ -146,47 +146,47 @@ namespace Movement {
 
             #region Jump Gravity
             if(rb.velocity.y < 0)
-            {
-                rb.gravityScale = gravityScale * fallGravityMultiplier;
-            }
+                {
+                    rb.gravityScale = gravityScale * fallGravityMultiplier;
+                }
             else
-            {
-                rb.gravityScale = gravityScale;
-            }
+                {
+                    rb.gravityScale = gravityScale;
+                }
             #endregion
 
             #region Terminal Velocity
-            if(rb.velocity.y < -terminalVelocity)
-            {
-                rb.velocity = new Vector2(rb.velocity.x, -terminalVelocity);
-            }
+                if(rb.velocity.y < -terminalVelocity)
+                {
+                    rb.velocity = new Vector2(rb.velocity.x, -terminalVelocity);
+                }
             #endregion
 
             #region Wall Interaction
-            if (lastWallTime < 0)
-            {
-                leftWall = false;
-                rightWall = false;
-            }
-
-            if(lastWallJump > 0)
-            {
-                acceleration = 0;
-                deceleration = 0;
-            } else
-            {
-                acceleration = givenAccel;
-                deceleration = givenDecel;
-            }
-
-            //wall friction
-            if (lastWallTime > 0 && rb.velocity.y < -wallSlideSpeed)
-            {
-                if ((leftWall && horizontalInput < -0.01f) || (rightWall && horizontalInput > 0.01f))
+                if (lastWallTime < 0)
                 {
-                    rb.velocity = new Vector2(rb.velocity.x, -wallSlideSpeed);
+                    leftWall = false;
+                    rightWall = false;
                 }
-            }
+
+                if(lastWallJump > 0)
+                {
+                    acceleration = 0;
+                    deceleration = 0;
+                } else
+                {
+                    acceleration = givenAccel;
+                    deceleration = givenDecel;
+                }
+
+                //wall friction
+                if (lastWallTime > 0 && rb.velocity.y < -wallSlideSpeed)
+                {
+                    if ((leftWall && horizontalInput < -0.01f) || (rightWall && horizontalInput > 0.01f))
+                    {
+                        rb.velocity = new Vector2(rb.velocity.x, -wallSlideSpeed);
+                    }
+                }
             #endregion
         }
 
@@ -198,36 +198,36 @@ namespace Movement {
         private void HorizontalMovement()
         {
             #region Normal Movement
-            //calculates direction to move in and desired velocity
-            float targetSpeed = horizontalInput * moveSpeed;
-            float speedDif;
-            if (Exceeding(targetSpeed) && lastGroundedTime < jumpCoyoteTime - .01f)
-            {
-                speedDif = -1 * Mathf.Sign(rb.velocity.x);
-            }
-            else
-            {
-                //calculates difference between current velocity and desired velocity
-                speedDif = targetSpeed - rb.velocity.x;
-            }
-            //change acceleration rate depending on the situation
-            //when target speed is > 0.01f, use acceleration variable, else use deceleration variable
-            float accelRate = (Mathf.Abs(targetSpeed) > 0.01f) ? acceleration : deceleration;
-            //applies acceleration to speed difference, then raises to a set power so acceleration increases with higher speeds
-            //finally multiplies by sing to reapply direction
-            float movement = Mathf.Pow(Mathf.Abs(speedDif) * accelRate, velPower) * Mathf.Sign(speedDif);
+                //calculates direction to move in and desired velocity
+                float targetSpeed = horizontalInput * moveSpeed;
+                float speedDif;
+                if (Exceeding(targetSpeed) && lastGroundedTime < jumpCoyoteTime - .01f)
+                {
+                    speedDif = -1 * Mathf.Sign(rb.velocity.x);
+                }
+                else
+                {
+                    //calculates difference between current velocity and desired velocity
+                    speedDif = targetSpeed - rb.velocity.x;
+                }
+                //change acceleration rate depending on the situation
+                //when target speed is > 0.01f, use acceleration variable, else use deceleration variable
+                float accelRate = (Mathf.Abs(targetSpeed) > 0.01f) ? acceleration : deceleration;
+                //applies acceleration to speed difference, then raises to a set power so acceleration increases with higher speeds
+                //finally multiplies by sing to reapply direction
+                float movement = Mathf.Pow(Mathf.Abs(speedDif) * accelRate, velPower) * Mathf.Sign(speedDif);
 
-            //applies force to rigidbody, multiplying by Vector2.right so that it only affects X axis
-            rb.AddForce(movement * Vector2.right);
+                //applies force to rigidbody, multiplying by Vector2.right so that it only affects X axis
+                rb.AddForce(movement * Vector2.right);
             #endregion
 
             #region Friction
-            if (lastGroundedTime > 0 && Mathf.Abs(horizontalInput) < 0.01f && lastWallJump < 0)
-            {
-                float amount = Mathf.Min(Mathf.Abs(rb.velocity.x), Mathf.Abs(frictionAmount));
-                amount *= Mathf.Sign(rb.velocity.x);
-                rb.AddForce(Vector2.right * -amount, ForceMode2D.Impulse);
-            }
+                if (lastGroundedTime > 0 && Mathf.Abs(horizontalInput) < 0.01f && lastWallJump < 0)
+                {
+                    float amount = Mathf.Min(Mathf.Abs(rb.velocity.x), Mathf.Abs(frictionAmount));
+                    amount *= Mathf.Sign(rb.velocity.x);
+                    rb.AddForce(Vector2.right * -amount, ForceMode2D.Impulse);
+                }
             #endregion
         }
 
