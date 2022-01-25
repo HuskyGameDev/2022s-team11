@@ -147,7 +147,7 @@ namespace _Scripts.Movement {
             #region Jump Gravity
             if(rb.velocity.y < 0)
                 {
-                    rb.gravityScale = gravityScale * fallGravityMultiplier;
+                    //rb.gravityScale = gravityScale * fallGravityMultiplier;
                 }
             else
                 {
