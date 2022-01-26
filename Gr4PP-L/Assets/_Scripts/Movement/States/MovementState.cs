@@ -1,15 +1,19 @@
 using _Scripts.Utility;
 namespace _Scripts.Movement.States {
     /** Author: Nick Zimanski
-    * Version 1/25/22
+    * Version 1/26/22
     */
     public abstract class MovementState : State
     {
         protected StateMachine<MovementState> _sm;
         protected _Scripts.Managers.PlayerManager _player;
-        public MovementState(_Scripts.Managers.PlayerManager player, StateMachine<MovementState> sm) {
+        protected UnityEngine.Rigidbody2D _rb;
+        public virtual void Initialize(_Scripts.Managers.PlayerManager player, StateMachine<MovementState> sm)
+        {
+            base.Initialize();
             _player = player;
             _sm = sm;
+            _rb = player.PlayerRigidbody;
         }
         /// <summary>
         /// Checks for inputs and sets appropriate flags.

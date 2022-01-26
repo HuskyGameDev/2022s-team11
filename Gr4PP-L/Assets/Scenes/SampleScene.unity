@@ -904,6 +904,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1111762058}
   - component: {fileID: 1111762059}
+  - component: {fileID: 1111762060}
   m_Layer: 0
   m_Name: Player Container
   m_TagString: Untagged
@@ -942,9 +943,49 @@ MonoBehaviour:
   _grappleHinge: {fileID: 628505096}
   _playerRigidbody: {fileID: 353158132}
   _grappleTether: {fileID: 77083788}
-  _rampingPullIncrement: 1.5
+  _rampingPullIncrement: 0
   _rampingPullValue: 10
   _grappleHookTravelSpeedModifier: 700
+--- !u!114 &1111762060
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1111762057}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e85697f96b6b6874bb28ee9956e32243, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _playerMovement: {fileID: 353158134}
+  _runningState: {fileID: 0}
+  _groundedState: {fileID: 11400000, guid: 606123f71b8cb874d8332507036e7d29, type: 2}
+  _slidingState: {fileID: 11400000, guid: 68e52ca9d6495134ca6f976b8c3ebb13, type: 2}
+  _grapplingState: {fileID: 11400000, guid: e72cafe1a06d5bf48aab072907737bca, type: 2}
+  _airborneState: {fileID: 11400000, guid: 5c7ad67761b4233448855a7a280f92a5, type: 2}
+  _groundLayer:
+    serializedVersion: 2
+    m_Bits: 0
+  _groundedAcceleration: 0
+  _groundedDeceleration: 0
+  _velPower: 0
+  _frictionAmount: 0
+  _jumpForce: 0
+  _jumpCutMultiplier: 0
+  _jumpCoyoteTime: 0
+  _jumpBufferTime: 0
+  _jumpWallJumpSpacing: 0
+  _fallGravityMultiplier: 0
+  _terminalVelocity: 0
+  _wallJumpForce: 0
+  _wallJumpCoyoteTime: 0
+  _wallSlideSpeed: 0
+  _wallJumpPreservationTime: 0
+  _groundCheckPoint: {fileID: 0}
+  _groundCheckSize: {x: 0, y: 0}
+  _wallCheckSize: {x: 0, y: 0}
+  _wallCheckOffset: {x: 0, y: 0}
 --- !u!1 &1308646433
 GameObject:
   m_ObjectHideFlags: 0
@@ -35057,7 +35098,7 @@ GameObject:
   - component: {fileID: 1602645673}
   m_Layer: 3
   m_Name: Ground
-  m_TagString: Untagged
+  m_TagString: Ground
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0

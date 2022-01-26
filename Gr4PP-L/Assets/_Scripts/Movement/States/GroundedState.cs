@@ -1,13 +1,17 @@
 using UnityEngine;
 namespace _Scripts.Movement.States {
     /** Author: Nick Zimanski
-    * Version 1/25/22
+    * Version 1/26/22
     */
+    [CreateAssetMenu(fileName = "GroundedStateData", menuName = "ScriptableObjects/GroundedStateScriptableObject")]
     public class GroundedState : MovementState
     {
-        private _Scripts.Managers.PlayerManager _owner;
+        protected _Scripts.Managers.PlayerManager _owner;
         private bool _runningRight, _runningLeft, _jumping, _crouching;
-        public GroundedState(_Scripts.Managers.PlayerManager player, _Scripts.Utility.StateMachine<MovementState> sm) : base(player, sm) {}
+        public override void Initialize(_Scripts.Managers.PlayerManager player, _Scripts.Utility.StateMachine<MovementState> sm)
+        {
+            base.Initialize(player, sm);
+        }
         public override void Enter() {
             _owner.IsGrounded = true;
         }

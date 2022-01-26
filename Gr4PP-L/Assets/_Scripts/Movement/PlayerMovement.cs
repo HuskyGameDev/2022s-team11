@@ -35,7 +35,6 @@ namespace _Scripts.Movement {
         private float lastGroundJump;
         [Space(10)]
         [SerializeField] private float fallGravityMultiplier;
-        private float gravityScale;
         [SerializeField] private float terminalVelocity;
         [Space(10)]
         private bool isJumping;
@@ -64,7 +63,6 @@ namespace _Scripts.Movement {
         {
             rb = GetComponent<Rigidbody2D>();
 
-            gravityScale = rb.gravityScale;
 
             givenAccel = acceleration;
             givenDecel = deceleration;
@@ -144,17 +142,6 @@ namespace _Scripts.Movement {
         {
             HorizontalMovement();
 
-            #region Jump Gravity
-            if(rb.velocity.y < 0)
-                {
-                    //rb.gravityScale = gravityScale * fallGravityMultiplier;
-                }
-            else
-                {
-                    rb.gravityScale = gravityScale;
-                }
-            #endregion
-
             #region Terminal Velocity
                 if(rb.velocity.y < -terminalVelocity)
                 {
@@ -197,38 +184,7 @@ namespace _Scripts.Movement {
 
         private void HorizontalMovement()
         {
-            #region Normal Movement
-                //calculates direction to move in and desired velocity
-                float targetSpeed = horizontalInput * moveSpeed;
-                float speedDif;
-                if (Exceeding(targetSpeed) && lastGroundedTime < jumpCoyoteTime - .01f)
-                {
-                    speedDif = -1 * Mathf.Sign(rb.velocity.x);
-                }
-                else
-                {
-                    //calculates difference between current velocity and desired velocity
-                    speedDif = targetSpeed - rb.velocity.x;
-                }
-                //change acceleration rate depending on the situation
-                //when target speed is > 0.01f, use acceleration variable, else use deceleration variable
-                float accelRate = (Mathf.Abs(targetSpeed) > 0.01f) ? acceleration : deceleration;
-                //applies acceleration to speed difference, then raises to a set power so acceleration increases with higher speeds
-                //finally multiplies by sing to reapply direction
-                float movement = Mathf.Pow(Mathf.Abs(speedDif) * accelRate, velPower) * Mathf.Sign(speedDif);
-
-                //applies force to rigidbody, multiplying by Vector2.right so that it only affects X axis
-                rb.AddForce(movement * Vector2.right);
-            #endregion
-
-            #region Friction
-                if (lastGroundedTime > 0 && Mathf.Abs(horizontalInput) < 0.01f && lastWallJump < 0)
-                {
-                    float amount = Mathf.Min(Mathf.Abs(rb.velocity.x), Mathf.Abs(frictionAmount));
-                    amount *= Mathf.Sign(rb.velocity.x);
-                    rb.AddForce(Vector2.right * -amount, ForceMode2D.Impulse);
-                }
-            #endregion
+            //
         }
 
         private void Jump()
@@ -284,15 +240,6 @@ namespace _Scripts.Movement {
             Gizmos.DrawWireCube(groundCheckPoint.position + new Vector3(-wallCheckOffset.x, wallCheckOffset.y, 0), wallCheckSize);
         }
 
-        private bool Exceeding(float v)
-        {
-            if(Mathf.Abs(rb.velocity.x) > Mathf.Abs(v) && Mathf.Abs(v) > 0.1f && Mathf.Sign(v) == Mathf.Sign(rb.velocity.x))
-            {
-                return true;
-            } else
-            {
-                return false;
-            }
-        }
+
     }
 }

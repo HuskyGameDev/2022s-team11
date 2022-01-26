@@ -1,9 +1,9 @@
-
+using UnityEngine;
 namespace _Scripts.Utility {
     /** Author: Nick Zimanski
     * Version 1/25/22
-    */
-    public abstract class State
+    */    
+    public class State : ScriptableObject
     {
         public enum States {}
         /**protected StateMachine<State> _sm;
@@ -27,5 +27,9 @@ namespace _Scripts.Utility {
         /// Called when changing away from this state.
         /// </summary>
         public virtual void Exit() {}
+        /// <summary>
+        /// Called to initialize any data in this object
+        /// </summary>
+        public virtual void Initialize() {}
     }
 }
