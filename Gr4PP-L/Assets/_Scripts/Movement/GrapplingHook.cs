@@ -4,7 +4,8 @@ using UnityEngine;
 namespace _Scripts.Movement {
     public class GrapplingHook : MonoBehaviour
     {
-        private float _screenWidth, _screenHeight;
+        //TODO: PORT TO MOVEMENT STATE SYSTEM
+        /**private float _screenWidth, _screenHeight;
         [SerializeField]private GameObject _grappleHinge;
         private Rigidbody2D _grappleHingeRigidbody;
         [SerializeField]private Rigidbody2D _playerRigidbody;
@@ -48,7 +49,7 @@ namespace _Scripts.Movement {
                     }
                 } else {
                     maxTetherDistance = ((float) Math.Sqrt((distX * distX) + (distY * distY)));
-                }*/
+                }
 
                 //double theta = Math.Abs(Math.Atan(distY/distX));
                 //distX = (float) (distX < 0 ? Math.Cos(theta) : -1 * Math.Cos(theta));
@@ -87,7 +88,7 @@ namespace _Scripts.Movement {
 
             crosshairTransform.position = new Vector3((rawCrosshairX * horizontalBreadth) + Camera.main.transform.position.x, 
                 (rawCrosshairY * verticalBreadth) + Camera.main.transform.position.y, 0);
-        }*/
+        }
 
         private void LaunchGrapple() {
             isGrappleHeld = false;
@@ -124,5 +125,6 @@ namespace _Scripts.Movement {
         }
         
         private Vector2 _hookShotAngle => new Vector2(1,1);
+        */
     }
 }

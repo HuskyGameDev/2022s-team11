@@ -3,10 +3,11 @@ namespace _Scripts.Movement.States {
     /** Author: Nick Zimanski
     * Version 1/26/22
     */
-    [CreateAssetMenu(fileName = "SlidingStateData", menuName = "ScriptableObjects/SlidingStateScriptableObject")]
-    public class SlidingState : GroundedState
+    [CreateAssetMenu(fileName = "SlidingStateData", menuName = "ScriptableObjects/MovementStates/SlidingStateScriptableObject")]
+    public class SlidingState : MovementState
     {
-        public override void Initialize(_Scripts.Managers.PlayerManager player, _Scripts.Utility.StateMachine<MovementState> sm)
+        new public States Name => States.Sliding;
+        public override void Initialize(_Scripts.Managers.PlayerManager player, MovementStateMachine sm)
         {
             base.Initialize(player, sm);
         }
@@ -16,14 +17,19 @@ namespace _Scripts.Movement.States {
         public override void Exit() {
             base.Exit();
         }
-        public override void HandleInput() {
+        protected override void HandleInput() {
+            _input = GetInput();
 
         }
-        public override void LogicUpdate() {
+        protected override void LogicUpdate() {
 
         }
-        public override void PhysicsUpdate() {
+        protected override void PhysicsUpdate() {
 
+        }
+        protected override void CheckInputBuffer()
+        {
+            throw new System.NotImplementedException();
         }
     }
 }

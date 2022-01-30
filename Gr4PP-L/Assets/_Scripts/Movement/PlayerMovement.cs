@@ -29,7 +29,6 @@ namespace _Scripts.Movement {
         [Space(10)]
         [SerializeField] private float jumpCoyoteTime;
         private float lastGroundedTime;
-        [SerializeField] private float jumpBufferTime;
         private float lastJumpTime;
         [SerializeField] private float jumpWallJumpSpacing;
         private float lastGroundJump;
@@ -75,7 +74,7 @@ namespace _Scripts.Movement {
 
             if (Input.GetButtonDown("Jump"))
             {
-                lastJumpTime = jumpBufferTime;
+                //lastJumpTime = jumpBufferTime;
             }
 
             if (Input.GetButtonUp("Jump"))
@@ -122,7 +121,7 @@ namespace _Scripts.Movement {
             #region Jump
             if(lastGroundedTime > 0 && lastJumpTime > 0 && !isJumping && !(lastWallTime > 0))
             {
-                Jump();
+                //Jump();
             } else if(lastWallTime > 0 && lastJumpTime > 0 && !isJumping)
             {
                 WallJump();
@@ -185,15 +184,6 @@ namespace _Scripts.Movement {
         private void HorizontalMovement()
         {
             //
-        }
-
-        private void Jump()
-        {
-            lastJumpTime = 0;
-            lastGroundJump = jumpWallJumpSpacing;
-            rb.velocity = new Vector2(rb.velocity.x, 0);
-            rb.AddForce(Vector2.up * jumpForce, ForceMode2D.Impulse);
-            isJumping = true;
         }
 
         private void WallJump()

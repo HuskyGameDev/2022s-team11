@@ -12,3 +12,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 733d99af8ec4397409d1ada537134334, type: 3}
   m_Name: GrapplingStateData
   m_EditorClassIdentifier: 
+  _jumpForce: 20
+  _jumpCoyoteTime: 0
+  _jumpBufferTime: 0
+  _groundJumpToWallJumpDelay: 0
+  _jumpCutMultiplier: 0
+  _wallJumpForce: 0
+  _fallGravityMultiplier: 0
+  _terminalVelocity: 0
+  _acceleration: 0
+  _deceleration: 0
+  _wallSlideSpeed: 0

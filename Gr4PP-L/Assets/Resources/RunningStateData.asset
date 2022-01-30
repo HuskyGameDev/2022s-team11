@@ -9,6 +9,14 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: e1e0af0a084ac2a4eba4128f127443d5, type: 3}
-  m_Name: GroundedStateData
+  m_Script: {fileID: 11500000, guid: 2c2a29aa656c79748a9d9ebfaa8657e0, type: 3}
+  m_Name: RunningStateData
   m_EditorClassIdentifier: 
+  _jumpForce: 20
+  _horizAxisThreshold: 0.1
+  _vertAxisThreshold: 0.1
+  _givenAccel: 8
+  _givenDecel: 5
+  _frictionAmount: 0.22
+  _velPower: 0.96
+  _maxHorizontalSpeed: 11

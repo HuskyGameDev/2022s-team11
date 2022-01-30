@@ -12,3 +12,17 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d88124992ae8be34fa184d00b2ee91c6, type: 3}
   m_Name: AirborneStateData
   m_EditorClassIdentifier: 
+  _jumpForce: 20
+  _horizAxisThreshold: 0
+  _vertAxisThreshold: 0
+  _jumpCoyoteTime: 0.1
+  _jumpBufferTime: 0.1
+  _groundJumpToWallJumpDelay: 0.1
+  _jumpCutMultiplier: 0.3
+  _wallJumpForce: 10
+  _fallGravityMultiplier: 2
+  _terminalVelocity: 15
+  _givenAccel: 8
+  _givenDecel: 5
+  _wallSlideSpeed: 6
+  _maxHorizontalAirSpeed: 4

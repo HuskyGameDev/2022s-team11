@@ -5,9 +5,11 @@ namespace _Scripts.Utility {
     */
     public class StateMachine<T> where T : State
     {
-        protected Dictionary<int, T> _validStates;
+        protected Dictionary<int, T> _validStates = new Dictionary<int, T>();
         protected T _currentState;
+        protected T _previousState;
         public T CurrentState => _currentState;
+        public T PreviousState => _previousState;
         public StateMachine(T state) {
             Initialize(state);
         }
@@ -15,6 +17,7 @@ namespace _Scripts.Utility {
 
         public void Initialize(T newState) {
             _currentState = newState;
+            _previousState = null;
 
             if (_currentState != null) {
                 _currentState.Enter();
@@ -26,6 +29,7 @@ namespace _Scripts.Utility {
                 _currentState.Exit();
             }
 
+            _previousState = _currentState;
             _currentState = newState;
 
             if (_currentState != null) {

@@ -12,3 +12,4 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d05b87045cd3f00459d4e99364c03fbe, type: 3}
   m_Name: SlidingStateData
   m_EditorClassIdentifier: 
+  _jumpForce: 20

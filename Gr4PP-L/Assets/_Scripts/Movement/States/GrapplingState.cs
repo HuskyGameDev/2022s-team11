@@ -3,26 +3,29 @@ namespace _Scripts.Movement.States {
     /** Author: Nick Zimanski
     * Version 1/26/22
     */
-    [CreateAssetMenu(fileName = "GrapplingStateData", menuName = "ScriptableObjects/GrapplingStateScriptableObject")]
+    [CreateAssetMenu(fileName = "GrapplingStateData", menuName = "ScriptableObjects/MovementStates/GrapplingStateScriptableObject")]
     public class GrapplingState : AirborneState
     {
-        public override void Initialize(_Scripts.Managers.PlayerManager player, _Scripts.Utility.StateMachine<MovementState> sm)
+        new public States Name => States.Grappling;
+        public override void Initialize(_Scripts.Managers.PlayerManager player, MovementStateMachine sm)
         {
             base.Initialize(player, sm);
         }
         public override void Enter() {
             base.Enter();
+            _transitionToState = States.Running;
         }
         public override void Exit() {
             base.Exit();
         }
-        public override void HandleInput() {
+        protected override void HandleInput() {
+            _input = GetInput();
 
         }
-        public override void LogicUpdate() {
+        protected override void LogicUpdate() {
 
         }
-        public override void PhysicsUpdate() {
+        protected override void PhysicsUpdate() {
 
         }
     }

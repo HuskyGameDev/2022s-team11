@@ -1,91 +1,90 @@
+using System.Data;
 using System;
 using UnityEngine;
 using _Scripts.Movement.States;
 using _Scripts.Utility;
 namespace _Scripts.Managers {
     /** Author: Nick Zimanski
-    * Version 1/25/22
+    * Version 1/26/22
     */
-    public class PlayerManager : MonoBehaviour
+    public class PlayerManager : Manager
     {
         #region Serialized Variables
         [Header("Components")]
-        [SerializeField]private _Scripts.Movement.PlayerMovement _playerMovement;
-        public Rigidbody2D PlayerRigidbody {get; private set;}
-        [Header("Scriptable Objects")]
+        [SerializeField]private Rigidbody2D _playerRigidbody;
+        public Rigidbody2D PlayerRigidbody => _playerRigidbody;
         [SerializeField]private RunningState _runningState;
-        [SerializeField]private GroundedState _groundedState;
         [SerializeField]private SlidingState _slidingState;
         [SerializeField]private GrapplingState _grapplingState;
         [SerializeField]private AirborneState _airborneState;
+        [SerializeField]private LayerMask _groundLayer;
+        public LayerMask GroundLayer => _groundLayer;
 
-        [Header("Layer Masks")]
-        [SerializeField] private LayerMask _groundLayer;
-
-        [Header("Movement")]
-        [SerializeField] private float _groundedAcceleration;
-        [SerializeField] private float _groundedDeceleration;
-        public float MoveSpeed {get; private set;} //max horizontal speed
-        [SerializeField] private float _velPower;
+        [Header("Collision")]
+        [SerializeField]
+        [Tooltip("")]
+        private Vector2 _wallCheckSize;
+        public Vector2 WallCheckSize => _wallCheckSize;
+        [SerializeField]
+        [Tooltip("")]
+        private Vector2 _wallCheckOffset;
+        public Vector2 WallCheckOffset => _wallCheckOffset;
         [Space(10)]
-        [SerializeField] private float _frictionAmount;
-
-        [Header("Jump")]
-        [SerializeField] private float _jumpForce;
-        [Range(0, 1)]
-        [SerializeField] private float _jumpCutMultiplier;
-        [Space(10)]
-        [SerializeField] private float _jumpCoyoteTime;
-        [SerializeField] private float _jumpBufferTime;
-        [SerializeField] private float _jumpWallJumpSpacing;
-        [Space(10)]
-        [SerializeField] private float _fallGravityMultiplier;
-        [SerializeField] private float _terminalVelocity;
-        [Space(10)]
-
-        [Header("Wall Jump")]
-        [SerializeField] private float _wallJumpForce;
-        [Space(10)]
-        [SerializeField] private float _wallJumpCoyoteTime;
-        [SerializeField] private float _wallSlideSpeed;
-        [SerializeField] private float _wallJumpPreservationTime;
-        [Space(10)]
-
-        [Header("Ground Collision")]
-        [SerializeField] private Transform _groundCheckPoint;
-        [SerializeField] private Vector2 _groundCheckSize;
-        [SerializeField] private Vector2 _wallCheckSize;
-        [SerializeField] private Vector2 _wallCheckOffset;
+        [SerializeField]
+        [Tooltip("")]
+        private Transform _groundCheckPoint;
+        public Transform GroundCheckPoint => _groundCheckPoint;
+        [SerializeField]
+        [Tooltip("")]
+        private Vector2 _groundCheckSize;
+        public Vector2 GroundCheckSize => _groundCheckSize;
         #endregion
+
         #region Variables
-        private StateMachine<MovementState> _movementSM;
-        [NonSerializedAttribute]public bool IsGrounded, IsDead = false, IsJumping = false;
+        private MovementStateMachine _movementSM;
+        /// <summary>
+        /// Whether or not the player is touching the ground
+        /// </summary>
+        public bool IsGrounded => CheckIsGrounded();
+        /// <summary>
+        /// Whether or not the player is dead
+        /// </summary>
+        private bool _isDead = false;
+        public bool IsDead => _isDead;
         [NonSerializedAttribute]public float LastGroundJump,
             LastJumpTime,
             LastGroundedTime,
             LastWallJump,
-            LastWallTime;
+            LastWallTime,
+            CoyoteTimeWindowEndTime;
         private float _gravityScale;
         private bool _jumpInputReleased, 
             _leftWall, 
-            _rightWall;
+            _rightWall,
+            _isGrappleHeld = true;
+        public bool IsGrappleHeld => _isGrappleHeld;
         #endregion
 
         #region User Methods
         private void SetupStateMachine() {
-            _movementSM = new StateMachine<MovementState>();
+            _movementSM = new MovementStateMachine();
 
-            _runningState.Initialize(this, _movementSM);
-            _groundedState.Initialize(this, _movementSM);
-            _airborneState.Initialize(this, _movementSM);
-            _slidingState.Initialize(this, _movementSM);
-            _grapplingState.Initialize(this, _movementSM);
-            _movementSM.AddState((int) MovementState.States.Grounded, _groundedState);
             _movementSM.AddState((int) MovementState.States.Airborne, _airborneState);
             _movementSM.AddState((int) MovementState.States.Sliding, _slidingState);
             _movementSM.AddState((int) MovementState.States.Grappling, _grapplingState);
             _movementSM.AddState((int) MovementState.States.Running, _runningState);
-            _movementSM.Initialize(_movementSM.GetState((int) MovementState.States.Grounded));
+            
+            _movementSM.Initialize(this, _movementSM.GetState((int) MovementState.States.Running));
+        }
+
+        private bool CheckIsGrounded() {
+            switch(_movementSM.CurrentState.Name) {
+                case MovementState.States.Running:
+                case MovementState.States.Sliding:
+                    return true;
+                default:
+                    return false;
+            }
         }
         #endregion
         
@@ -98,6 +97,7 @@ namespace _Scripts.Managers {
         void Update()
         {
             _movementSM.Update();
+            //print(_movementSM.CurrentState.Name + " " + _movementSM.PreviousState);
         }
 
         void FixedUpdate()
@@ -105,5 +105,14 @@ namespace _Scripts.Managers {
             _movementSM.FixedUpdate();
         }
         #endregion
+
+        private void OnDrawGizmosSelected()
+        {
+            Gizmos.color = Color.green;
+            Gizmos.DrawWireCube(_groundCheckPoint.position - new Vector3(0,1,0), _groundCheckSize);
+            Gizmos.color = Color.blue;
+            Gizmos.DrawWireCube(_groundCheckPoint.position + new Vector3(_wallCheckOffset.x, _wallCheckOffset.y, 0), _wallCheckSize);
+            Gizmos.DrawWireCube(_groundCheckPoint.position + new Vector3(-_wallCheckOffset.x, _wallCheckOffset.y, 0), _wallCheckSize);
+        }
     }
 }

@@ -4,38 +4,67 @@ namespace _Scripts.Movement.States {
     /** Author: Nick Zimanski
     * Version 1/26/22
     */
-    [CreateAssetMenu(fileName = "RunningStateData", menuName = "ScriptableObjects/RunningStateScriptableObject")]
-    public class RunningState : GroundedState
+    [CreateAssetMenu(fileName = "RunningStateData", menuName = "ScriptableObjects/MovementStates/RunningStateScriptableObject")]
+    public class RunningState : MovementState
     {
-        #region Variables
+        #region Serialized Variables
         [Header("Movement")]
-        [SerializeField]private float _givenAccel;
-        [SerializeField]private float _givenDecel, _frictionAmount, _velPower, _maxHorizontalSpeed;
-        [Header("Jump")]
-        [SerializeField]private float _jumpCoyoteTime;
-        private float _horizontalInput, _acceleration, _deceleration, _movement, _accelRate;
-    
+        [SerializeField]
+        [Tooltip("How quickly to speed the player up before they reach max speed.")]
+        private float _givenAccel;
+        [SerializeField]
+        [Tooltip("How quickly to slow the player down before they stop.")]
+        private float _givenDecel;
+        [SerializeField]
+        [Tooltip("How much force to apply to the player as they move.")]
+        private float _frictionAmount;
+        [SerializeField]
+        [Tooltip("The power to raise the player's acceleration to.")]
+        private float _velPower;
+        [SerializeField]
+        [Tooltip("The maximum speed the player can normally reach horizontally.")]
+        private float _maxHorizontalSpeed;
         #endregion
-        public override void Initialize(_Scripts.Managers.PlayerManager player, _Scripts.Utility.StateMachine<MovementState> sm)
+
+        #region Variables
+        private bool _isJumpingInput, _isCrouchingInput, _isGrappleInput;
+        private float _movement, _accelRate, _acceleration, _deceleration;
+        new public States Name => States.Running;
+        #endregion
+
+        #region MovementState Callbacks
+        public override void Initialize(_Scripts.Managers.PlayerManager player, MovementStateMachine sm)
         {
             base.Initialize(player, sm);
         }
         public override void Enter() {
             base.Enter();
+            _acceleration = _givenAccel;
+            _deceleration = _givenDecel;
         }
         public override void Exit() {
             base.Exit();
         }
-        public override void HandleInput() {
+        #endregion
+        #region MovementState Overrides
+        protected override void HandleInput() {
+            var gameTime = Time.time;
+            _input = GetInput();
+            _isJumpingInput = _input.y > 0;
+            _isCrouchingInput = _input.y < 0;
+            _isGrappleInput = Input.GetButton("Grapple");
             
-            _horizontalInput = Input.GetAxisRaw("Horizontal");
+            if (_uncheckedInputBuffer) {
+                CheckInputBuffer();
+                _uncheckedInputBuffer = false;
+            }
         }
-        public override void LogicUpdate() {
+        protected override void LogicUpdate() {
             #region Normal Movement
                 //calculates direction to move in and desired velocity
-                float targetSpeed = _horizontalInput * _maxHorizontalSpeed;
-                float speedDif;
-                if (Exceeding(targetSpeed) && _owner.LastGroundedTime < _jumpCoyoteTime - .01f)
+                float targetSpeed = _input.x * _maxHorizontalSpeed;
+                float speedDif = 0;
+                if (IsPlayerSpeedExceeding(targetSpeed))
                 {
                     speedDif = -1 * Mathf.Sign(_rb.velocity.x);
                 }
@@ -53,29 +82,34 @@ namespace _Scripts.Movement.States {
 
             #endregion
 
+            #region StateChecks
+            if (!IsGrounded) {
+                _transitionToState = States.Airborne;
+            }
+            #endregion
+        }
+        protected override void PhysicsUpdate() {
+            //applies force to rigidbody, multiplying by Vector2.right so that it only affects X axis
+            _rb.AddForce(_movement * Vector2.right);
+
             #region Friction
-                if (_owner.LastGroundedTime > 0 && Mathf.Abs(_horizontalInput) < 0.01f && _owner.LastWallJump < 0)
+                if (Mathf.Abs(_input.x) < 0.01f)
                 {
                     float amount = Mathf.Min(Mathf.Abs(_rb.velocity.x), Mathf.Abs(_frictionAmount));
                     amount *= Mathf.Sign(_rb.velocity.x);
                     _rb.AddForce(Vector2.right * -amount, ForceMode2D.Impulse);
                 }
             #endregion
-        }
-        public override void PhysicsUpdate() {
-            //applies force to rigidbody, multiplying by Vector2.right so that it only affects X axis
-            _rb.AddForce(_movement * Vector2.right);
+            
+            if (_isJumpingInput) GroundedJump();
         }
 
-        private bool Exceeding(float v)
-        {
-            if(Mathf.Abs(_rb.velocity.x) > Mathf.Abs(v) && Mathf.Abs(v) > 0.1f && Mathf.Sign(v) == Mathf.Sign(_rb.velocity.x))
-            {
-                return true;
-            } else
-            {
-                return false;
-            }
+        protected override void CheckInputBuffer() {
+            _isJumpingInput = _isJumpingInput || _sm.CheckBufferedInputsFor("Jump");
+            _isCrouchingInput = _isCrouchingInput || _sm.CheckBufferedInputsFor("Slide");
+            _uncheckedInputBuffer = false;
         }
+        #endregion
+
     }
 }

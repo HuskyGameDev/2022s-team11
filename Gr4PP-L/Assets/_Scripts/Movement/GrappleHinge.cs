@@ -5,6 +5,8 @@ using UnityEngine;
 namespace _Scripts.Movement {
     public class GrappleHinge : MonoBehaviour
     {
+        //TODO: PORT TO MOVEMENT STATE SYSTEM
+        /**
         [SerializeField]
         private GameObject grappleHinge;
         [SerializeField]
@@ -39,6 +41,6 @@ namespace _Scripts.Movement {
             grappleHingeRigidbody.velocity = Vector3.zero;
             grappleHingeRigidbody.isKinematic = true;
             isAttached = true;
-        }
+        }*/
     }
 }

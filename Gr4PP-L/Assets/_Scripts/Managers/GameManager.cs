@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 
 namespace _Scripts.Managers {
-    public class GameManager : MonoBehaviour
+    public class GameManager : Manager
     {
         private static Camera s_mainCamera = null;
         // Start is called before the first frame update
