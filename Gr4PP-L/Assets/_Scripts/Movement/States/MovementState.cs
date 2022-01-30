@@ -9,15 +9,16 @@ namespace _Scripts.Movement.States {
     {
         [Header("Movement State")]
         [SerializeField]private float _jumpForce;
-        [SerializeField]private float _horizAxisThreshold, _vertAxisThreshold;
+        [SerializeField]private float _horizAxisThreshold;
+        [SerializeField]private float _vertAxisThreshold;
         #region Variables
-        protected MovementStateMachine _sm;
-        protected _Scripts.Managers.PlayerManager _owner;
+        protected MovementStateMachine _sm {get; private set;}
+        protected _Scripts.Managers.PlayerManager _owner {get; private set;}
         protected bool _uncheckedInputBuffer;
-        protected float _stateEnterTime;
-        protected Rigidbody2D _rb;
+        protected float _stateEnterTime {get; private set;}
+        protected Rigidbody2D _rb {get; private set;}
         /// <summary>
-        /// Stores the input data on a frame, typically from GetInput()
+        /// Stores the input data on a frame as a vector2 of horizontal and vertical inputs
         /// </summary>
         protected Vector2 _input;
 
@@ -55,6 +56,7 @@ namespace _Scripts.Movement.States {
         /// </summary>
         protected virtual void PhysicsUpdate() {}
         public override void Execute() {
+            _input = GetInput();
             HandleInput();
             LogicUpdate();
             StateChangeUpdate();

@@ -49,7 +49,6 @@ namespace _Scripts.Movement.States {
         #region MovementState Overrides
         protected override void HandleInput() {
             var gameTime = Time.time;
-            _input = GetInput();
             _isJumpingInput = _input.y > 0;
             _isCrouchingInput = _input.y < 0;
             _isGrappleInput = Input.GetButton("Grapple");

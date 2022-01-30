@@ -19,7 +19,6 @@ namespace _Scripts.Movement.States {
             base.Exit();
         }
         protected override void HandleInput() {
-            _input = GetInput();
 
         }
         protected override void LogicUpdate() {
