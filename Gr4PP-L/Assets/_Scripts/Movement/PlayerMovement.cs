@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+
 namespace Movement {
 
     public class PlayerMovement : MonoBehaviour
@@ -38,6 +39,7 @@ namespace Movement {
         private float gravityScale;
         [SerializeField] private float terminalVelocity;
         [Space(10)]
+
         private bool isJumping;
         private bool jumpInputReleased;
 
@@ -48,10 +50,15 @@ namespace Movement {
         private float lastWallTime;
         [SerializeField] private float wallSlideSpeed;
         [SerializeField] private float wallJumpPreservationTime;
+        [Space(10)]
+
         private float lastWallJump;
         private bool leftWall;
         private bool rightWall;
-        [Space(10)]
+
+        [Header("Slide")]
+        private bool isSliding = false;
+        [SerializeField] private float slideFrictionAmount;
 
         [Header("Ground Collision")]
         [SerializeField] private Transform groundCheckPoint;
@@ -89,10 +96,19 @@ namespace Movement {
             {
                 rb.AddForce(Vector2.up * 20, ForceMode2D.Impulse);
             }
+
+            if (Input.GetKey(KeyCode.Z))
+            {
+                isSliding = true;
+            }
+            else
+            {
+                isSliding = false;
+            }
             #endregion
 
             #region Checks
-            if(Physics2D.OverlapBox(groundCheckPoint.position - new Vector3(0, 1, 0), groundCheckSize, 0, groundLayer))
+            if (Physics2D.OverlapBox(groundCheckPoint.position - new Vector3(0, 1, 0), groundCheckSize, 0, groundLayer))
             {
                 lastGroundedTime = jumpCoyoteTime;
             }
@@ -201,6 +217,7 @@ namespace Movement {
             //calculates direction to move in and desired velocity
             float targetSpeed = horizontalInput * moveSpeed;
             float speedDif;
+
             if (Exceeding(targetSpeed) && lastGroundedTime < jumpCoyoteTime - .01f)
             {
                 speedDif = -1 * Mathf.Sign(rb.velocity.x);
@@ -210,24 +227,43 @@ namespace Movement {
                 //calculates difference between current velocity and desired velocity
                 speedDif = targetSpeed - rb.velocity.x;
             }
-            //change acceleration rate depending on the situation
-            //when target speed is > 0.01f, use acceleration variable, else use deceleration variable
-            float accelRate = (Mathf.Abs(targetSpeed) > 0.01f) ? acceleration : deceleration;
-            //applies acceleration to speed difference, then raises to a set power so acceleration increases with higher speeds
-            //finally multiplies by sing to reapply direction
-            float movement = Mathf.Pow(Mathf.Abs(speedDif) * accelRate, velPower) * Mathf.Sign(speedDif);
 
-            //applies force to rigidbody, multiplying by Vector2.right so that it only affects X axis
-            rb.AddForce(movement * Vector2.right);
-            #endregion
-
-            #region Friction
-            if (lastGroundedTime > 0 && Mathf.Abs(horizontalInput) < 0.01f && lastWallJump < 0)
+            if (isSliding == true)
             {
-                float amount = Mathf.Min(Mathf.Abs(rb.velocity.x), Mathf.Abs(frictionAmount));
-                amount *= Mathf.Sign(rb.velocity.x);
-                rb.AddForce(Vector2.right * -amount, ForceMode2D.Impulse);
+                #region FrictionSliding
+                if (lastGroundedTime > 0 && Mathf.Abs(horizontalInput) < 0.01f && lastWallJump < 0)
+                {
+                    float amount = Mathf.Min(Mathf.Abs(rb.velocity.x), Mathf.Abs(slideFrictionAmount));
+                    amount *= Mathf.Sign(rb.velocity.x);
+                    rb.AddForce(Vector2.right * -amount, ForceMode2D.Impulse);
+                }
+                #endregion
             }
+            else
+            {
+                //change acceleration rate depending on the situation
+                //when target speed is > 0.01f, use acceleration variable, else use deceleration variable
+                float accelRate = (Mathf.Abs(targetSpeed) > 0.01f) ? acceleration : deceleration;
+
+                //applies acceleration to speed difference, then raises to a set power so acceleration increases with higher speeds
+                //finally multiplies by sing to reapply direction
+                float movement = Mathf.Pow(Mathf.Abs(speedDif) * accelRate, velPower) * Mathf.Sign(speedDif);
+
+                //applies force to rigidbody, multiplying by Vector2.right so that it only affects X axis
+                rb.AddForce(movement * Vector2.right);
+
+
+                #region FrictionNotSliding
+                if (lastGroundedTime > 0 && Mathf.Abs(horizontalInput) < 0.01f && lastWallJump < 0)
+                {
+                    float amount = Mathf.Min(Mathf.Abs(rb.velocity.x), Mathf.Abs(frictionAmount));
+                    amount *= Mathf.Sign(rb.velocity.x);
+                    rb.AddForce(Vector2.right * -amount, ForceMode2D.Impulse);
+                }
+                #endregion
+            }
+
+
             #endregion
         }
 
