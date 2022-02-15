@@ -276,7 +276,7 @@ MonoBehaviour:
   acceleration: 5
   deceleration: 8
   velPower: 0.96
-  frictionAmount: 0.22
+  frictionAmount: 0
   jumpForce: 20
   jumpCutMultiplier: 0.3
   jumpCoyoteTime: 0.1
@@ -288,6 +288,7 @@ MonoBehaviour:
   wallJumpCoyoteTime: 0.05
   wallSlideSpeed: 5
   wallJumpPreservationTime: 0.05
+  slideFrictionAmount: 0.1
   groundCheckPoint: {fileID: 353158131}
   groundCheckSize: {x: 1, y: 0.1}
   wallCheckSize: {x: 0.3, y: 1.4}
