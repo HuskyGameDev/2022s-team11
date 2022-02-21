@@ -61,8 +61,10 @@ namespace _Scripts.Managers {
         private bool _jumpInputReleased, 
             _leftWall, 
             _rightWall,
-            _isGrappleHeld = true;
+            _isGrappleHeld,
+            _GrappleReady = true;
         public bool IsGrappleHeld => _isGrappleHeld;
+        public bool GrappleReady => _GrappleReady;
         #endregion
 
         #region User Methods
