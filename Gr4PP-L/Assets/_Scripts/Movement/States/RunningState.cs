@@ -1,8 +1,8 @@
 using System;
 using UnityEngine;
 namespace _Scripts.Movement.States {
-    /** Author: Nick Zimanski
-    * Version 1/26/22
+    /** Author: Nick Zimanski && Noah Kolczynski
+    * Version 2/10/22
     */
     [CreateAssetMenu(fileName = "RunningStateData", menuName = "ScriptableObjects/MovementStates/RunningStateScriptableObject")]
     public class RunningState : MovementState
@@ -24,10 +24,13 @@ namespace _Scripts.Movement.States {
         [SerializeField]
         [Tooltip("The maximum speed the player can normally reach horizontally.")]
         private float _maxHorizontalSpeed;
+        [SerializeField]
+        [Tooltip("The force with which to shoot the grappling hook while in this state")]
+        private float _hookShotForce;
         #endregion
 
         #region Variables
-        private bool _isJumpingInput, _isCrouchingInput, _isGrappleInput;
+        private bool _isJumpingInput, _isCrouchingInput, _grappleInput;
         private float _movement, _accelRate, _acceleration, _deceleration;
         new public States Name => States.Running;
         #endregion
@@ -41,6 +44,7 @@ namespace _Scripts.Movement.States {
             base.Enter();
             _acceleration = _givenAccel;
             _deceleration = _givenDecel;
+            HandleInput();
         }
         public override void Exit() {
             base.Exit();
@@ -51,7 +55,11 @@ namespace _Scripts.Movement.States {
             var gameTime = Time.time;
             _isJumpingInput = _input.y > 0;
             _isCrouchingInput = _input.y < 0;
-            _isGrappleInput = Input.GetButton("Grapple");
+
+            if (Input.GetButtonDown("Grapple")) {
+                _grappleInput = true;
+                _sm.BufferInput("Grapple", 0.1f);
+            }
             
             if (_uncheckedInputBuffer) {
                 CheckInputBuffer();
@@ -84,6 +92,8 @@ namespace _Scripts.Movement.States {
             #region StateChecks
             if (!IsGrounded) {
                 _transitionToState = States.Airborne;
+            } else if (_hook.IsAttached) {
+                _transitionToState = States.Grappling;
             }
             #endregion
         }
@@ -101,6 +111,11 @@ namespace _Scripts.Movement.States {
             #endregion
             
             if (_isJumpingInput) GroundedJump();
+
+            if(_grappleInput) {
+                HandleGrappleInput(_input, _hookShotForce);
+                _grappleInput = false;
+            }
         }
 
         protected override void CheckInputBuffer() {

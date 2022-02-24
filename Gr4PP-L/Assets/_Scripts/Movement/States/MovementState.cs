@@ -3,7 +3,7 @@ using _Scripts.Utility;
 using UnityEngine;
 namespace _Scripts.Movement.States {
     /** Author: Nick Zimanski
-    * Version 1/26/22
+    * Version 2/10/22
     */
     public abstract class MovementState : State
     {
@@ -15,10 +15,18 @@ namespace _Scripts.Movement.States {
         protected MovementStateMachine _sm {get; private set;}
         protected _Scripts.Managers.PlayerManager _owner {get; private set;}
         protected bool _uncheckedInputBuffer;
+<<<<<<< Updated upstream
         protected float _stateEnterTime {get; private set;}
         protected Rigidbody2D _rb {get; private set;}
         /// <summary>
         /// Stores the input data on a frame as a vector2 of horizontal and vertical inputs
+=======
+        protected float _stateEnterTime;
+        protected GrappleHookController _hook;
+        protected Rigidbody2D _rb;
+        /// <summary>
+        /// Stores the input data on a frame. Updated automatically every frame before HandleInput()
+>>>>>>> Stashed changes
         /// </summary>
         protected Vector2 _input;
 
@@ -33,12 +41,14 @@ namespace _Scripts.Movement.States {
             _sm = sm;
             _rb = player.PlayerRigidbody;
             _uncheckedInputBuffer = false;
+            _hook = player.GrappleHookCtrl;
         }
         public override void Enter() {
             base.Enter();
             _uncheckedInputBuffer = true;
             _stateEnterTime = Time.time;
             _transitionToState = null;
+            _input = GetInput();
         }
         public override void Exit() {
             base.Exit();
@@ -80,6 +90,16 @@ namespace _Scripts.Movement.States {
             _rb.AddForce(Vector2.up * _jumpForce, ForceMode2D.Impulse);      
         }
 
+        protected void HandleGrappleInput(Vector2 direction, float force) {
+            if (_hook.IsAttached) return;
+            
+            if (!_hook.IsHeld) {
+                _hook.RetractHook();
+                return;
+            } else {
+                 _hook.FireHook(direction, force);
+            }
+        }
         /// <summary>
         /// Checks if the player is contacting the ground at the grounding box
         /// </summary>

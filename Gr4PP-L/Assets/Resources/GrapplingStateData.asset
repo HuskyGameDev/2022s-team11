@@ -13,13 +13,9 @@ MonoBehaviour:
   m_Name: GrapplingStateData
   m_EditorClassIdentifier: 
   _jumpForce: 20
-  _jumpCoyoteTime: 0
-  _jumpBufferTime: 0
-  _groundJumpToWallJumpDelay: 0
-  _jumpCutMultiplier: 0
-  _wallJumpForce: 0
-  _fallGravityMultiplier: 0
-  _terminalVelocity: 0
-  _acceleration: 0
-  _deceleration: 0
-  _wallSlideSpeed: 0
+  _horizAxisThreshold: 0.1
+  _vertAxisThreshold: 0.1
+  _grappleFireForce: 10
+  _horizPullStrength: 20
+  _vertPullStrength: 80
+  _grappleTimeOut: 3

@@ -20,3 +20,4 @@ MonoBehaviour:
   _frictionAmount: 0.22
   _velPower: 0.96
   _maxHorizontalSpeed: 11
+  _hookShotForce: 20
