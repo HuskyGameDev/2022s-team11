@@ -13,6 +13,16 @@ public class IcePatchManager : MonoBehaviour
         if (collision.gameObject.CompareTag("Player"))
         {
             slipFactor = collision.gameObject.GetComponent<Rigidbody2D>().velocity.x;
+            if (slipFactor < 5f && slipFactor > -5f)
+            {
+                if (slipFactor > 0f)
+                {
+                    slipFactor = 5f;
+                } else
+                {
+                    slipFactor = -5f;
+                }
+            }
             collision.gameObject.GetComponent<Rigidbody2D>().AddForce(Vector2.right * slipFactor, ForceMode2D.Impulse);
         }
     }
