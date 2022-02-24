@@ -38,11 +38,20 @@ namespace _Scripts.Movement.States {
         [Tooltip("How quickly to slow the player down before stopping.")]
         private float _givenDecel;
         [SerializeField]
+        [Tooltip("Helps smooth movement, exponent used for movement calculations.")]
+        private float _velPower;
+        [SerializeField]
         [Tooltip("The speed at which the player should slide down a wall.")]
         private float _wallSlideSpeed;
         [SerializeField]
         [Tooltip("Max horizontal velocity in the air.")]
         private float _maxHorizontalAirSpeed;
+        
+        //variables used for calculating 
+        private float _horizontalMovement, _accelRate;
+        
+
+
         /// <summary>
         /// Whether or not the player entered this state with a jump.
         /// </summary>
@@ -99,6 +108,8 @@ namespace _Scripts.Movement.States {
                 float speedDif = 0;
                 if (IsPlayerSpeedExceeding(targetSpeed))
                 {
+                    //when the character is exceeding our maximum velocity, speed dif will have a value of 1 in the opposite horizontal direction
+                    //so if the character is going fast to the right, this will give a -1, if going fast to the left, it'll give a 1
                     speedDif = -1 * Mathf.Sign(_rb.velocity.x);
                 }
                 else
@@ -108,10 +119,10 @@ namespace _Scripts.Movement.States {
                 }
                 //change acceleration rate depending on the situation
                 //when target speed is > 0.01f, use acceleration variable, else use deceleration variable
-                //_accelRate = (Mathf.Abs(targetSpeed) > 0.01f) ? _acceleration : _deceleration;
+                _accelRate = (Mathf.Abs(targetSpeed) > 0.01f) ? _acceleration : _deceleration;
                 //applies acceleration to speed difference, then raises to a set power so acceleration increases with higher speeds
                 //finally multiplies by sing to reapply direction
-                //_horizontalMovement = Mathf.Pow(Mathf.Abs(speedDif) * _accelRate, _velPower) * Mathf.Sign(speedDif);
+                _horizontalMovement = Mathf.Pow(Mathf.Abs(speedDif) * _accelRate, _velPower) * Mathf.Sign(speedDif);
             #endregion
 
             if (_uncheckedInputBuffer) {
@@ -133,8 +144,13 @@ namespace _Scripts.Movement.States {
             }
         }
         protected override void PhysicsUpdate() {
+            #region Horizontal Movement
+            //applies force to rigidbody, multiplying by Vector2.right so that it only affects X axis
+            _rb.AddForce(_horizontalMovement * Vector2.right);
+            #endregion
+
             #region Jump Gravity
-            if(_rb.velocity.y < 0)
+            if (_rb.velocity.y < 0)
             {
                 _rb.gravityScale = _gravityScale * _fallGravityMultiplier;
             }
@@ -188,7 +204,7 @@ namespace _Scripts.Movement.States {
         }
         protected override void CheckInputBuffer()
         {
-            throw new System.NotImplementedException();
+            _uncheckedInputBuffer = false;
         }
 
         private void OnJumpEnd()
