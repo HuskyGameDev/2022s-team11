@@ -6,6 +6,7 @@ TagManager:
   tags:
   - ObjectFolder
   - Ground
+  - GrappleMarker
   layers:
   - Default
   - TransparentFX

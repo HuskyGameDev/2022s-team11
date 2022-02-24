@@ -61,10 +61,11 @@ namespace _Scripts.Managers {
         private bool _jumpInputReleased, 
             _leftWall, 
             _rightWall,
-            _isGrappleHeld,
-            _GrappleReady = true;
+            _isGrappleHeld = true;
         public bool IsGrappleHeld => _isGrappleHeld;
-        public bool GrappleReady => _GrappleReady;
+
+        //GameObject GrappleMarker;
+        //GrappleMarker.GetComponent<GrappleActiveScript>();
         #endregion
 
         #region User Methods
@@ -88,6 +89,11 @@ namespace _Scripts.Managers {
                     return false;
             }
         }
+        /**
+        private bool CheckIsGrappleReady() {
+            return 0;
+        }
+        */
         #endregion
         
         #region Unity Callbacks
