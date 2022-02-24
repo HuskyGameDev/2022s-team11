@@ -23,6 +23,7 @@ MonoBehaviour:
   _fallGravityMultiplier: 2
   _terminalVelocity: 15
   _givenAccel: 8
-  _givenDecel: 5
+  _givenDecel: 10
+  _velPower: 0.96
   _wallSlideSpeed: 6
-  _maxHorizontalAirSpeed: 4
+  _maxHorizontalAirSpeed: 13
