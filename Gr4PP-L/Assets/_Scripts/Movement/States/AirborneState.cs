@@ -57,12 +57,11 @@ namespace _Scripts.Movement.States {
         /// </summary>
         private bool _continuingJumpFromPrevState;
         new public States Name => States.Airborne;
-        private bool _queueGroundJump = false, _hasJumpEnded = true;
+        private bool _queueGroundJump = false, _hasJumpEnded = true, _jumpEndCalled = false;
         private int _queueWallJump = 0;
         public float WallSlideSpeed => _wallSlideSpeed;
         private float _gravityScale, _horizontalInput, _acceleration, _deceleration;
-        public override void Initialize(_Scripts.Managers.PlayerManager player, MovementStateMachine sm)
-        {
+        public override void Initialize(_Scripts.Managers.PlayerManager player, MovementStateMachine sm) {
             base.Initialize(player, sm);
         }
         public override void Enter() {
@@ -71,6 +70,7 @@ namespace _Scripts.Movement.States {
             _continuingJumpFromPrevState = _rb.velocity.y > 1;
             _hasJumpEnded = !_continuingJumpFromPrevState;
             _gravityScale = _rb.gravityScale;
+            _jumpEndCalled = false;
         }
         public override void Exit() {
             base.Exit();
@@ -106,14 +106,11 @@ namespace _Scripts.Movement.States {
             //calculates direction to move in and desired velocity
                 float targetSpeed = _input.x * _maxHorizontalAirSpeed;
                 float speedDif = 0;
-                if (IsPlayerSpeedExceeding(targetSpeed))
-                {
+                if (IsPlayerSpeedExceeding(targetSpeed)) {
                     //when the character is exceeding our maximum velocity, speed dif will have a value of 1 in the opposite horizontal direction
                     //so if the character is going fast to the right, this will give a -1, if going fast to the left, it'll give a 1
                     speedDif = -1 * Mathf.Sign(_rb.velocity.x);
-                }
-                else
-                {
+                } else {
                     //calculates difference between current velocity and desired velocity
                     speedDif = targetSpeed - _rb.velocity.x;
                 }
@@ -132,21 +129,31 @@ namespace _Scripts.Movement.States {
 
         }
         protected override void LogicUpdate() {
-            if (!_hasJumpEnded && _rb.velocity.y < 0) {
-                _hasJumpEnded = true;
-                OnJumpEnd();
-            }
+            //if (!_hasJumpEnded && _rb.velocity.y < 0) {
+            //    _hasJumpEnded = true;
+            //}
 
             if (IsGrounded) {
                 _transitionToState = _sm.CheckBufferedInputsFor("Down") ? States.Sliding : States.Running;
             } else if (!_owner.IsGrappleHeld) {
                 _transitionToState = States.Grappling;
             }
+
+            if(!_hasJumpEnded && _input.y <= 0) {
+                _hasJumpEnded = true;
+                Debug.Log("_hasJumpEnded set to true");
+            }
         }
         protected override void PhysicsUpdate() {
             #region Horizontal Movement
             //applies force to rigidbody, multiplying by Vector2.right so that it only affects X axis
             _rb.AddForce(_horizontalMovement * Vector2.right);
+            #endregion
+
+            #region Jump Cut
+            if(_hasJumpEnded && !_jumpEndCalled) {
+                OnJumpEnd();
+            }
             #endregion
 
             #region Jump Gravity
@@ -207,10 +214,15 @@ namespace _Scripts.Movement.States {
             _uncheckedInputBuffer = false;
         }
 
+        /// <summary>
+        /// Cuts player's jump short.
+        /// </summary>
         private void OnJumpEnd()
         {
+            Debug.Log("OnJumpEnd called");
             if(_rb.velocity.y > 0)
             {
+                Debug.Log("jump Cut");
                 _rb.AddForce(Vector2.down * _rb.velocity.y * (1 - _jumpCutMultiplier), ForceMode2D.Impulse);
             }
 
