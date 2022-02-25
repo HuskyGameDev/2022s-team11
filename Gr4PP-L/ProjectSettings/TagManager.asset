@@ -5,6 +5,7 @@ TagManager:
   serializedVersion: 2
   tags:
   - ObjectFolder
+  - MovingPlatform
   layers:
   - Default
   - TransparentFX
@@ -12,7 +13,7 @@ TagManager:
   - Ground
   - Water
   - UI
-  - 
+  - Moving Platform
   - 
   - 
   - 
