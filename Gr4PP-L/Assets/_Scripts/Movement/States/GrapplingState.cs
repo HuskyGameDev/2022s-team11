@@ -38,22 +38,19 @@ namespace _Scripts.Movement.States {
             _hookController.RetractHook();
         }
         protected override void HandleInput() {
-<<<<<<< Updated upstream
-=======
             _grappleInput = Input.GetButtonDown("Grapple");
 
             if (_input.y < 0) {
                 _sm.BufferInput("Down", 0.1f);
             }
->>>>>>> Stashed changes
 
             if (_uncheckedInputBuffer) {
                 CheckInputBuffer();
                 _uncheckedInputBuffer = false;
             }
         }
-        //TODO MAKE GRAPPLE FIRE MEMBER OF MOVEMENT STATE
-        //TODO ONLY ENTER GRAPPLE STATE ONCE HOOK CONNECTS
+        //TODO: MAKE GRAPPLE FIRE MEMBER OF MOVEMENT STATE
+        //TODO: ONLY ENTER GRAPPLE STATE ONCE HOOK CONNECTS
         protected override void LogicUpdate() {
 
             //Check for retraction

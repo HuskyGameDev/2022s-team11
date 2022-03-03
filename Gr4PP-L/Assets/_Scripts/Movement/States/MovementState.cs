@@ -15,18 +15,11 @@ namespace _Scripts.Movement.States {
         protected MovementStateMachine _sm {get; private set;}
         protected _Scripts.Managers.PlayerManager _owner {get; private set;}
         protected bool _uncheckedInputBuffer;
-<<<<<<< Updated upstream
-        protected float _stateEnterTime {get; private set;}
-        protected Rigidbody2D _rb {get; private set;}
-        /// <summary>
-        /// Stores the input data on a frame as a vector2 of horizontal and vertical inputs
-=======
         protected float _stateEnterTime;
         protected GrappleHookController _hook;
         protected Rigidbody2D _rb;
         /// <summary>
         /// Stores the input data on a frame. Updated automatically every frame before HandleInput()
->>>>>>> Stashed changes
         /// </summary>
         protected Vector2 _input;
 

@@ -73,11 +73,7 @@ namespace _Scripts.Movement.States {
             _rb.gravityScale = _gravityScale;
         }
         protected override void HandleInput() {
-<<<<<<< Updated upstream
-            if(Input.GetButton("Down")) {
-=======
             if(_input.y < 0) {
->>>>>>> Stashed changes
                 _sm.BufferInput("Down", 0.1f);
             }
 
