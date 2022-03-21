@@ -6,7 +6,7 @@ using _Scripts.Movement;
 using _Scripts.Utility;
 namespace _Scripts.Managers {
     /** Author: Nick Zimanski
-    * Version 2/10/22
+    * Version 3/21/22
     */
     public class PlayerManager : Manager
     {

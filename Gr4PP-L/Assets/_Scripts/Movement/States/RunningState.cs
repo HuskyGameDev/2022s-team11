@@ -2,7 +2,7 @@ using System;
 using UnityEngine;
 namespace _Scripts.Movement.States {
     /** Author: Nick Zimanski && Noah Kolczynski
-    * Version 2/10/22
+    * Version 3/21/22
     */
     [CreateAssetMenu(fileName = "RunningStateData", menuName = "ScriptableObjects/MovementStates/RunningStateScriptableObject")]
     public class RunningState : MovementState

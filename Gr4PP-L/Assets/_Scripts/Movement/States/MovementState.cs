@@ -3,7 +3,7 @@ using _Scripts.Utility;
 using UnityEngine;
 namespace _Scripts.Movement.States {
     /** Author: Nick Zimanski
-    * Version 2/10/22
+    * Version 3/21/22
     */
     public abstract class MovementState : State
     {

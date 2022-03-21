@@ -1,7 +1,7 @@
 using UnityEngine;
 namespace _Scripts.Movement.States {
     /** Author: Nick Zimanski
-    * Version 2/10/22
+    * Version 3/21/22
     */
     [CreateAssetMenu(fileName = "SlidingStateData", menuName = "ScriptableObjects/MovementStates/SlidingStateScriptableObject")]
     public class SlidingState : MovementState
