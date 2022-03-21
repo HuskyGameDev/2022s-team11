@@ -1,7 +1,7 @@
 using UnityEngine;
 namespace _Scripts.Movement.States {
     /** Author: Nick Zimanski
-    * Version 1/28/22
+    * Version 3/21/22
     */
     [CreateAssetMenu(fileName = "AirborneStateData", menuName = "ScriptableObjects/MovementStates/AirborneStateScriptableObject")]
     public class AirborneState : MovementState
@@ -43,10 +43,14 @@ namespace _Scripts.Movement.States {
         [SerializeField]
         [Tooltip("Max horizontal velocity in the air.")]
         private float _maxHorizontalAirSpeed;
+        [SerializeField]
+        [Tooltip("The force with which to shoot the grappling hook while in this state")]
+        private float _hookShotForce;
         /// <summary>
         /// Whether or not the player entered this state with a jump.
         /// </summary>
         private bool _continuingJumpFromPrevState;
+        private bool _grappleInput;
         new public States Name => States.Airborne;
         private bool _queueGroundJump = false, _hasJumpEnded = true;
         private int _queueWallJump = 0;
@@ -55,22 +59,26 @@ namespace _Scripts.Movement.States {
         public override void Initialize(_Scripts.Managers.PlayerManager player, MovementStateMachine sm)
         {
             base.Initialize(player, sm);
+            _gravityScale = _rb.gravityScale;
         }
         public override void Enter() {
             base.Enter();
+            HandleInput();
 
             _continuingJumpFromPrevState = _rb.velocity.y > 1;
             _hasJumpEnded = !_continuingJumpFromPrevState;
-            _gravityScale = _rb.gravityScale;
         }
         public override void Exit() {
             base.Exit();
             _rb.gravityScale = _gravityScale;
         }
         protected override void HandleInput() {
-            _input = GetInput();
-            if(Input.GetButton("Down")) {
+            if(_input.y < 0) {
                 _sm.BufferInput("Down", 0.1f);
+            }
+
+            if (Input.GetButtonDown("Grapple")) {
+                _grappleInput = true;
             }
 
             #region Jump
@@ -89,6 +97,7 @@ namespace _Scripts.Movement.States {
                 //Stop the jump from the previous state
                 _continuingJumpFromPrevState = false;
                 _queueGroundJump = false;
+                _queueWallJump = 0;
             }
             #endregion
 
@@ -128,7 +137,7 @@ namespace _Scripts.Movement.States {
 
             if (IsGrounded) {
                 _transitionToState = _sm.CheckBufferedInputsFor("Down") ? States.Sliding : States.Running;
-            } else if (!_owner.IsGrappleHeld) {
+            } else if (_hook.IsAttached) {
                 _transitionToState = States.Grappling;
             }
         }
@@ -171,6 +180,11 @@ namespace _Scripts.Movement.States {
                 _deceleration = _givenDecel;
             }
             #endregion
+
+            if(_grappleInput) {
+                HandleGrappleInput(_input, _hookShotForce);
+                _grappleInput = false;
+            }
 
             //continuing a ground jump
             if (_queueGroundJump) {

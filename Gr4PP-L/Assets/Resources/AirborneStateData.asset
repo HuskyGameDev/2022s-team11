@@ -26,3 +26,4 @@ MonoBehaviour:
   _givenDecel: 5
   _wallSlideSpeed: 6
   _maxHorizontalAirSpeed: 4
+  _hookShotForce: 20
