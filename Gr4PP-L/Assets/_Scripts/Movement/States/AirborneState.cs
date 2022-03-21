@@ -62,6 +62,9 @@ namespace _Scripts.Movement.States {
         // tracks if the jump button is pressed
         private bool _jumpPressed;
 
+        // used to call a grounded jump when player presses jump shortly after touching ground
+        private bool _queueCoyoteJump;
+
         /// <summary>
         /// Whether or not the player entered this state with a jump.
         /// </summary>
@@ -97,13 +100,30 @@ namespace _Scripts.Movement.States {
             }
 
             _jumpPressed = Input.GetButton("Jump");
+            
+            if (_uncheckedInputBuffer) {
+                _uncheckedInputBuffer = false;
+                CheckInputBuffer();
+            }
 
+        }
+        protected override void LogicUpdate() {
+            if (IsGrounded && ((_sm.CheckBufferedInputsFor("Jump") == false) || (_sm.CheckBufferedInputsFor("Jump") == true && WallCheck() == 0))) {
+                _transitionToState = _sm.CheckBufferedInputsFor("Down") ? States.Sliding : States.Running;
+            } else if (!_owner.IsGrappleHeld) {
+                _transitionToState = States.Grappling;
+            }
 
-            //TODO: change jumpCoyoteTime so that it's not affecting jump height
+            if(!_jumpPressed && !_hasJumpEnded) {
+                _jumpEndCalled = true;
+            }
 
             #region Jump
-            if(WallCheck() != 0 && _sm.CheckBufferedInputsFor("Jump")) {
+            if (WallCheck() != 0 && _sm.CheckBufferedInputsFor("Jump")) {
                 _queueWallJump = WallCheck();
+            }
+            if(WallCheck() == 0 && _sm.CheckBufferedInputsFor("Jump") && _stateEnterTime > Time.time - _jumpCoyoteTime && _lastWallJump < 0) {
+                _queueCoyoteJump = true;
             }
             #endregion
 
@@ -131,30 +151,14 @@ namespace _Scripts.Movement.States {
             }
             #endregion
 
-            if (_uncheckedInputBuffer) {
-                _uncheckedInputBuffer = false;
-                CheckInputBuffer();
-            }
-
             #region Cooldown Timers
-            if(_lastWallJump > -1) {
+            if (_lastWallJump > -1) {
                 _lastWallJump -= Time.deltaTime;
             }
             if (_lastGroundJump > -1) {
                 _lastGroundJump -= Time.deltaTime;
             }
             #endregion
-        }
-        protected override void LogicUpdate() {
-            if (IsGrounded && ((_sm.CheckBufferedInputsFor("Jump") == false) || (_sm.CheckBufferedInputsFor("Jump") == true && WallCheck() == 0))) {
-                _transitionToState = _sm.CheckBufferedInputsFor("Down") ? States.Sliding : States.Running;
-            } else if (!_owner.IsGrappleHeld) {
-                _transitionToState = States.Grappling;
-            }
-
-            if(!_jumpPressed && !_hasJumpEnded) {
-                _jumpEndCalled = true;
-            }
         }
         protected override void PhysicsUpdate() {
             #region Horizontal Movement
@@ -207,13 +211,21 @@ namespace _Scripts.Movement.States {
                 _deceleration = _givenDecel;
             }
             #endregion
-            
-            //wall jumping
+
+            #region WallJump
             if (_queueWallJump != 0) {
                 WallJump(_queueWallJump);
                 _queueWallJump = 0;
                 return;
             }
+            #endregion
+
+            #region CoyoteJump
+            if (_queueCoyoteJump) {
+                _queueCoyoteJump = false;
+                GroundedJump();
+            }
+            #endregion
         }
         protected override void CheckInputBuffer()
         {
