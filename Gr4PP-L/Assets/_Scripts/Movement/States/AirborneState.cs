@@ -163,7 +163,7 @@ namespace _Scripts.Movement.States {
             #endregion
 
             #region Jump Cut
-            if(!_hasJumpEnded && _jumpEndCalled && _lastWallJump < 0) {
+            if(!_hasJumpEnded && _jumpEndCalled) {
                 OnJumpEnd();
                 _hasJumpEnded = true;
             }
@@ -233,6 +233,7 @@ namespace _Scripts.Movement.States {
             }
 
             _hasJumpEnded = true;
+            _jumpEndCalled = false;
             //jumpInputReleased = true;
             //lastJumpTime = 0;
         }
@@ -255,7 +256,7 @@ namespace _Scripts.Movement.States {
             _rb.velocity = new Vector2(0, _rb.velocity.y);
             _rb.AddForce(new Vector2(-1 * wallSide, 1) * _wallJumpForce, ForceMode2D.Impulse);
             _sm.RemoveBufferedInputsFor("Jump");
-            _hasJumpEnded = _jumpPressed;
+            _hasJumpEnded = !_jumpPressed;
         }
     }
 }

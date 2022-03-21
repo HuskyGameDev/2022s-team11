@@ -20,4 +20,4 @@ MonoBehaviour:
   _frictionAmount: 0.22
   _velPower: 0.96
   _maxHorizontalSpeed: 13
-  _jumpBufferTime: 0.33
+  _jumpBufferTime: 0.15

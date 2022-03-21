@@ -16,7 +16,7 @@ MonoBehaviour:
   _horizAxisThreshold: 0
   _vertAxisThreshold: 0
   _jumpCoyoteTime: 0.1
-  _jumpBufferTime: 0.33
+  _jumpBufferTime: 0.15
   _groundJumpToWallJumpDelay: 0.1
   _jumpCutMultiplier: 0.3
   _wallJumpForce: 18
