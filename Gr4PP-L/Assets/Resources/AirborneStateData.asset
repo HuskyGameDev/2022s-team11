@@ -29,3 +29,4 @@ MonoBehaviour:
   _velPower: 0.96
   _wallSlideSpeed: 5
   _maxHorizontalAirSpeed: 13
+  _hookShotForce: 20

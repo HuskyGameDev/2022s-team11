@@ -61,10 +61,10 @@ namespace _Scripts.Movement.States
         }
 
         public void Initialize(PlayerManager player, MovementState startingState) {
-            base.Initialize(startingState);
             for (int i = 0; i < _validStates.Count; i++) {
                 _validStates.ElementAt(i).Value.Initialize(player, this);
             }
+            base.Initialize(startingState);
         }
     }
 }

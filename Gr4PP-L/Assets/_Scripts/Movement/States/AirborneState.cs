@@ -1,7 +1,7 @@
 using UnityEngine;
 namespace _Scripts.Movement.States {
     /** Author: Nick Zimanski
-    * Version 1/28/22
+    * Version 3/21/22
     */
     [CreateAssetMenu(fileName = "AirborneStateData", menuName = "ScriptableObjects/MovementStates/AirborneStateScriptableObject")]
     public class AirborneState : MovementState
@@ -65,10 +65,14 @@ namespace _Scripts.Movement.States {
         // used to call a grounded jump when player presses jump shortly after touching ground
         private bool _queueCoyoteJump;
 
+        [SerializeField]
+        [Tooltip("The force with which to shoot the grappling hook while in this state")]
+        private float _hookShotForce;
         /// <summary>
         /// Whether or not the player entered this state with a jump.
         /// </summary>
         private bool _continuingJumpFromPrevState;
+        private bool _grappleInput;
         new public States Name => States.Airborne;
         private bool _hasJumpEnded = false, _jumpEndCalled = false;
         private int _queueWallJump = 0;
@@ -76,9 +80,11 @@ namespace _Scripts.Movement.States {
         private float _gravityScale, _horizontalInput, _acceleration, _deceleration;
         public override void Initialize(_Scripts.Managers.PlayerManager player, MovementStateMachine sm) {
             base.Initialize(player, sm);
+            _gravityScale = _rb.gravityScale;
         }
         public override void Enter() {
             base.Enter();
+            HandleInput();
 
             _gravityScale = _rb.gravityScale;
             _jumpEndCalled = false;
@@ -92,7 +98,7 @@ namespace _Scripts.Movement.States {
             _rb.gravityScale = _gravityScale;
         }
         protected override void HandleInput() {
-            if(Input.GetButton("Down")) {
+            if(_input.y < 0) {
                 _sm.BufferInput("Down", 0.1f);
             }
             if (Input.GetButtonDown("Jump")) {
@@ -101,11 +107,14 @@ namespace _Scripts.Movement.States {
 
             _jumpPressed = Input.GetButton("Jump");
             
+            if (Input.GetButtonDown("Grapple")) {
+                _grappleInput = true;
+            }
+
             if (_uncheckedInputBuffer) {
                 _uncheckedInputBuffer = false;
                 CheckInputBuffer();
             }
-
         }
         protected override void LogicUpdate() {
             if (IsGrounded && ((_sm.CheckBufferedInputsFor("Jump") == false) || (_sm.CheckBufferedInputsFor("Jump") == true && WallCheck() == 0))) {
@@ -216,6 +225,19 @@ namespace _Scripts.Movement.States {
             }
             #endregion
 
+            
+            if(_grappleInput) {
+                HandleGrappleInput(_input, _hookShotForce);
+                _grappleInput = false;
+            }
+
+            //continuing a ground jump
+            if (_queueGroundJump) {
+                GroundedJump();
+                _queueGroundJump = false;
+                return;
+            }
+            
             #region WallJump
             if (_queueWallJump != 0) {
                 WallJump(_queueWallJump);
