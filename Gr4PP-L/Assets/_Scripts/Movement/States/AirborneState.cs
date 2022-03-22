@@ -232,9 +232,9 @@ namespace _Scripts.Movement.States {
             }
 
             //continuing a ground jump
-            if (_queueGroundJump) {
+            if (_queueCoyoteJump) {
                 GroundedJump();
-                _queueGroundJump = false;
+                _queueCoyoteJump = false;
                 return;
             }
             

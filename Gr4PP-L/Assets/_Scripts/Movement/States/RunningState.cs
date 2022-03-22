@@ -27,6 +27,7 @@ namespace _Scripts.Movement.States {
         [SerializeField]
         [Tooltip("The length of time a jump input will be usable in the buffer")]
         private float _jumpBufferTime;
+        [SerializeField]
         [Tooltip("The force with which to shoot the grappling hook while in this state")]
         private float _hookShotForce;
         #endregion
