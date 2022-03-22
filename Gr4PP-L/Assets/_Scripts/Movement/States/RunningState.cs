@@ -114,9 +114,11 @@ namespace _Scripts.Movement.States {
                 // the second line of the if statement ensures that the player only gets a grounded jump when touching the wall if they've been in the grounded state for more than 0.1 seconds.
                 // this ensures that, should the player clip into the wall momentarily when trying to wall jump, they don't get a grounded jump.
                 if ((WallCheck() == 0 || _input.x == 0 ||(WallCheck() != 0 && Mathf.Sign(WallCheck()) == Mathf.Sign(_input.x)))
-                    && (WallCheck() == 0 || _stateEnterTime < Time.time - 0.1)) {
+                    && !_sm.CheckBufferedInputsFor("WallTouchTransition")) {
+                    Debug.Log("WallCheck() = " + WallCheck() + " !_sm.CheckBufferedInputsFor(WallTouchTransition) = " + !_sm.CheckBufferedInputsFor("WallTouchTransition"));
                     GroundedJump();
                 } else {
+                    _sm.RemoveBufferedInputsFor("WallTouchTransition");
                     _transitionToState = States.Airborne;
                 }
             }

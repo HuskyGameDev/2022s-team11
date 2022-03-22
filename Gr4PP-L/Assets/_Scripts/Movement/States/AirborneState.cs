@@ -109,6 +109,10 @@ namespace _Scripts.Movement.States {
         }
         protected override void LogicUpdate() {
             if (IsGrounded && ((_sm.CheckBufferedInputsFor("Jump") == false) || (_sm.CheckBufferedInputsFor("Jump") == true && WallCheck() == 0))) {
+                if(WallCheck() != 0) {
+                    _sm.BufferInput("WallTouchTransition", 0.05f);
+                    Debug.Log("WallTouchTransition");
+                }
                 _transitionToState = _sm.CheckBufferedInputsFor("Down") ? States.Sliding : States.Running;
             } else if (!_owner.IsGrappleHeld) {
                 _transitionToState = States.Grappling;

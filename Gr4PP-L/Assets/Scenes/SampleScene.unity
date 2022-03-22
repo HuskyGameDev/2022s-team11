@@ -922,8 +922,8 @@ MonoBehaviour:
   _groundLayer:
     serializedVersion: 2
     m_Bits: 8
-  _wallCheckSize: {x: 0.26, y: 1.48}
-  _wallCheckOffset: {x: 0.6, y: 0.16}
+  _wallCheckSize: {x: 0.51, y: 1.48}
+  _wallCheckOffset: {x: 0.47, y: 0.16}
   _groundCheckPoint: {fileID: 353158131}
   _groundCheckSize: {x: 1.14, y: 0.05}
 --- !u!1 &1308646433
