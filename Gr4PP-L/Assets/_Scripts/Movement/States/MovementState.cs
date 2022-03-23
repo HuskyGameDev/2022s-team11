@@ -82,7 +82,7 @@ namespace _Scripts.Movement.States {
             _rb.velocity = new Vector2(_rb.velocity.x, 0);
             _rb.AddForce(Vector2.up * _jumpForce, ForceMode2D.Impulse);
             _sm.RemoveBufferedInputsFor("Jump");
-            UnityEngine.Debug.Log("Grounded Jump");    
+            _sm.BufferInput("Grounded Jump", 0.1f);
         }
 
         protected void HandleGrappleInput(Vector2 direction, float force) {

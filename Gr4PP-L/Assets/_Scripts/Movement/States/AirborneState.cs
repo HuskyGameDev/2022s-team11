@@ -29,7 +29,6 @@ namespace _Scripts.Movement.States {
         [SerializeField]
         [Tooltip("How long between a grounded jump and a wall jump is acceptable")]
         private float _jumpWallJumpSpacing;
-        private float _lastGroundJump; // used to prevent glitchy jumps
         [Header("Velocity")]
         [SerializeField]
         [Tooltip("How quickly to ramp the player's gravity when falling")]
@@ -89,9 +88,8 @@ namespace _Scripts.Movement.States {
             _gravityScale = _rb.gravityScale;
             _jumpEndCalled = false;
             _lastWallJump = -1;
-            _lastGroundJump = _jumpWallJumpSpacing;
 
-            _hasJumpEnded = false;
+            _hasJumpEnded = !(_sm.CheckBufferedInputsFor("Grounded Jump"));
         }
         public override void Exit() {
             base.Exit();
@@ -167,9 +165,6 @@ namespace _Scripts.Movement.States {
             #region Cooldown Timers
             if (_lastWallJump > -1) {
                 _lastWallJump -= Time.deltaTime;
-            }
-            if (_lastGroundJump > -1) {
-                _lastGroundJump -= Time.deltaTime;
             }
             #endregion
         }
@@ -287,12 +282,16 @@ namespace _Scripts.Movement.States {
                 return;
             }
             _lastWallJump = _wallJumpPreservationTime;
-            if (_rb.velocity.y < 0 || _lastGroundJump > 0){
+            if (_rb.velocity.y < 0 || _sm.CheckBufferedInputsFor("Ground Jump")){
                 _rb.velocity = new Vector2(0, 0);
                 Debug.Log("WallJump with canceled upwards momentum");
+                _rb.velocity = new Vector2(0, _rb.velocity.y);
+                _rb.AddForce(new Vector2(-1 * wallSide, 1) * _wallJumpForce, ForceMode2D.Impulse);
+            } else {
+                _rb.velocity = new Vector2(0, _rb.velocity.y);
+                _rb.AddForce(new Vector2(-1 * wallSide, 0.5f) * _wallJumpForce, ForceMode2D.Impulse);
             }
-            _rb.velocity = new Vector2(0, _rb.velocity.y);
-            _rb.AddForce(new Vector2(-1 * wallSide, 1) * _wallJumpForce, ForceMode2D.Impulse);
+            
             _sm.RemoveBufferedInputsFor("Jump");
             _hasJumpEnded = !_jumpPressed;
         }
