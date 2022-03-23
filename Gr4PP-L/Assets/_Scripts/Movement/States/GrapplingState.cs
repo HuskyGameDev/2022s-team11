@@ -1,4 +1,5 @@
 
+using System;
 using UnityEngine;
 namespace _Scripts.Movement.States {
     /** Author: Nick Zimanski
@@ -107,7 +108,7 @@ namespace _Scripts.Movement.States {
             //_grappleInput = _sm.CheckBufferedInputsFor("Grapple") || _grappleInput;
         }
         private void Grapple() {
-            var tetherVector = (_hookController.TetherPosition - _hookController.Position) * -1;
+            var tetherVector = (_hookController.Position - _hookController.TetherPosition);
             var distance = Mathf.Abs(tetherVector.magnitude);
             if (_lastDistance == 0) _lastDistance = distance;
             var tetherPlayerDifference = _rb.position - _hookController.TetherPosition;
@@ -121,25 +122,51 @@ namespace _Scripts.Movement.States {
             //} //Stop player from going beyond grapple length
             
             //Pull player downward
-            pullVector = tetherVector.y < 0 ? pullVector * new Vector2(1, _downwardPullMagnitude) : pullVector;
+            ///pullVector = tetherVector.y < 0 ? pullVector * new Vector2(1, _downwardPullMagnitude) : pullVector;
 
             //Factor in player input
-            pullVector += new Vector2(_input.x * Mathf.Abs(pullVector.x), _input.y * Mathf.Abs(pullVector.y)) * _playerInputMagnitude;
+            ///pullVector += new Vector2(_input.x * Mathf.Abs(pullVector.x), _input.y * Mathf.Abs(pullVector.y)) * _playerInputMagnitude;
 
             //Constrain player to end of rope "circle"
             //Look forward to see if the player will break the circle
-            /**oldVel = (_hookController.TetherPosition + playerVelocity * Time.fixedDeltaTime);
+            
+            /**
+            oldVel = (_hookController.TetherPosition + playerVelocity * Time.fixedDeltaTime);
             newVel = playerVelocity;
             if ((oldVel + tetherVector).magnitude > distance) {
+                Debug.Log("Shlorking");
                 newVel = Vector2.ClampMagnitude(oldVel + tetherVector, distance);
             }
+            **/
 
-            
-            //Reassign velocity
-            _rb.velocity = newVel;**/
+            //oldVel = (_hookController.TetherPosition + playerVelocity * Time.fixedDeltaTime);
+            oldVel = playerVelocity;
+            newVel = playerVelocity;
 
+            var tetherToVelAngle = Vector2.SignedAngle(playerVelocity, tetherVector);
+            if (Mathf.Abs(tetherToVelAngle) > 90 && playerVelocity.y < 0) {
+                Debug.Log("Velocity: " + oldVel);
+                Debug.Log("Velocity angle: " + Vector2.SignedAngle(oldVel,Vector2.up));
+                Debug.Log("Tether: " + tetherVector);
+                Vector2 tangentVector = Vector2.Perpendicular(tetherVector);
+                
+                Debug.Log("Tangent: " + tangentVector);
+
+                if (Mathf.Sign(tetherToVelAngle) == 1) tangentVector *= -1;
+
+                Debug.Log("Tangent after correction: " + tangentVector);
+                var newVelMag = oldVel.magnitude * Mathf.Abs(Mathf.Cos(Vector2.Angle(playerVelocity, tangentVector)));
+                newVel = tangentVector.normalized * newVelMag;
+
+                Debug.Log("Angle from tangent: " + Mathf.Cos(Vector2.Angle(tangentVector, playerVelocity)));
+                Debug.Log("New velocity: " + newVel);
+                //Reassign velocity
+                _rb.velocity = newVel;
+            }
+
+            //push the player
             pullVector = (pullVector - tetherPlayerDifference).normalized;
-            Debug.Log(new Vector2(pullVector.x * _horizPullStrength, pullVector.y * _vertPullStrength));
+            //Debug.Log(new Vector2(pullVector.x * _horizPullStrength, pullVector.y * _vertPullStrength));
             _rb.AddForce(new Vector2(pullVector.x * _horizPullStrength, pullVector.y * _vertPullStrength) , ForceMode2D.Force);
             
             _lastDistance = distance < _lastDistance ? distance : _lastDistance;
