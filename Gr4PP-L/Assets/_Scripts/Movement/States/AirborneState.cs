@@ -282,7 +282,7 @@ namespace _Scripts.Movement.States {
                 return;
             }
             _lastWallJump = _wallJumpPreservationTime;
-            if (_rb.velocity.y < 0 || _sm.CheckBufferedInputsFor("Ground Jump")){
+            if (_rb.velocity.y < _wallJumpForce * 0.5 || _sm.CheckBufferedInputsFor("Ground Jump")){
                 _rb.velocity = new Vector2(0, 0);
                 Debug.Log("WallJump with canceled upwards momentum");
                 _rb.velocity = new Vector2(0, _rb.velocity.y);
