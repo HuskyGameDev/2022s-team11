@@ -1,8 +1,8 @@
 using System;
 using UnityEngine;
 namespace _Scripts.Movement.States {
-    /** Author: Nick Zimanski
-    * Version 1/26/22
+    /** Author: Nick Zimanski && Noah Kolczynski
+    * Version 3/21/22
     */
     [CreateAssetMenu(fileName = "RunningStateData", menuName = "ScriptableObjects/MovementStates/RunningStateScriptableObject")]
     public class RunningState : MovementState
@@ -24,10 +24,16 @@ namespace _Scripts.Movement.States {
         [SerializeField]
         [Tooltip("The maximum speed the player can normally reach horizontally.")]
         private float _maxHorizontalSpeed;
+        [SerializeField]
+        [Tooltip("The length of time a jump input will be usable in the buffer")]
+        private float _jumpBufferTime;
+        [SerializeField]
+        [Tooltip("The force with which to shoot the grappling hook while in this state")]
+        private float _hookShotForce;
         #endregion
 
         #region Variables
-        private bool _isJumpingInput, _isCrouchingInput, _isGrappleInput;
+        private bool _isJumpingInput, _isCrouchingInput, _grappleInput;
         private float _movement, _accelRate, _acceleration, _deceleration;
         new public States Name => States.Running;
         #endregion
@@ -41,6 +47,7 @@ namespace _Scripts.Movement.States {
             base.Enter();
             _acceleration = _givenAccel;
             _deceleration = _givenDecel;
+            HandleInput();
         }
         public override void Exit() {
             base.Exit();
@@ -50,10 +57,18 @@ namespace _Scripts.Movement.States {
         protected override void HandleInput() {
             var gameTime = Time.time;
             _input = GetInput();
-            _isJumpingInput = _input.y > 0;
             _isCrouchingInput = _input.y < 0;
-            _isGrappleInput = Input.GetButton("Grapple");
             
+            if (Input.GetButtonDown("Grapple")) {
+                _grappleInput = true;
+                _sm.BufferInput("Grapple", 0.1f);
+            }
+
+            if (Input.GetButtonDown("Jump")) {
+                _sm.BufferInput("Jump", _jumpBufferTime);
+                Debug.Log("Jump buffered");
+            }
+
             if (_uncheckedInputBuffer) {
                 CheckInputBuffer();
                 _uncheckedInputBuffer = false;
@@ -85,6 +100,8 @@ namespace _Scripts.Movement.States {
             #region StateChecks
             if (!IsGrounded) {
                 _transitionToState = States.Airborne;
+            } else if (_hook.IsAttached) {
+                _transitionToState = States.Grappling;
             }
             #endregion
         }
@@ -100,12 +117,29 @@ namespace _Scripts.Movement.States {
                     _rb.AddForce(Vector2.right * -amount, ForceMode2D.Impulse);
                 }
             #endregion
-            
-            if (_isJumpingInput) GroundedJump();
+
+            if (_sm.CheckBufferedInputsFor("Jump")) {
+                // this ugly if statement checks to see if the player is either not touching a wall, not holding a direction, or touching the wall, but holding in the direction of the wall.
+                // this allows the player while grounded to jump up the side of a wall if they're touching it.
+                // the second line of the if statement ensures that the player only gets a grounded jump when touching the wall if they've been in the grounded state for more than 0.1 seconds.
+                // this ensures that, should the player clip into the wall momentarily when trying to wall jump, they don't get a grounded jump.
+                if ((WallCheck() == 0 || _input.x == 0 ||(WallCheck() != 0 && Mathf.Sign(WallCheck()) == Mathf.Sign(_input.x)))
+                    && !_sm.CheckBufferedInputsFor("WallTouchTransition")) {
+                    Debug.Log("WallCheck() = " + WallCheck() + " !_sm.CheckBufferedInputsFor(WallTouchTransition) = " + !_sm.CheckBufferedInputsFor("WallTouchTransition"));
+                    GroundedJump();
+                } else {
+                    _sm.RemoveBufferedInputsFor("WallTouchTransition");
+                    _transitionToState = States.Airborne;
+                }
+            }
+
+            if(_grappleInput) {
+                HandleGrappleInput(_input, _hookShotForce);
+                _grappleInput = false;
+            }
         }
 
         protected override void CheckInputBuffer() {
-            _isJumpingInput = _isJumpingInput || _sm.CheckBufferedInputsFor("Jump");
             _isCrouchingInput = _isCrouchingInput || _sm.CheckBufferedInputsFor("Slide");
             _uncheckedInputBuffer = false;
         }

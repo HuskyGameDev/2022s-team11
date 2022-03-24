@@ -13,3 +13,6 @@ MonoBehaviour:
   m_Name: SlidingStateData
   m_EditorClassIdentifier: 
   _jumpForce: 20
+  _horizAxisThreshold: 0
+  _vertAxisThreshold: 0
+  _hookShotForce: 20
