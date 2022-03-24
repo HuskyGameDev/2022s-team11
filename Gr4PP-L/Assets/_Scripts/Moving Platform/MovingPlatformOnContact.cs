@@ -1,17 +1,26 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class MovingPlatform : MonoBehaviour
+public class MovingPlatformOnContact : MonoBehaviour
 {
     public List<Transform> points;
     public Transform platform;
     int goalPoint=0;
-    public float moveSpeed = 3;
+    public float moveSpeed = 0;
 
-    private void Update()
+
+
+
+   private void Update()
     {
         MoveToNextPoint();
     }
+
+    void OnTriggerEnter2D(Collider2D other)
+    {
+        moveSpeed = 4;
+    }
+
 
     void MoveToNextPoint()
     {

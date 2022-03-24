@@ -60,6 +60,8 @@ namespace Movement {
         [SerializeField] private Vector2 wallCheckOffset;
 
 
+
+
         private void Start()
         {
             rb = GetComponent<Rigidbody2D>();
@@ -69,6 +71,10 @@ namespace Movement {
             givenAccel = acceleration;
             givenDecel = deceleration;
         }
+
+
+
+
 
         private void Update()
         {
@@ -96,6 +102,8 @@ namespace Movement {
             {
                 lastGroundedTime = jumpCoyoteTime;
             }
+
+
 
             if (Physics2D.OverlapBox(groundCheckPoint.position + new Vector3(-wallCheckOffset.x, wallCheckOffset.y, 0), wallCheckSize, 0, groundLayer))
             {
@@ -143,6 +151,8 @@ namespace Movement {
         private void FixedUpdate()
         {
             HorizontalMovement();
+
+
 
             #region Jump Gravity
             if(rb.velocity.y < 0)
