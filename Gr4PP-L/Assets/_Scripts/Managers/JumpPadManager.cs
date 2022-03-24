@@ -7,13 +7,35 @@ using UnityEngine;
     */
 public class JumpPadManager : MonoBehaviour
 {
-    public float launchForce = 100f;
+    // Variable to control the launch force of the 
+    public float launchForce = 20f;
 
     private void OnCollisionEnter2D(Collision2D collision)
     {
         if (collision.gameObject.CompareTag("Player"))
         {
-            collision.gameObject.GetComponent<Rigidbody2D>().AddForce(Vector2.up * launchForce, ForceMode2D.Impulse);
+            foreach(ContactPoint2D hitPos in collision.contacts)
+            {
+                Debug.Log(hitPos.normal);
+                
+                if (hitPos.normal.y < 0)
+                {
+                    collision.gameObject.GetComponent<Rigidbody2D>().AddForce(Vector2.up * launchForce, ForceMode2D.Impulse);
+                }
+                else if (hitPos.normal.y > 0)
+                {
+                    collision.gameObject.GetComponent<Rigidbody2D>().AddForce(Vector2.down * launchForce, ForceMode2D.Impulse);
+                }
+                else if (hitPos.normal.x > 0) // from left
+                {
+                    collision.gameObject.GetComponent<Rigidbody2D>().AddForce(Vector2.left * launchForce, ForceMode2D.Impulse);
+                }
+                else if (hitPos.normal.x < 0) // from right
+                {
+                    collision.gameObject.GetComponent<Rigidbody2D>().AddForce(Vector2.right * launchForce, ForceMode2D.Impulse);
+                }
+            }
+            //collision.gameObject.GetComponent<Rigidbody2D>().AddForce(Vector2.up * launchForce, ForceMode2D.Impulse);
         }
     }
 }

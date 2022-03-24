@@ -12,7 +12,7 @@ GameObject:
   - component: {fileID: 4404978730792440147}
   - component: {fileID: 4404978730792440150}
   - component: {fileID: 4404978730792440145}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: Ice Patch
   m_TagString: Untagged
   m_Icon: {fileID: 0}

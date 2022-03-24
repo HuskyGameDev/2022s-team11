@@ -1221,7 +1221,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1542242231}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 1}
+  m_LocalPosition: {x: 4.88, y: 0.58, z: 1}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -37242,11 +37242,26 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 4404978730792440145, guid: 48fe2ecc6c455124b98438158ce6b6ea,
+        type: 3}
+      propertyPath: friction
+      value: 0.5
+      objectReference: {fileID: 0}
     - target: {fileID: 4404978730792440146, guid: 48fe2ecc6c455124b98438158ce6b6ea,
         type: 3}
       propertyPath: m_Name
       value: Ice Patch
       objectReference: {fileID: 0}
+    - target: {fileID: 4404978730792440146, guid: 48fe2ecc6c455124b98438158ce6b6ea,
+        type: 3}
+      propertyPath: m_Layer
+      value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 4404978730792440150, guid: 48fe2ecc6c455124b98438158ce6b6ea,
+        type: 3}
+      propertyPath: m_Material
+      value: 
+      objectReference: {fileID: 6200000, guid: c1260e8e5559672458f090d3f7bf2fd4, type: 2}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 48fe2ecc6c455124b98438158ce6b6ea, type: 3}
 --- !u!1001 &7871337767374365055
@@ -37256,6 +37271,11 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 7871337766809600539, guid: 2aa67730a4712104c840bc6347ec60b3,
+        type: 3}
+      propertyPath: launchForce
+      value: 15
+      objectReference: {fileID: 0}
     - target: {fileID: 7871337766809600540, guid: 2aa67730a4712104c840bc6347ec60b3,
         type: 3}
       propertyPath: m_RootOrder
@@ -37315,6 +37335,11 @@ PrefabInstance:
         type: 3}
       propertyPath: m_Name
       value: Jump Pad
+      objectReference: {fileID: 0}
+    - target: {fileID: 7871337766809600542, guid: 2aa67730a4712104c840bc6347ec60b3,
+        type: 3}
+      propertyPath: m_Layer
+      value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 2aa67730a4712104c840bc6347ec60b3, type: 3}
