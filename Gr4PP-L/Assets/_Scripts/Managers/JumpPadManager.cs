@@ -8,7 +8,7 @@ using UnityEngine;
 public class JumpPadManager : MonoBehaviour
 {
     // Variable to control the launch force of the 
-    public float launchForce = 20f;
+    public float launchForce = 10f;
 
     private void OnCollisionEnter2D(Collision2D collision)
     {
