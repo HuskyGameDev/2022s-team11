@@ -15,14 +15,18 @@ MonoBehaviour:
   _jumpForce: 20
   _horizAxisThreshold: 0
   _vertAxisThreshold: 0
-  _jumpCoyoteTime: 0.1
-  _jumpBufferTime: 0.1
+  _jumpCoyoteTime: 0.05
+  _jumpBufferTime: 0.15
   _groundJumpToWallJumpDelay: 0.1
   _jumpCutMultiplier: 0.3
-  _wallJumpForce: 10
+  _wallJumpForce: 18
+  _wallJumpPreservationTime: 0.1
+  _jumpWallJumpSpacing: 0.1
   _fallGravityMultiplier: 2
-  _terminalVelocity: 15
-  _givenAccel: 8
-  _givenDecel: 5
-  _wallSlideSpeed: 6
-  _maxHorizontalAirSpeed: 4
+  _terminalVelocity: 22
+  _givenAccel: 5
+  _givenDecel: 8
+  _velPower: 0.96
+  _wallSlideSpeed: 5
+  _maxHorizontalAirSpeed: 13
+  _hookShotForce: 20
