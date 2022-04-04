@@ -21,7 +21,7 @@ namespace _Scripts.Managers {
         public Rigidbody2D GrappleHookRigidbody => _grappleHookRigidbody;
         [SerializeField]private RunningState _runningState;
         [SerializeField]private SlidingState _slidingState;
-        [SerializeField]private GrapplingState _grapplingState;
+        [SerializeField]public GrapplingState _grapplingState;
         [SerializeField]private AirborneState _airborneState;
         [SerializeField]private LayerMask _groundLayer;
         public LayerMask GroundLayer => _groundLayer;
@@ -66,9 +66,6 @@ namespace _Scripts.Managers {
         private bool _jumpInputReleased, 
             _isGrappleHeld = true;
         public bool IsGrappleHeld => _isGrappleHeld;
-
-        //GameObject GrappleMarker;
-        //GrappleMarker.GetComponent<GrappleActiveScript>();
         #endregion
 
         #region User Methods

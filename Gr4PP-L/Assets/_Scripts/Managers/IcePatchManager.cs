@@ -58,7 +58,7 @@ public class IcePatchManager : MonoBehaviour
 
                 if (directionInput != directionMove)
                 {
-                    rigBody.AddForce(new Vector2(rigBody.velocity.x, rigBody.velocity.y).normalized * 0.55f, ForceMode2D.Impulse);
+                    rigBody.AddForce(new Vector2(-rigBody.velocity.x, rigBody.velocity.y).normalized * 0.55f, ForceMode2D.Impulse);
                 }
 
                 //rigBody.AddForce(new Vector2(rigBody.velocity.x * -1, rigBody.velocity.y).normalized * 2f, ForceMode2D.Impulse);
