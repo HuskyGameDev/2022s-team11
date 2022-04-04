@@ -10,19 +10,21 @@ public class JumpPadManager : MonoBehaviour
     // Variable to control the launch force of the 
     public float launchForce = 10f;
 
+    // On collision with the player, handle the bounce direction
     private void OnCollisionEnter2D(Collision2D collision)
     {
         if (collision.gameObject.CompareTag("Player"))
         {
             foreach(ContactPoint2D hitPos in collision.contacts)
             {
-                Debug.Log(hitPos.normal);
+                // Debug.Log(hitPos.normal);
                 
-                if (hitPos.normal.y < 0)
+                // Handling the direction of the bounce
+                if (hitPos.normal.y < 0) // from top
                 {
                     collision.gameObject.GetComponent<Rigidbody2D>().AddForce(Vector2.up * launchForce, ForceMode2D.Impulse);
                 }
-                else if (hitPos.normal.y > 0)
+                else if (hitPos.normal.y > 0) // from bottom
                 {
                     collision.gameObject.GetComponent<Rigidbody2D>().AddForce(Vector2.down * launchForce, ForceMode2D.Impulse);
                 }

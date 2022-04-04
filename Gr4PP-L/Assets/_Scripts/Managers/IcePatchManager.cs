@@ -7,20 +7,16 @@ using UnityEngine;
     */
 public class IcePatchManager : MonoBehaviour
 {
-   
-    //public float friction = 1f;
+    // Varaibles to control sliding
     private Rigidbody2D rigBody;
     private bool collide = false;
-    //private bool slide = false;
-    private float directionMove = 0;
-    private float directionInput = 0;
+    private float directionMove = 0f;
+    private float directionInput = 0f;
     private float startSlip = 0f;
-    private float endSlip = 1f;
     public float slip = 0;
-    private float x = 0;
-    private float y = 0;
     private Vector2 constVelocity;
-
+    
+    // Handles the sliding variables when the player comes in contact with the object
     private void OnCollisionEnter2D(Collision2D collision)
     {
         if (collision.gameObject.CompareTag("Player"))
@@ -32,6 +28,7 @@ public class IcePatchManager : MonoBehaviour
         }
     }
 
+    // Handles a collision exit gracefully
     private void OnCollisionExit2D(Collision2D collision)
     {
         if (collision.gameObject.CompareTag("Player"))
@@ -40,79 +37,56 @@ public class IcePatchManager : MonoBehaviour
         }
     }
     
-    
+    // Update function
     void Update()
     {
         if (collide)
         {
-            Debug.Log(rigBody.velocity.x);
-            if (Input.GetAxisRaw("Horizontal") == 0)
+            // Gets the players input and their direction
+            directionInput = Input.GetAxisRaw("Horizontal");
+            directionMove = rigBody.velocity.x;
+            // Debug.Log(directionMove);
+
+            // Controls players movement when not pressing anything
+            if (directionInput == 0)
             {
                 rigBody.velocity = constVelocity;
-                slip = startSlip;
-            }
+                slip = 0f;
+            } 
             else
-            {
-                directionInput = Mathf.Sign(Input.GetAxisRaw("Horizontal"));
-                directionMove = Mathf.Sign(rigBody.velocity.x);
-
-                if (directionInput != directionMove)
+            {              
+                // Controls players rightward movement
+                if (directionInput > 0)
                 {
-                    rigBody.AddForce(new Vector2(-rigBody.velocity.x, rigBody.velocity.y).normalized * 0.55f, ForceMode2D.Impulse);
-                }
-
-                //rigBody.AddForce(new Vector2(rigBody.velocity.x * -1, rigBody.velocity.y).normalized * 2f, ForceMode2D.Impulse);
-
-                /*
-                if (directionInput == directionMove)
-                {
-                    //rigBody.AddForce(new Vector2(rigBody.velocity.x, rigBody.velocity.y).normalized, ForceMode2D.Impulse);
-                }
-                else
-                {
-                    /*
-                    rigBody.AddForce(new Vector2(rigBody.velocity.x * -1, rigBody.velocity.y).normalized * slip, ForceMode2D.Impulse);
-                    if (slip > endSlip)
+                    // Checking for little to no movement
+                    if (directionMove < 0.009f && directionMove > -0.009f)
                     {
-                        slip = slip + 0.00000000000000001f;
-                    }
-                    */
-                /*
-                if (rigBody.velocity.x < 0.01 || rigBody.velocity.x > -0.01)
-                {
-                    slip = 0;
-                }
-                */
-
-                constVelocity = rigBody.velocity;
-
-                /*
-                directionOld = directionNew;
-                directionNew = Mathf.Sign(Input.GetAxisRaw("Horizontal"));
-                if (directionNew == directionOld)
-                {
-                    if (slip < endSlip)
+                        // Debug.Log("RIGHT");
+                        rigBody.AddForce(Vector2.right * 0.1f, ForceMode2D.Impulse);
+                    } 
+                    else
                     {
-                        slip = slip - 0.1f;
+                        slip = slip * directionMove;
+                        rigBody.AddForce(Vector2.right * -slip, ForceMode2D.Impulse);
+                        constVelocity = rigBody.velocity;
                     }
                 }
-                else
+                // Controls players leftward movement
+                else if (directionInput < 0)
                 {
-
-                    slip = startSlip;
-                }
-                if (directionNew > 0)
-                {
-                    rigBody.AddForce(Vector2.left * slip, ForceMode2D.Impulse);
-                }
-                else
-                {
-                    rigBody.AddForce(Vector2.right * slip, ForceMode2D.Impulse);
-                }
-                
-                */
+                    if (directionMove < 0.009f && directionMove > -0.009f)
+                    {
+                        // Debug.Log("LEFT");
+                        rigBody.AddForce(Vector2.left * 0.1f, ForceMode2D.Impulse);
+                    }
+                    else
+                    {
+                        slip = slip * directionMove;
+                        rigBody.AddForce(Vector2.left * -slip, ForceMode2D.Impulse);
+                        constVelocity = rigBody.velocity;
+                    }  
+                } 
             }
-            
         }
        
          
