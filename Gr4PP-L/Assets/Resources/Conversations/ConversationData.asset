@@ -12,4 +12,3 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 616a65c7688141544b5f9a2425b04028, type: 3}
   m_Name: ConversationData
   m_EditorClassIdentifier: 
-  Beats: []

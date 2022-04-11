@@ -1,4 +1,4 @@
-using UnityEngine;
+/**using UnityEngine;
 namespace _Scripts.Dialogue { 
 
     //[CreateAssetMenu(fileName = "DialogueTextData", menuName = "ScriptableObjects/Conversation/DialogueTextScriptableObject")]
@@ -13,3 +13,4 @@ namespace _Scripts.Dialogue {
         }
     }
 }
+*/
