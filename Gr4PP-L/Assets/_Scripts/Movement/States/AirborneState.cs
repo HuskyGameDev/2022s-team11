@@ -220,11 +220,8 @@ namespace _Scripts.Movement.States {
             }
             #endregion
 
-            
-            if(_grappleInput) {
                 HandleGrappleInput(_input, _hookShotForce);
-                _grappleInput = false;
-            }
+            
 
             //continuing a ground jump
             if (_queueCoyoteJump) {
