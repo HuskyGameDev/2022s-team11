@@ -102,6 +102,9 @@ namespace _Scripts.Movement.States {
                 _transitionToState = States.Airborne;
             } else if (_hook.IsAttached) {
                 _transitionToState = States.Grappling;
+            } else if (Input.GetButtonDown("Slide"))
+            {
+                _transitionToState = States.Sliding;
             }
             #endregion
         }
