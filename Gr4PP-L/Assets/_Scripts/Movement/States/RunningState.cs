@@ -25,6 +25,9 @@ namespace _Scripts.Movement.States {
         [Tooltip("The maximum speed the player can normally reach horizontally.")]
         private float _maxHorizontalSpeed;
         [SerializeField]
+        [Tooltip("The length of time a jump input will be usable in the buffer")]
+        private float _jumpBufferTime;
+        [SerializeField]
         [Tooltip("The force with which to shoot the grappling hook while in this state")]
         private float _hookShotForce;
         #endregion
@@ -53,14 +56,19 @@ namespace _Scripts.Movement.States {
         #region MovementState Overrides
         protected override void HandleInput() {
             var gameTime = Time.time;
-            _isJumpingInput = _input.y > 0;
+            _input = GetInput();
             _isCrouchingInput = _input.y < 0;
-
+            
             if (Input.GetButtonDown("Grapple")) {
                 _grappleInput = true;
                 _sm.BufferInput("Grapple", 0.1f);
             }
-            
+
+            if (Input.GetButtonDown("Jump")) {
+                _sm.BufferInput("Jump", _jumpBufferTime);
+                Debug.Log("Jump buffered");
+            }
+
             if (_uncheckedInputBuffer) {
                 CheckInputBuffer();
                 _uncheckedInputBuffer = false;
@@ -109,8 +117,21 @@ namespace _Scripts.Movement.States {
                     _rb.AddForce(Vector2.right * -amount, ForceMode2D.Impulse);
                 }
             #endregion
-            
-            if (_isJumpingInput) GroundedJump();
+
+            if (_sm.CheckBufferedInputsFor("Jump")) {
+                // this ugly if statement checks to see if the player is either not touching a wall, not holding a direction, or touching the wall, but holding in the direction of the wall.
+                // this allows the player while grounded to jump up the side of a wall if they're touching it.
+                // the second line of the if statement ensures that the player only gets a grounded jump when touching the wall if they've been in the grounded state for more than 0.1 seconds.
+                // this ensures that, should the player clip into the wall momentarily when trying to wall jump, they don't get a grounded jump.
+                if ((WallCheck() == 0 || _input.x == 0 ||(WallCheck() != 0 && Mathf.Sign(WallCheck()) == Mathf.Sign(_input.x)))
+                    && !_sm.CheckBufferedInputsFor("WallTouchTransition")) {
+                    Debug.Log("WallCheck() = " + WallCheck() + " !_sm.CheckBufferedInputsFor(WallTouchTransition) = " + !_sm.CheckBufferedInputsFor("WallTouchTransition"));
+                    GroundedJump();
+                } else {
+                    _sm.RemoveBufferedInputsFor("WallTouchTransition");
+                    _transitionToState = States.Airborne;
+                }
+            }
 
             if(_grappleInput) {
                 HandleGrappleInput(_input, _hookShotForce);
@@ -119,7 +140,6 @@ namespace _Scripts.Movement.States {
         }
 
         protected override void CheckInputBuffer() {
-            _isJumpingInput = _isJumpingInput || _sm.CheckBufferedInputsFor("Jump");
             _isCrouchingInput = _isCrouchingInput || _sm.CheckBufferedInputsFor("Slide");
             _uncheckedInputBuffer = false;
         }

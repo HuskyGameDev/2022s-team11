@@ -21,7 +21,7 @@ namespace _Scripts.Movement.States
                 _bufferedInputs[inputName] = Time.time + timeWindow;
                 return;
             }
-            _bufferedInputs.Add(inputName, timeWindow);
+            _bufferedInputs.Add(inputName, Time.time + timeWindow);
         }
 
         /// <summary>
@@ -33,6 +33,31 @@ namespace _Scripts.Movement.States
             if (!_bufferedInputs.ContainsKey(inputName)) return false;
             if (_bufferedInputs[inputName] <= Time.time) return false;
             return true;
+        }
+
+        /// <summary>
+        /// Checks the input buffer for a specific input type. If a valid buffered input is found, this will return true.
+        /// </summary>
+        /// <param name="inputName">The name of the input to check for</param>
+        /// <param name="consume">Whether or not the buffer should remove the input</param>
+        /// <returns>Whether or not a valid buffered input exists</returns>
+        public bool CheckBufferedInputsFor(string inputName, bool consume) {
+            bool a = CheckBufferedInputsFor(inputName);
+            if (consume) RemoveBufferedInputsFor(inputName);
+            return a;
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="inputName"></param>
+        /// <returns></returns>
+        public bool RemoveBufferedInputsFor(string inputName) {
+            if (!_bufferedInputs.ContainsKey(inputName)) return false;
+            else {
+                _bufferedInputs.Remove(inputName);
+                return true;
+            }
         }
 
         public void Initialize(PlayerManager player, MovementState startingState) {

@@ -108,7 +108,7 @@ namespace _Scripts.Movement.States {
             //_grappleInput = _sm.CheckBufferedInputsFor("Grapple") || _grappleInput;
         }
         private void Grapple() {
-            var tetherVector = (_hookController.Position - _hookController.TetherPosition);
+            var tetherVector = (_hookController.TetherPosition - _hookController.Position) * -1;
             var distance = Mathf.Abs(tetherVector.magnitude);
             if (_lastDistance == 0) _lastDistance = distance;
             var tetherPlayerDifference = _rb.position - _hookController.TetherPosition;

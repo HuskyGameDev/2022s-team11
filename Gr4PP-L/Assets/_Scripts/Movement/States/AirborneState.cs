@@ -23,7 +23,12 @@ namespace _Scripts.Movement.States {
         [SerializeField]
         [Tooltip("How much force to apply to the player when jumping them off a wall.")]
         private float _wallJumpForce;
-
+        [SerializeField]
+        [Tooltip("How long after a wall jump before the player regains control of the character")]
+        private float _wallJumpPreservationTime;
+        [SerializeField]
+        [Tooltip("How long between a grounded jump and a wall jump is acceptable")]
+        private float _jumpWallJumpSpacing;
         [Header("Velocity")]
         [SerializeField]
         [Tooltip("How quickly to ramp the player's gravity when falling")]
@@ -38,11 +43,27 @@ namespace _Scripts.Movement.States {
         [Tooltip("How quickly to slow the player down before stopping.")]
         private float _givenDecel;
         [SerializeField]
+        [Tooltip("Helps smooth movement, exponent used for movement calculations.")]
+        private float _velPower;
+        [SerializeField]
         [Tooltip("The speed at which the player should slide down a wall.")]
         private float _wallSlideSpeed;
         [SerializeField]
         [Tooltip("Max horizontal velocity in the air.")]
         private float _maxHorizontalAirSpeed;
+        
+        //variables used for calculating 
+        private float _horizontalMovement, _accelRate;
+
+        // used to prevent player from moving back towards the wall for a short period of time
+        private float _lastWallJump;
+
+        // tracks if the jump button is pressed
+        private bool _jumpPressed;
+
+        // used to call a grounded jump when player presses jump shortly after touching ground
+        private bool _queueCoyoteJump;
+
         [SerializeField]
         [Tooltip("The force with which to shoot the grappling hook while in this state")]
         private float _hookShotForce;
@@ -52,12 +73,11 @@ namespace _Scripts.Movement.States {
         private bool _continuingJumpFromPrevState;
         private bool _grappleInput;
         new public States Name => States.Airborne;
-        private bool _queueGroundJump = false, _hasJumpEnded = true;
+        private bool _hasJumpEnded = false, _jumpEndCalled = false;
         private int _queueWallJump = 0;
         public float WallSlideSpeed => _wallSlideSpeed;
         private float _gravityScale, _horizontalInput, _acceleration, _deceleration;
-        public override void Initialize(_Scripts.Managers.PlayerManager player, MovementStateMachine sm)
-        {
+        public override void Initialize(_Scripts.Managers.PlayerManager player, MovementStateMachine sm) {
             base.Initialize(player, sm);
             _gravityScale = _rb.gravityScale;
         }
@@ -65,8 +85,11 @@ namespace _Scripts.Movement.States {
             base.Enter();
             HandleInput();
 
-            _continuingJumpFromPrevState = _rb.velocity.y > 1;
-            _hasJumpEnded = !_continuingJumpFromPrevState;
+            _gravityScale = _rb.gravityScale;
+            _jumpEndCalled = false;
+            _lastWallJump = -1;
+
+            _hasJumpEnded = !(_sm.CheckBufferedInputsFor("Grounded Jump"));
         }
         public override void Exit() {
             base.Exit();
@@ -76,74 +99,90 @@ namespace _Scripts.Movement.States {
             if(_input.y < 0) {
                 _sm.BufferInput("Down", 0.1f);
             }
+            if (Input.GetButtonDown("Jump")) {
+                _sm.BufferInput("Jump", _jumpBufferTime);
+            }
 
+            _jumpPressed = Input.GetButton("Jump");
+            
             if (Input.GetButtonDown("Grapple")) {
                 _grappleInput = true;
             }
-
-            #region Jump
-            if (_input.y > 0) {
-                if (_continuingJumpFromPrevState && _stateEnterTime + _jumpCoyoteTime > Time.time) {
-                    //Continue a jump from the previous state
-                    _queueGroundJump = true;
-                } else if (WallCheck() != 0) {
-                    //Wall jump
-                    _queueWallJump = WallCheck();
-                } else {
-                    //Buffer the jump input
-                    _sm.BufferInput("Jump", 0.1f);
-                }
-            } else {
-                //Stop the jump from the previous state
-                _continuingJumpFromPrevState = false;
-                _queueGroundJump = false;
-                _queueWallJump = 0;
-            }
-            #endregion
-
-            #region Air Control
-            //TODO: Implement air control
-            //calculates direction to move in and desired velocity
-                float targetSpeed = _input.x * _maxHorizontalAirSpeed;
-                float speedDif = 0;
-                if (IsPlayerSpeedExceeding(targetSpeed))
-                {
-                    speedDif = -1 * Mathf.Sign(_rb.velocity.x);
-                }
-                else
-                {
-                    //calculates difference between current velocity and desired velocity
-                    speedDif = targetSpeed - _rb.velocity.x;
-                }
-                //change acceleration rate depending on the situation
-                //when target speed is > 0.01f, use acceleration variable, else use deceleration variable
-                //_accelRate = (Mathf.Abs(targetSpeed) > 0.01f) ? _acceleration : _deceleration;
-                //applies acceleration to speed difference, then raises to a set power so acceleration increases with higher speeds
-                //finally multiplies by sing to reapply direction
-                //_horizontalMovement = Mathf.Pow(Mathf.Abs(speedDif) * _accelRate, _velPower) * Mathf.Sign(speedDif);
-            #endregion
 
             if (_uncheckedInputBuffer) {
                 _uncheckedInputBuffer = false;
                 CheckInputBuffer();
             }
-
         }
         protected override void LogicUpdate() {
-            if (!_hasJumpEnded && _rb.velocity.y < 0) {
-                _hasJumpEnded = true;
-                OnJumpEnd();
-            }
-
-            if (IsGrounded) {
+            if (IsGrounded && ((_sm.CheckBufferedInputsFor("Jump") == false) || (_sm.CheckBufferedInputsFor("Jump") == true && WallCheck() == 0))) {
+                if(WallCheck() != 0) {
+                    _sm.BufferInput("WallTouchTransition", 0.05f);
+                    Debug.Log("WallTouchTransition");
+                }
                 _transitionToState = _sm.CheckBufferedInputsFor("Down") ? States.Sliding : States.Running;
-            } else if (_hook.IsAttached) {
+            } else if (!_owner.IsGrappleHeld) {
                 _transitionToState = States.Grappling;
             }
+
+            if(!_jumpPressed && !_hasJumpEnded) {
+                _jumpEndCalled = true;
+            }
+
+            #region Jump
+            if (WallCheck() != 0 && _sm.CheckBufferedInputsFor("Jump")) {
+                _queueWallJump = WallCheck();
+            }
+            if(WallCheck() == 0 && _sm.CheckBufferedInputsFor("Jump") && _stateEnterTime > Time.time - _jumpCoyoteTime && _lastWallJump < 0) {
+                _queueCoyoteJump = true;
+            }
+            #endregion
+
+            #region Air Control
+            //calculates direction to move in and desired velocity
+            if (_lastWallJump < 0) {
+                float targetSpeed = _input.x * _maxHorizontalAirSpeed;
+                float speedDif = 0;
+                if (IsPlayerSpeedExceeding(targetSpeed)) {
+                    //when the character is exceeding our maximum velocity, speed dif will have a value of 1 in the opposite horizontal direction
+                    //so if the character is going fast to the right, this will give a -1, if going fast to the left, it'll give a 1
+                    speedDif = -1 * Mathf.Sign(_rb.velocity.x);
+                } else {
+                    //calculates difference between current velocity and desired velocity
+                    speedDif = targetSpeed - _rb.velocity.x;
+                }
+                //change acceleration rate depending on the situation
+                //when target speed is > 0.01f, use acceleration variable, else use deceleration variable
+                _accelRate = (Mathf.Abs(targetSpeed) > 0.01f) ? _acceleration : _deceleration;
+                //applies acceleration to speed difference, then raises to a set power so acceleration increases with higher speeds
+                //finally multiplies by sing to reapply direction
+                _horizontalMovement = Mathf.Pow(Mathf.Abs(speedDif) * _accelRate, _velPower) * Mathf.Sign(speedDif);
+            } else {
+                _horizontalMovement = 0;
+            }
+            #endregion
+
+            #region Cooldown Timers
+            if (_lastWallJump > -1) {
+                _lastWallJump -= Time.deltaTime;
+            }
+            #endregion
         }
         protected override void PhysicsUpdate() {
+            #region Horizontal Movement
+            //applies force to rigidbody, multiplying by Vector2.right so that it only affects X axis
+            _rb.AddForce(_horizontalMovement * Vector2.right);
+            #endregion
+
+            #region Jump Cut
+            if(!_hasJumpEnded && _jumpEndCalled) {
+                OnJumpEnd();
+                _hasJumpEnded = true;
+            }
+            #endregion
+
             #region Jump Gravity
-            if(_rb.velocity.y < 0)
+            if (_rb.velocity.y < 0)
             {
                 _rb.gravityScale = _gravityScale * _fallGravityMultiplier;
             }
@@ -181,37 +220,50 @@ namespace _Scripts.Movement.States {
             }
             #endregion
 
-            if(_grappleInput) {
                 HandleGrappleInput(_input, _hookShotForce);
-                _grappleInput = false;
             }
 
             //continuing a ground jump
-            if (_queueGroundJump) {
+            if (_queueCoyoteJump) {
                 GroundedJump();
-                _queueGroundJump = false;
+                _queueCoyoteJump = false;
                 return;
             }
             
-            //wall jumping
+            #region WallJump
             if (_queueWallJump != 0) {
                 WallJump(_queueWallJump);
                 _queueWallJump = 0;
                 return;
             }
+            #endregion
+
+            #region CoyoteJump
+            if (_queueCoyoteJump) {
+                _queueCoyoteJump = false;
+                GroundedJump();
+            }
+            #endregion
         }
         protected override void CheckInputBuffer()
         {
-            throw new System.NotImplementedException();
+            _uncheckedInputBuffer = false;
         }
 
+        /// <summary>
+        /// Cuts player's jump short.
+        /// </summary>
         private void OnJumpEnd()
         {
+            Debug.Log("OnJumpEnd called");
             if(_rb.velocity.y > 0)
             {
+                Debug.Log("jump Cut");
                 _rb.AddForce(Vector2.down * _rb.velocity.y * (1 - _jumpCutMultiplier), ForceMode2D.Impulse);
             }
 
+            _hasJumpEnded = true;
+            _jumpEndCalled = false;
             //jumpInputReleased = true;
             //lastJumpTime = 0;
         }
@@ -222,13 +274,22 @@ namespace _Scripts.Movement.States {
         /// <param name="wallSide">The side of the player the wall is located to. -1 for the player's left. 1 for the player's right</param>
         private void WallJump(int wallSide)
         {
-            if (wallSide == 0) return;
-            if (_rb.velocity.y < 0)
-            {
-                _rb.velocity = new Vector2(0, 0);
+            if (wallSide == 0 || _lastWallJump > 0.5 * _wallJumpPreservationTime){
+                Debug.Log("WallJump queued but no longer touching wall or last wall jump was too recent");
+                return;
             }
-            _rb.velocity = new Vector2(0, _rb.velocity.y);
-            _rb.AddForce(new Vector2(-1 * wallSide, 1) * _wallJumpForce, ForceMode2D.Impulse);
+            _lastWallJump = _wallJumpPreservationTime;
+            if (_rb.velocity.y < _wallJumpForce * 0.5 || _sm.CheckBufferedInputsFor("Ground Jump")){
+                _rb.velocity = new Vector2(0, 0);
+                Debug.Log("WallJump with canceled upwards momentum");
+                _rb.velocity = new Vector2(0, _rb.velocity.y);
+                _rb.AddForce(new Vector2(-1 * wallSide, 1) * _wallJumpForce, ForceMode2D.Impulse);
+            } else {
+                _rb.velocity = new Vector2(0, _rb.velocity.y);
+                _rb.AddForce(new Vector2(-1 * wallSide, 0.5f) * _wallJumpForce, ForceMode2D.Impulse);
+            }
+            
+            _sm.RemoveBufferedInputsFor("Jump");
+            _hasJumpEnded = !_jumpPressed;
         }
     }
-}

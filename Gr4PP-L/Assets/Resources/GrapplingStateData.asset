@@ -16,8 +16,8 @@ MonoBehaviour:
   _horizAxisThreshold: 0.1
   _vertAxisThreshold: 0.1
   _grappleFireForce: 10
-  _horizPullStrength: 32.6
-  _vertPullStrength: 74.1
+  _horizPullStrength: 60.6
+  _vertPullStrength: 80
   _grappleTimeOut: 3
   _downwardPullMagnitude: 0.056
   _playerInputMagnitude: 0.2
