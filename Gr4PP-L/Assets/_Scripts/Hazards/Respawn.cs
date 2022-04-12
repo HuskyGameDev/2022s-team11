@@ -30,8 +30,8 @@ namespace Restart
             // if player is touching the badbad
             if (touchingHazard)
             {
-                respawn();                 // Respawns the player
-                touchingHazard = false;    // Sets back to false (if not already)
+                Application.LoadLevel(Application.loadedLevel);         // Reloads the level
+                touchingHazard = false;                                 // Sets back to false (if not already)
             }
         }
     }
