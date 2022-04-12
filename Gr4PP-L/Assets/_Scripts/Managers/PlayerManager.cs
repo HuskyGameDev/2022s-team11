@@ -89,6 +89,16 @@ namespace _Scripts.Managers {
                     return false;
             }
         }
+
+        public GrapplingState getGrappleState()
+        {
+            return _grapplingState;
+        }
+        /**
+        private bool CheckIsGrappleReady() {
+            return 0;
+        }
+        */
         #endregion
         
         #region Unity Callbacks

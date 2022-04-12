@@ -33,6 +33,7 @@ namespace _Scripts.Movement.States {
         private bool _grappleInput = false;
         private Vector2 newVel;
         private Vector2 oldVel;
+        public bool isRefreshed = false;
         #endregion
         new public States Name => States.Grappling;
         public override void Initialize(_Scripts.Managers.PlayerManager player, MovementStateMachine sm)
@@ -71,11 +72,18 @@ namespace _Scripts.Movement.States {
                 _hookController.RetractHook();
                 if (IsGrounded) {
                     _transitionToState = States.Running;
-                } else {
-                    _transitionToState = States.Airborne;
-                }
+                } //else {
+                    //_transitionToState = States.Airborne;
+                //}
             }
 
+            
+            if (isRefreshed)
+            {
+                isRefreshed = false;
+                _transitionToState = States.Airborne;
+            }
+            
 
             //if (_stateEnterTime + _grappleTimeOut > Time.time) return;
 
@@ -84,9 +92,9 @@ namespace _Scripts.Movement.States {
             //Hook hasn't hit anything in the timeout window -- change state
             if (IsGrounded) {
                 _transitionToState = States.Running;
-            } else {
-                _transitionToState = States.Airborne;
-            }
+            } //else {
+                //_transitionToState = States.Airborne;
+            //}
         }
         protected override void PhysicsUpdate() {
             if (!_grappleInput && !_hookController.IsAttached) return;
