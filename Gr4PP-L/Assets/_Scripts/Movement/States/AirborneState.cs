@@ -221,7 +221,7 @@ namespace _Scripts.Movement.States {
             #endregion
 
                 HandleGrappleInput(_input, _hookShotForce);
-            }
+            
 
             //continuing a ground jump
             if (_queueCoyoteJump) {
@@ -293,3 +293,4 @@ namespace _Scripts.Movement.States {
             _hasJumpEnded = !_jumpPressed;
         }
     }
+}
