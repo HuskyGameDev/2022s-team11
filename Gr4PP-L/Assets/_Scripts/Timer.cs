@@ -4,6 +4,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using System;
 
+//Author: Ethan Hohman
 public class Timer : MonoBehaviour
 {
     bool timerActive = true;
