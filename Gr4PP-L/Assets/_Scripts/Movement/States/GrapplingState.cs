@@ -67,14 +67,18 @@ namespace _Scripts.Movement.States {
         //TODO: ONLY ENTER GRAPPLE STATE ONCE HOOK CONNECTS
         protected override void LogicUpdate() {
 
+            if (_hookController.IsHeld) {
+                if (IsGrounded) {
+                    _transitionToState = States.Running;
+                } else {
+                    _transitionToState = States.Airborne;
+                }
+                return;
+            }
+
             //Check for retraction
             if (_grappleInput) {
                 _hookController.RetractHook();
-                if (IsGrounded) {
-                    _transitionToState = States.Running;
-                } //else {
-                    //_transitionToState = States.Airborne;
-                //}
             }
 
             
@@ -87,14 +91,7 @@ namespace _Scripts.Movement.States {
 
             //if (_stateEnterTime + _grappleTimeOut > Time.time) return;
 
-            if (_hookController.IsAttached) return;
-
-            //Hook hasn't hit anything in the timeout window -- change state
-            if (IsGrounded) {
-                _transitionToState = States.Running;
-            } //else {
-                //_transitionToState = States.Airborne;
-            //}
+            //if (_hookController.IsAttached) return;
         }
         protected override void PhysicsUpdate() {
             if (!_grappleInput && !_hookController.IsAttached) return;
