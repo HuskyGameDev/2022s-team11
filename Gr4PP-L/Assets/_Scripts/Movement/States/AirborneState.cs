@@ -121,9 +121,9 @@ namespace _Scripts.Movement.States {
                     Debug.Log("WallTouchTransition");
                 }
                 _transitionToState = _sm.CheckBufferedInputsFor("Down") ? States.Sliding : States.Running;
-            } else if (!_owner.IsGrappleHeld) {
+            } /**else if (!_owner.IsGrappleHeld) {
                 _transitionToState = States.Grappling;
-            }
+            }*/
 
             if(!_jumpPressed && !_hasJumpEnded) {
                 _jumpEndCalled = true;
@@ -220,7 +220,11 @@ namespace _Scripts.Movement.States {
             }
             #endregion
 
+            if (_grappleInput) {
                 HandleGrappleInput(_input, _hookShotForce);
+                _grappleInput = false;    
+            }
+
             
 
             //continuing a ground jump
