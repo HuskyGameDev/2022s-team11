@@ -14,6 +14,7 @@ public class Glass : MonoBehaviour {
     private bool _isHorizontal;
 
     private void OnCollisionEnter2D(Collision2D collision) {
+        Debug.Log(collision.relativeVelocity);
         if (_isHorizontal) {
             if (collision.gameObject.CompareTag("Player") && Mathf.Abs(collision.relativeVelocity.x) > _threshold) {
                 _character.GetComponent<Rigidbody2D>().velocity = collision.relativeVelocity; // ensures player doesn't lose velocity on contact

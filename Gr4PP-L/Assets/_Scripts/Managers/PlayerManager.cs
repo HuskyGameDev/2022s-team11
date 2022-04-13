@@ -90,9 +90,9 @@ namespace _Scripts.Managers {
             }
         }
 
-        public GrapplingState getGrappleState()
+        public AirborneState getAirborneState()
         {
-            return _grapplingState;
+            return _airborneState;
         }
         /**
         private bool CheckIsGrappleReady() {

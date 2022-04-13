@@ -12,7 +12,7 @@ GameObject:
   - component: {fileID: 7871337766809600541}
   - component: {fileID: 7871337766809600538}
   - component: {fileID: 7871337766809600539}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: Jump Pad
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -125,4 +125,4 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1d438a4d16d63194e97acc89abe8e353, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  launchForce: 10
+  launchForce: 35

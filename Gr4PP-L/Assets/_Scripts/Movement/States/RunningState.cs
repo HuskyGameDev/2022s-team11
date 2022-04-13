@@ -66,7 +66,6 @@ namespace _Scripts.Movement.States {
 
             if (Input.GetButtonDown("Jump")) {
                 _sm.BufferInput("Jump", _jumpBufferTime);
-                Debug.Log("Jump buffered");
             }
 
             if (_uncheckedInputBuffer) {
@@ -101,12 +100,16 @@ namespace _Scripts.Movement.States {
             if (!IsGrounded) {
                 _transitionToState = States.Airborne;
             } else if (_hook.IsAttached) {
+                _sm.RemoveBufferedInputsFor("Grapple");
+                _canGrapple = false;
                 _transitionToState = States.Grappling;
             } else if (Input.GetButtonDown("Slide"))
             {
                 _transitionToState = States.Sliding;
             }
             #endregion
+
+            _canGrapple = true;
         }
         protected override void PhysicsUpdate() {
             //applies force to rigidbody, multiplying by Vector2.right so that it only affects X axis
@@ -128,7 +131,6 @@ namespace _Scripts.Movement.States {
                 // this ensures that, should the player clip into the wall momentarily when trying to wall jump, they don't get a grounded jump.
                 if ((WallCheck() == 0 || _input.x == 0 ||(WallCheck() != 0 && Mathf.Sign(WallCheck()) == Mathf.Sign(_input.x)))
                     && !_sm.CheckBufferedInputsFor("WallTouchTransition")) {
-                    Debug.Log("WallCheck() = " + WallCheck() + " !_sm.CheckBufferedInputsFor(WallTouchTransition) = " + !_sm.CheckBufferedInputsFor("WallTouchTransition"));
                     GroundedJump();
                 } else {
                     _sm.RemoveBufferedInputsFor("WallTouchTransition");
@@ -136,7 +138,7 @@ namespace _Scripts.Movement.States {
                 }
             }
 
-            if(_grappleInput) {
+            if(_sm.CheckBufferedInputsFor("Grapple")) {
                 HandleGrappleInput(_input, _hookShotForce);
                 _grappleInput = false;
             }

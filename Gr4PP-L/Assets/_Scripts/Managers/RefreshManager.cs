@@ -28,7 +28,7 @@ namespace _Scripts.Managers {
             {
                 // Gets the data from the grapplestate script and sets the isrefreshed value to true
                 PlayerManager playerScript = playContainer.GetComponent<PlayerManager>();
-                playerScript.getGrappleState().isRefreshed = true;
+                playerScript.getAirborneState()._canGrapple = true;
                 Destroy(gameObject);
             }
         }

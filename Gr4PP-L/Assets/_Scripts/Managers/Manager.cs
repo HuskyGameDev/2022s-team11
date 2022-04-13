@@ -8,7 +8,7 @@ namespace _Scripts.Managers
     {
         void Awake()
         {
-            DontDestroyOnLoad(this.gameObject);
+            //DontDestroyOnLoad(this.gameObject);
         }
     }
 }

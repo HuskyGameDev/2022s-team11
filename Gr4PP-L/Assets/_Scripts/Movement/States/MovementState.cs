@@ -26,6 +26,9 @@ namespace _Scripts.Movement.States {
         protected States? _transitionToState;
         public States? Name => null;
         protected bool IsGrounded => GroundedCheck();
+
+        public bool _canGrapple;
+
         #endregion
         public virtual void Initialize(_Scripts.Managers.PlayerManager player, MovementStateMachine sm)
         {
@@ -87,6 +90,7 @@ namespace _Scripts.Movement.States {
 
         protected void HandleGrappleInput(Vector2 direction, float force) {
             if (_hook.IsAttached) return;
+            if (!_canGrapple) return;
             
             if (!_hook.IsHeld) {
                 _hook.RetractHook();
