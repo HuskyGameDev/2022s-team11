@@ -15,8 +15,10 @@ MonoBehaviour:
   _jumpForce: 20
   _horizAxisThreshold: 0.1
   _vertAxisThreshold: 0.1
-  _givenAccel: 8
-  _givenDecel: 5
+  _givenAccel: 5
+  _givenDecel: 8
   _frictionAmount: 0.22
   _velPower: 0.96
-  _maxHorizontalSpeed: 11
+  _maxHorizontalSpeed: 13
+  _jumpBufferTime: 0.15
+  _hookShotForce: 20

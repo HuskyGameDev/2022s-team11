@@ -2,10 +2,11 @@ using System.Data;
 using System;
 using UnityEngine;
 using _Scripts.Movement.States;
+using _Scripts.Movement;
 using _Scripts.Utility;
 namespace _Scripts.Managers {
     /** Author: Nick Zimanski
-    * Version 1/26/22
+    * Version 3/21/22
     */
     public class PlayerManager : Manager
     {
@@ -13,6 +14,11 @@ namespace _Scripts.Managers {
         [Header("Components")]
         [SerializeField]private Rigidbody2D _playerRigidbody;
         public Rigidbody2D PlayerRigidbody => _playerRigidbody;
+        [SerializeField]private GameObject _grappleHook;
+        private GrappleHookController _grappleHookController;
+        public GrappleHookController GrappleHookCtrl => _grappleHookController;
+        private Rigidbody2D _grappleHookRigidbody;
+        public Rigidbody2D GrappleHookRigidbody => _grappleHookRigidbody;
         [SerializeField]private RunningState _runningState;
         [SerializeField]private SlidingState _slidingState;
         [SerializeField]private GrapplingState _grapplingState;
@@ -57,10 +63,7 @@ namespace _Scripts.Managers {
             LastWallJump,
             LastWallTime,
             CoyoteTimeWindowEndTime;
-        private float _gravityScale;
         private bool _jumpInputReleased, 
-            _leftWall, 
-            _rightWall,
             _isGrappleHeld = true;
         public bool IsGrappleHeld => _isGrappleHeld;
         #endregion
@@ -86,11 +89,23 @@ namespace _Scripts.Managers {
                     return false;
             }
         }
+
+        public GrapplingState getGrappleState()
+        {
+            return _grapplingState;
+        }
+        /**
+        private bool CheckIsGrappleReady() {
+            return 0;
+        }
+        */
         #endregion
         
         #region Unity Callbacks
         void Start()
         {
+            _grappleHookController = _grappleHook.GetComponent<GrappleHookController>();
+            _grappleHookRigidbody = _grappleHook.GetComponent<Rigidbody2D>();
             SetupStateMachine();
         }
 
