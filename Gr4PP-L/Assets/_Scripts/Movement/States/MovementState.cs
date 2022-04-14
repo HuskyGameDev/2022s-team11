@@ -90,7 +90,7 @@ namespace _Scripts.Movement.States {
 
         protected void HandleGrappleInput(Vector2 direction, float force) {
             if (_hook.IsAttached) return;
-            if (!_canGrapple) return;
+            if (!_owner._canGrapple) return;
             
             if (!_hook.IsHeld) {
                 _hook.RetractHook();
@@ -108,6 +108,14 @@ namespace _Scripts.Movement.States {
         }
 
         /// <summary>
+        /// Returns the ground collider, used to prevent weird jumps on jump pads
+        /// </summary>
+        /// <returns>The collider the ground box is touching</returns>
+        protected Collider2D GroundCollider() {
+            return (Physics2D.OverlapBox(_owner.GroundCheckPoint.position - new Vector3(0, 1, 0), _owner.GroundCheckSize, 0, _owner.GroundLayer));
+        }
+
+        /// <summary>
         /// Checks if the player's wall checkboxes are contacting a wall
         /// </summary>
         /// <returns>an int, -1 if the wall is to the left of the player, 1 if it's to the right, and 0 if no contact is made or if both walls are in contact</returns>
@@ -119,10 +127,13 @@ namespace _Scripts.Movement.States {
             // since they player will slightly clip into the wall.
 
             int _wallSide = 0;
-            if (Physics2D.OverlapBox(_owner.GroundCheckPoint.position + new Vector3(-_owner.WallCheckOffset.x, _owner.WallCheckOffset.y, 0), _owner.WallCheckSize, 0, _owner.GroundLayer)) {
+            Collider2D collision;
+            if ((collision = Physics2D.OverlapBox(_owner.GroundCheckPoint.position + new Vector3(-_owner.WallCheckOffset.x, _owner.WallCheckOffset.y, 0), _owner.WallCheckSize, 0, _owner.GroundLayer))
+                && !collision.CompareTag("Ice")) {
                 _wallSide = -1;
             }
-            if (Physics2D.OverlapBox(_owner.GroundCheckPoint.position + new Vector3(_owner.WallCheckOffset.x, _owner.WallCheckOffset.y, 0), _owner.WallCheckSize, 0, _owner.GroundLayer)) {
+            if ((collision = Physics2D.OverlapBox(_owner.GroundCheckPoint.position + new Vector3(_owner.WallCheckOffset.x, _owner.WallCheckOffset.y, 0), _owner.WallCheckSize, 0, _owner.GroundLayer))
+                && !collision.CompareTag("Ice")) {
                 if(_wallSide == 0) {
                     _wallSide = 1;
                 } else {

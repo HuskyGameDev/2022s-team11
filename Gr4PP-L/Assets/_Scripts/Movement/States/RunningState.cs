@@ -101,7 +101,7 @@ namespace _Scripts.Movement.States {
                 _transitionToState = States.Airborne;
             } else if (_hook.IsAttached) {
                 _sm.RemoveBufferedInputsFor("Grapple");
-                _canGrapple = false;
+                _owner._canGrapple = false;
                 _transitionToState = States.Grappling;
             } else if (Input.GetButtonDown("Slide"))
             {
@@ -109,7 +109,7 @@ namespace _Scripts.Movement.States {
             }
             #endregion
 
-            _canGrapple = true;
+            _owner._canGrapple = true;
         }
         protected override void PhysicsUpdate() {
             //applies force to rigidbody, multiplying by Vector2.right so that it only affects X axis
@@ -124,7 +124,7 @@ namespace _Scripts.Movement.States {
                 }
             #endregion
 
-            if (_sm.CheckBufferedInputsFor("Jump")) {
+            if (_sm.CheckBufferedInputsFor("Jump") && !GroundCollider().CompareTag("Jump Pad")) {
                 // this ugly if statement checks to see if the player is either not touching a wall, not holding a direction, or touching the wall, but holding in the direction of the wall.
                 // this allows the player while grounded to jump up the side of a wall if they're touching it.
                 // the second line of the if statement ensures that the player only gets a grounded jump when touching the wall if they've been in the grounded state for more than 0.1 seconds.

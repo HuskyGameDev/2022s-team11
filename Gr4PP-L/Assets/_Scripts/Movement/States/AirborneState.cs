@@ -90,13 +90,6 @@ namespace _Scripts.Movement.States {
             _lastWallJump = -1;
 
             _hasJumpEnded = !(_sm.CheckBufferedInputsFor("Grounded Jump"));
-
-            if(_sm.CheckBufferedInputsFor("From Grapple")) {
-                _sm.RemoveBufferedInputsFor("From Grapple");
-                _canGrapple = false;
-            } else {
-                _canGrapple = true;
-            }
         }
         public override void Exit() {
             base.Exit();
@@ -122,6 +115,7 @@ namespace _Scripts.Movement.States {
                 CheckInputBuffer();
             }
         }
+
         protected override void LogicUpdate() {
             if (IsGrounded && ((_sm.CheckBufferedInputsFor("Jump") == false) || (_sm.CheckBufferedInputsFor("Jump") == true && WallCheck() == 0))) {
                 if(WallCheck() != 0) {
@@ -177,6 +171,7 @@ namespace _Scripts.Movement.States {
 
             if (_hook.IsAttached) {
                 _sm.RemoveBufferedInputsFor("Grapple");
+                _owner._canGrapple = false;
                 _transitionToState = States.Grappling;
             }
         }
@@ -214,10 +209,6 @@ namespace _Scripts.Movement.States {
 
             #region Wall Interaction
             if (WallCheck() != 0) {
-                    _acceleration = 0;
-                    _deceleration = 0;
-            
-
                 //wall friction
                 if (_rb.velocity.y < -_wallSlideSpeed)
                 {

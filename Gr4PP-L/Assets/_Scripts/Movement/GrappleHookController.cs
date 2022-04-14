@@ -11,6 +11,7 @@ namespace _Scripts.Movement {
         [SerializeField] private GameObject _parent;
         [SerializeField] private Transform _grappleTether;
         [SerializeField] private Vector2 _defaultDirectionVector;
+        [SerializeField] private LayerMask _layerMask;
         private Rigidbody2D _rb;
         private LineRenderer _lr;
 
@@ -82,10 +83,9 @@ namespace _Scripts.Movement {
 
         public void FireHook(Vector2 direction, float force) {
             if (direction.x == 0 && direction.y == 0) direction = _defaultDirectionVector;
-            LayerMask _layerMask = LayerMask.GetMask("Ground");
 
             //RaycastHit2D _hit = Physics2D.Raycast(_parent.transform.position + new Vector3(0, 0.75f, 0), direction, 15, _layerMask);
-            RaycastHit2D _hit = castHit(ref direction, 15, _layerMask, 7, 1);
+            RaycastHit2D _hit = castHit(ref direction, 15, _layerMask);
             //Debug.DrawRay(this.transform.position, direction, Color.red);
 
             if (_hit) {
@@ -101,22 +101,30 @@ namespace _Scripts.Movement {
             
         }
 
-        private RaycastHit2D castHit(ref Vector2 direction, float distance, LayerMask layerMask, int width, float fidelity) {
+        private RaycastHit2D castHit(ref Vector2 direction, float distance, LayerMask layerMask) {;
+
             RaycastHit2D hit = Physics2D.Raycast(_parent.transform.position + new Vector3(0, 0.75f, 0), direction, distance, layerMask);
-            if (hit) return hit;
+            if (hit && !hit.collider.gameObject.CompareTag("Ice") && !hit.collider.gameObject.CompareTag("Jump Pad") && !hit.collider.gameObject.CompareTag("Glass")) return hit;
+
+            int width = 30;
+            float fidelity = 1;
+            if(direction.normalized.y == 0 || direction.normalized.x == 0) {
+                width = 0;
+            }
+
             for(float i = 1/fidelity; i <= width; i += 1/fidelity) {
                 hit = Physics2D.Raycast(_parent.transform.position + new Vector3(0, 0.75f, 0), getVectorFromAngle(Vector2.SignedAngle(Vector2.right, direction) + i), distance, layerMask);
-                if (hit) {
+                if (hit && !hit.collider.gameObject.CompareTag("Ice") && !hit.collider.gameObject.CompareTag("Jump Pad") && !hit.collider.gameObject.CompareTag("Glass")) {
                     direction = getVectorFromAngle(Vector2.SignedAngle(Vector2.right, direction) + i);
                     return hit;
                 }
                 hit = Physics2D.Raycast(_parent.transform.position + new Vector3(0, 0.75f, 0), getVectorFromAngle(Vector2.SignedAngle(Vector2.right, direction) - i), distance, layerMask);
-                if (hit) {
+                if (hit && !hit.collider.gameObject.CompareTag("Ice") && !hit.collider.gameObject.CompareTag("Jump Pad") && !hit.collider.gameObject.CompareTag("Glass")) {
                     direction = getVectorFromAngle(Vector2.SignedAngle(Vector2.right, direction) - i);
                     return hit;
                 }
             }
-            return hit;
+            return Physics2D.Raycast(_parent.transform.position + new Vector3(0, 0.75f, 0), direction, 0, layerMask);
         }
 
         /* gets a vector from a given angle

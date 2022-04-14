@@ -62,6 +62,10 @@ namespace _Scripts.Movement.States {
                 CheckInputBuffer();
                 _uncheckedInputBuffer = false;
             }
+
+            if (Input.GetButtonDown("Jump")) {
+                _sm.BufferInput("Jump", 0.15f);
+            }
         }
         //TODO: MAKE GRAPPLE FIRE MEMBER OF MOVEMENT STATE
         //TODO: ONLY ENTER GRAPPLE STATE ONCE HOOK CONNECTS
@@ -89,6 +93,9 @@ namespace _Scripts.Movement.States {
                 _transitionToState = States.Airborne;
             }
             
+            if(IsGrounded && _sm.CheckBufferedInputsFor("Jump")) {
+                GroundedJump();
+            }
 
             //if (_stateEnterTime + _grappleTimeOut > Time.time) return;
 

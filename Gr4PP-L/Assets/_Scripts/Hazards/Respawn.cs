@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 namespace Restart
 {
     public class Respawn: MonoBehaviour
@@ -11,7 +12,9 @@ namespace Restart
 
         void OnTriggerEnter2D(Collider2D collision)
         {
-            touchingHazard = true;       // If touching the bad, set to true
+            if (collision.gameObject.CompareTag("Player")) {
+                SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
+            }
         }
 
         void respawn()
@@ -27,12 +30,6 @@ namespace Restart
 
         void Update()
         {
-            // if player is touching the badbad
-            if (touchingHazard)
-            {
-                Application.LoadLevel(Application.loadedLevel);         // Reloads the level
-                touchingHazard = false;                                 // Sets back to false (if not already)
-            }
         }
     }
 }
