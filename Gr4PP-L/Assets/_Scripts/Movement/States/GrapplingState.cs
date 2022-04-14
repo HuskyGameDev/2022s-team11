@@ -157,7 +157,7 @@ namespace _Scripts.Movement.States {
             newVel = playerVelocity;
 
             var tetherToVelAngle = Vector2.SignedAngle(playerVelocity, tetherVector);
-            if (Mathf.Abs(tetherToVelAngle) > 90 && playerVelocity.y < 0) {
+            if (Mathf.Abs(tetherToVelAngle) > 90) {
                 Vector2 tangentVector = Vector2.Perpendicular(tetherVector);
 
                 if (Mathf.Sign(tetherToVelAngle) == 1) tangentVector *= -1;

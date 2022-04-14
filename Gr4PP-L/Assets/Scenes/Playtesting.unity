@@ -1905,7 +1905,7 @@ Transform:
   m_Children:
   - {fileID: 1953782604}
   m_Father: {fileID: 1763868864}
-  m_RootOrder: 0
+  m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &128980975
 MonoBehaviour:
@@ -1921,7 +1921,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_ConfineMode: 0
   m_BoundingVolume: {fileID: 0}
-  m_BoundingShape2D: {fileID: 1763868865}
+  m_BoundingShape2D: {fileID: 249489758}
   m_ConfineScreenEdges: 1
   m_Damping: 0
 --- !u!114 &128980976
@@ -3275,6 +3275,67 @@ Transform:
     type: 3}
   m_PrefabInstance: {fileID: 247447487}
   m_PrefabAsset: {fileID: 0}
+--- !u!1 &249489757
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 249489759}
+  - component: {fileID: 249489758}
+  m_Layer: 0
+  m_Name: Room3 Constraint
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!60 &249489758
+PolygonCollider2D:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 249489757}
+  m_Enabled: 1
+  m_Density: 1
+  m_Material: {fileID: 0}
+  m_IsTrigger: 1
+  m_UsedByEffector: 0
+  m_UsedByComposite: 0
+  m_Offset: {x: -9, y: -10}
+  m_SpriteTilingProperty:
+    border: {x: 0, y: 0, z: 0, w: 0}
+    pivot: {x: 0, y: 0}
+    oldSize: {x: 0, y: 0}
+    newSize: {x: 0, y: 0}
+    adaptiveTilingThreshold: 0
+    drawMode: 0
+    adaptiveTiling: 0
+  m_AutoTiling: 0
+  m_Points:
+    m_Paths:
+    - - {x: 0, y: 32}
+      - {x: 0, y: 0}
+      - {x: 125, y: 0}
+      - {x: 125, y: 32}
+--- !u!4 &249489759
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 249489757}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 1763868864}
+  m_RootOrder: 0
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!4 &256015929 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 4138980566082907668, guid: b91a142043b616840a80402d33ae9a0e,
@@ -8647,8 +8708,8 @@ PolygonCollider2D:
     m_Paths:
     - - {x: 0, y: 32}
       - {x: 0, y: 0}
-      - {x: 78, y: 0}
-      - {x: 78, y: 32}
+      - {x: 77, y: 0}
+      - {x: 77, y: 32}
 --- !u!114 &693969194
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -111573,7 +111634,6 @@ Transform:
   - {fileID: 1851746350}
   - {fileID: 187089312}
   - {fileID: 571016251}
-  - {fileID: 831790444}
   - {fileID: 1396734002}
   - {fileID: 1947800697}
   - {fileID: 1624988219}
@@ -111664,6 +111724,7 @@ Transform:
   - {fileID: 1383709541}
   - {fileID: 144982340}
   - {fileID: 230923259}
+  - {fileID: 1805492288}
   - {fileID: 1883849820}
   - {fileID: 1633851981}
   - {fileID: 1445037264}
@@ -111676,9 +111737,11 @@ Transform:
   - {fileID: 266872955}
   - {fileID: 178275399}
   - {fileID: 2034192039}
+  - {fileID: 326355165}
   - {fileID: 945862329}
   - {fileID: 1060217425}
   - {fileID: 100713843}
+  - {fileID: 2077770248}
   - {fileID: 786950194}
   - {fileID: 1713496071}
   - {fileID: 1352978612}
@@ -111688,6 +111751,7 @@ Transform:
   - {fileID: 549855286}
   - {fileID: 1560783065}
   - {fileID: 1342560010}
+  - {fileID: 1468877341}
   - {fileID: 1786669540}
   - {fileID: 1246668811}
   - {fileID: 69935494}
@@ -111703,83 +111767,80 @@ Transform:
   - {fileID: 1014205907}
   - {fileID: 691174487}
   - {fileID: 1017543289}
+  - {fileID: 757464833}
   - {fileID: 2005446003}
   - {fileID: 1710063738}
   - {fileID: 485269251}
   - {fileID: 208212807}
   - {fileID: 1572491921}
+  - {fileID: 1758090408}
   - {fileID: 1866333468}
   - {fileID: 3922943}
   - {fileID: 1479550041}
   - {fileID: 582563524}
   - {fileID: 1364658014}
   - {fileID: 102293989}
+  - {fileID: 750267048}
   - {fileID: 1117009023}
+  - {fileID: 684638337}
   - {fileID: 1962222893}
   - {fileID: 1337921726}
+  - {fileID: 163849312}
   - {fileID: 1823064372}
   - {fileID: 97617897}
+  - {fileID: 1151740163}
   - {fileID: 655389351}
   - {fileID: 1376267019}
   - {fileID: 1282923796}
   - {fileID: 1983865648}
+  - {fileID: 486654347}
   - {fileID: 1349064104}
   - {fileID: 473617373}
+  - {fileID: 26835575}
   - {fileID: 895468963}
   - {fileID: 604921884}
   - {fileID: 781759106}
   - {fileID: 1476296104}
+  - {fileID: 1880987296}
   - {fileID: 281122922}
   - {fileID: 437132329}
   - {fileID: 389963180}
+  - {fileID: 403136200}
   - {fileID: 43467630}
   - {fileID: 1227509455}
   - {fileID: 1583725768}
-  - {fileID: 684638337}
   - {fileID: 1331574592}
+  - {fileID: 2083449872}
   - {fileID: 1669711618}
   - {fileID: 8449819}
   - {fileID: 11736650}
-  - {fileID: 1805492288}
-  - {fileID: 887505561}
   - {fileID: 203519922}
   - {fileID: 562018877}
-  - {fileID: 26835575}
-  - {fileID: 1151740163}
-  - {fileID: 1468877341}
+  - {fileID: 887505561}
+  - {fileID: 1319980380}
   - {fileID: 2121479432}
+  - {fileID: 68739214}
   - {fileID: 450537853}
-  - {fileID: 326355165}
-  - {fileID: 163849312}
   - {fileID: 1085319490}
+  - {fileID: 1075234875}
   - {fileID: 808812581}
-  - {fileID: 1758090408}
   - {fileID: 738214486}
-  - {fileID: 750267048}
-  - {fileID: 486654347}
   - {fileID: 148597107}
-  - {fileID: 2077770248}
+  - {fileID: 685519063}
   - {fileID: 168057550}
-  - {fileID: 1880987296}
+  - {fileID: 1981107941}
   - {fileID: 610016603}
   - {fileID: 125225168}
-  - {fileID: 1319980380}
   - {fileID: 1315244886}
-  - {fileID: 757464833}
-  - {fileID: 2083449872}
+  - {fileID: 286220935}
   - {fileID: 1897659818}
   - {fileID: 168800877}
-  - {fileID: 286220935}
-  - {fileID: 685519063}
   - {fileID: 894092324}
+  - {fileID: 831790444}
   - {fileID: 703820127}
-  - {fileID: 1981107941}
-  - {fileID: 1075234875}
   - {fileID: 520077688}
-  - {fileID: 403136200}
   - {fileID: 1571764702}
   - {fileID: 1106778829}
-  - {fileID: 68739214}
   - {fileID: 1291099843}
   - {fileID: 1674844416}
   - {fileID: 1901397877}
@@ -116332,6 +116393,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
+  - {fileID: 249489759}
   - {fileID: 128980974}
   m_Father: {fileID: 1960559615}
   m_RootOrder: 2
@@ -116349,7 +116411,7 @@ PolygonCollider2D:
   m_IsTrigger: 1
   m_UsedByEffector: 0
   m_UsedByComposite: 0
-  m_Offset: {x: -9, y: -10}
+  m_Offset: {x: -8, y: -10}
   m_SpriteTilingProperty:
     border: {x: 0, y: 0, z: 0, w: 0}
     pivot: {x: 0, y: 0}
@@ -116361,10 +116423,10 @@ PolygonCollider2D:
   m_AutoTiling: 0
   m_Points:
     m_Paths:
-    - - {x: 0, y: 32}
+    - - {x: 0, y: 50}
       - {x: 0, y: 0}
       - {x: 125, y: 0}
-      - {x: 125, y: 32}
+      - {x: 125, y: 50}
 --- !u!114 &1763868866
 MonoBehaviour:
   m_ObjectHideFlags: 0

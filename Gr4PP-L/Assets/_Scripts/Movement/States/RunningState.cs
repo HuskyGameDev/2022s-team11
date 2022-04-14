@@ -48,6 +48,7 @@ namespace _Scripts.Movement.States {
             _acceleration = _givenAccel;
             _deceleration = _givenDecel;
             HandleInput();
+            _owner._canGrapple = true;
         }
         public override void Exit() {
             base.Exit();
@@ -108,8 +109,6 @@ namespace _Scripts.Movement.States {
                 _transitionToState = States.Sliding;
             }
             #endregion
-
-            _owner._canGrapple = true;
         }
         protected override void PhysicsUpdate() {
             //applies force to rigidbody, multiplying by Vector2.right so that it only affects X axis
