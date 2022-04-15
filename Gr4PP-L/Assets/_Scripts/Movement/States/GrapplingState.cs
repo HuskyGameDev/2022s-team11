@@ -82,7 +82,7 @@ namespace _Scripts.Movement.States {
             }
 
             //Check for retraction
-            if (_grappleInput) {
+            if (!Input.GetButton("Grapple")) {
                 _hookController.RetractHook();
             }
 
