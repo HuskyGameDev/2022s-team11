@@ -134,7 +134,7 @@ namespace _Scripts.Movement.States {
             if (WallCheck() != 0 && _sm.CheckBufferedInputsFor("Jump")) {
                 _queueWallJump = WallCheck();
             }
-            if(WallCheck() == 0 && _sm.CheckBufferedInputsFor("Jump") && _stateEnterTime > Time.time - _jumpCoyoteTime && _lastWallJump < 0) {
+            if(WallCheck() == 0 && _sm.CheckBufferedInputsFor("Jump") && _stateEnterTime > Time.time - _jumpCoyoteTime && _lastWallJump < 0 && _sm.CheckBufferedInputsFor("Ground to Air")) {
                 _queueCoyoteJump = true;
             }
             #endregion
@@ -228,15 +228,6 @@ namespace _Scripts.Movement.States {
                 HandleGrappleInput(_input, _hookShotForce);
                 _grappleInput = false;    
             }
-
-            
-
-            //continuing a ground jump
-            if (_queueCoyoteJump) {
-                GroundedJump();
-                _queueCoyoteJump = false;
-                return;
-            }
             
             #region WallJump
             if (_queueWallJump != 0) {
@@ -249,6 +240,7 @@ namespace _Scripts.Movement.States {
             #region CoyoteJump
             if (_queueCoyoteJump) {
                 _queueCoyoteJump = false;
+                _hasJumpEnded = false;
                 GroundedJump();
             }
             #endregion

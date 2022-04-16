@@ -99,12 +99,13 @@ namespace _Scripts.Movement.States {
 
             #region StateChecks
             if (!IsGrounded) {
+                _sm.BufferInput("Ground to Air", 0.1f);
                 _transitionToState = States.Airborne;
             } else if (_hook.IsAttached) {
                 _sm.RemoveBufferedInputsFor("Grapple");
                 _owner._canGrapple = false;
                 _transitionToState = States.Grappling;
-            } else if (Input.GetButtonDown("Slide"))
+            } else if (Input.GetButton("Slide"))
             {
                 _transitionToState = States.Sliding;
             }
