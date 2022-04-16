@@ -171,8 +171,9 @@ namespace _Scripts.Movement.States {
 
             //push the player
             pullVector = (pullVector - tetherPlayerDifference).normalized;
+            float _vertPullStrengthAdjusted = (!_sm.CheckBufferedInputsFor("Jumped")) ? _vertPullStrength : 0;
             //Debug.Log(new Vector2(pullVector.x * _horizPullStrength, pullVector.y * _vertPullStrength));
-            _rb.AddForce(new Vector2(pullVector.x * _horizPullStrength, pullVector.y * _vertPullStrength) , ForceMode2D.Force);
+            _rb.AddForce(new Vector2(pullVector.x * _horizPullStrength, pullVector.y * _vertPullStrengthAdjusted) , ForceMode2D.Force);
             _rb.AddForce(new Vector2(_input.x * _playerInputMagnitude, 0));
             
             _lastDistance = distance < _lastDistance ? distance : _lastDistance;

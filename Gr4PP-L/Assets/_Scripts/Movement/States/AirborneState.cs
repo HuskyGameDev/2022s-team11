@@ -262,6 +262,7 @@ namespace _Scripts.Movement.States {
 
             _hasJumpEnded = true;
             _jumpEndCalled = false;
+            _sm.RemoveBufferedInputsFor("Jumped");
             //jumpInputReleased = true;
             //lastJumpTime = 0;
         }

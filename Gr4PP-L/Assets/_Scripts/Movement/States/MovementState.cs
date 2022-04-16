@@ -86,6 +86,7 @@ namespace _Scripts.Movement.States {
             _rb.AddForce(Vector2.up * _jumpForce, ForceMode2D.Impulse);
             _sm.RemoveBufferedInputsFor("Jump");
             _sm.BufferInput("Grounded Jump", 0.1f);
+            _sm.BufferInput("Jumped", 0.15f);
         }
 
         protected void HandleGrappleInput(Vector2 direction, float force) {
