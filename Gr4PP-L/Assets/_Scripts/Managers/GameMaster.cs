@@ -7,10 +7,12 @@ public class GameMaster : MonoBehaviour
 {
     private static GameMaster instance;
     public Vector2 lastCheckpointPos;
+    public float lastTime;
+    private float initTime = 0;
     private Vector2 initPos;
 
     private void Awake() {
-        if(instance == null) {
+        if (instance == null) {
             instance = this;
             DontDestroyOnLoad(instance);
             initPos = lastCheckpointPos;
@@ -22,6 +24,7 @@ public class GameMaster : MonoBehaviour
     private void Update() {
         if (Input.GetKeyDown(KeyCode.K)) {
             lastCheckpointPos = initPos;
+            lastTime = 0;
             SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
         }
     }

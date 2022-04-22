@@ -6,6 +6,7 @@ public class RoomManager : MonoBehaviour
 {
     public GameObject virtualCam;
     private GameMaster _gm;
+    private TimerManager _tm;
 
     private void Start() {
         _gm = GameObject.FindGameObjectWithTag("GM").GetComponent<GameMaster>();
