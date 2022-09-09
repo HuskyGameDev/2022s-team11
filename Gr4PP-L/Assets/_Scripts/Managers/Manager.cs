@@ -2,9 +2,9 @@ using UnityEngine;
 namespace _Scripts.Managers
 {
     /** Author: Nick Zimanski
-    * Version 1/25/22
+    * Version 9/09/22
     */
-    public class Manager : MonoBehaviour
+    public abstract class Manager : MonoBehaviour
     {
         void Awake()
         {
