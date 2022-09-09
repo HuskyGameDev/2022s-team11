@@ -7,6 +7,10 @@ TagManager:
   - ObjectFolder
   - Ground
   - GrappleMarker
+  - Ice
+  - Jump Pad
+  - GM
+  - Glass
   layers:
   - Default
   - TransparentFX

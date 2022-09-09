@@ -24,7 +24,7 @@ namespace _Scripts.Movement.States {
         private float _downwardPullMagnitude;
         [SerializeField]
         [Tooltip("The percentage of the force vector to change the pull by according to the player's input")]
-        [Range(0,1)]
+        [Range(0,50)]
         private float _playerInputMagnitude;
         [SerializeField]
         [Range(1,3)]
@@ -62,19 +62,28 @@ namespace _Scripts.Movement.States {
                 CheckInputBuffer();
                 _uncheckedInputBuffer = false;
             }
+
+            if (Input.GetButtonDown("Jump")) {
+                _sm.BufferInput("Jump", 0.15f);
+            }
         }
         //TODO: MAKE GRAPPLE FIRE MEMBER OF MOVEMENT STATE
         //TODO: ONLY ENTER GRAPPLE STATE ONCE HOOK CONNECTS
         protected override void LogicUpdate() {
 
-            //Check for retraction
-            if (_grappleInput) {
-                _hookController.RetractHook();
+            if (_hookController.IsHeld) {
                 if (IsGrounded) {
                     _transitionToState = States.Running;
-                } //else {
-                    //_transitionToState = States.Airborne;
-                //}
+                } else {
+                    _sm.BufferInput("From Grapple", 1);
+                    _transitionToState = States.Airborne;
+                }
+                return;
+            }
+
+            //Check for retraction
+            if (!Input.GetButton("Grapple")) {
+                _hookController.RetractHook();
             }
 
             
@@ -84,17 +93,13 @@ namespace _Scripts.Movement.States {
                 _transitionToState = States.Airborne;
             }
             
+            if(IsGrounded && _sm.CheckBufferedInputsFor("Jump")) {
+                GroundedJump();
+            }
 
             //if (_stateEnterTime + _grappleTimeOut > Time.time) return;
 
-            if (_hookController.IsAttached) return;
-
-            //Hook hasn't hit anything in the timeout window -- change state
-            if (IsGrounded) {
-                _transitionToState = States.Running;
-            } //else {
-                //_transitionToState = States.Airborne;
-            //}
+            //if (_hookController.IsAttached) return;
         }
         protected override void PhysicsUpdate() {
             if (!_grappleInput && !_hookController.IsAttached) return;
@@ -152,30 +157,24 @@ namespace _Scripts.Movement.States {
             newVel = playerVelocity;
 
             var tetherToVelAngle = Vector2.SignedAngle(playerVelocity, tetherVector);
-            if (Mathf.Abs(tetherToVelAngle) > 90 && playerVelocity.y < 0) {
-                Debug.Log("Velocity: " + oldVel);
-                Debug.Log("Velocity angle: " + Vector2.SignedAngle(oldVel,Vector2.up));
-                Debug.Log("Tether: " + tetherVector);
+            if (Mathf.Abs(tetherToVelAngle) > 90) {
                 Vector2 tangentVector = Vector2.Perpendicular(tetherVector);
-                
-                Debug.Log("Tangent: " + tangentVector);
 
                 if (Mathf.Sign(tetherToVelAngle) == 1) tangentVector *= -1;
 
-                Debug.Log("Tangent after correction: " + tangentVector);
-                var newVelMag = oldVel.magnitude * Mathf.Abs(Mathf.Cos(Vector2.Angle(playerVelocity, tangentVector)));
+                var newVelMag = oldVel.magnitude * Mathf.Abs(Mathf.Cos(Mathf.Deg2Rad * Vector2.Angle(playerVelocity, tangentVector)));
                 newVel = tangentVector.normalized * newVelMag;
 
-                Debug.Log("Angle from tangent: " + Mathf.Cos(Vector2.Angle(tangentVector, playerVelocity)));
-                Debug.Log("New velocity: " + newVel);
                 //Reassign velocity
                 _rb.velocity = newVel;
             }
 
             //push the player
             pullVector = (pullVector - tetherPlayerDifference).normalized;
+            float _vertPullStrengthAdjusted = (!_sm.CheckBufferedInputsFor("Jumped")) ? _vertPullStrength : 0;
             //Debug.Log(new Vector2(pullVector.x * _horizPullStrength, pullVector.y * _vertPullStrength));
-            _rb.AddForce(new Vector2(pullVector.x * _horizPullStrength, pullVector.y * _vertPullStrength) , ForceMode2D.Force);
+            _rb.AddForce(new Vector2(pullVector.x * _horizPullStrength, pullVector.y * _vertPullStrengthAdjusted) , ForceMode2D.Force);
+            _rb.AddForce(new Vector2(_input.x * _playerInputMagnitude, 0));
             
             _lastDistance = distance < _lastDistance ? distance : _lastDistance;
         }

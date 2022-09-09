@@ -106,6 +106,7 @@ namespace _Scripts.Movement.States {
             _jumpPressed = Input.GetButton("Jump");
             
             if (Input.GetButtonDown("Grapple")) {
+                _sm.BufferInput("Grapple", 0.1f);
                 _grappleInput = true;
             }
 
@@ -114,11 +115,11 @@ namespace _Scripts.Movement.States {
                 CheckInputBuffer();
             }
         }
+
         protected override void LogicUpdate() {
             if (IsGrounded && ((_sm.CheckBufferedInputsFor("Jump") == false) || (_sm.CheckBufferedInputsFor("Jump") == true && WallCheck() == 0))) {
                 if(WallCheck() != 0) {
                     _sm.BufferInput("WallTouchTransition", 0.05f);
-                    Debug.Log("WallTouchTransition");
                 }
                 _transitionToState = _sm.CheckBufferedInputsFor("Down") ? States.Sliding : States.Running;
             } /**else if (!_owner.IsGrappleHeld) {
@@ -133,7 +134,7 @@ namespace _Scripts.Movement.States {
             if (WallCheck() != 0 && _sm.CheckBufferedInputsFor("Jump")) {
                 _queueWallJump = WallCheck();
             }
-            if(WallCheck() == 0 && _sm.CheckBufferedInputsFor("Jump") && _stateEnterTime > Time.time - _jumpCoyoteTime && _lastWallJump < 0) {
+            if(WallCheck() == 0 && _sm.CheckBufferedInputsFor("Jump") && _stateEnterTime > Time.time - _jumpCoyoteTime && _lastWallJump < 0 && _sm.CheckBufferedInputsFor("Ground to Air")) {
                 _queueCoyoteJump = true;
             }
             #endregion
@@ -167,6 +168,12 @@ namespace _Scripts.Movement.States {
                 _lastWallJump -= Time.deltaTime;
             }
             #endregion
+
+            if (_hook.IsAttached) {
+                _sm.RemoveBufferedInputsFor("Grapple");
+                _owner._canGrapple = false;
+                _transitionToState = States.Grappling;
+            }
         }
         protected override void PhysicsUpdate() {
             #region Horizontal Movement
@@ -195,16 +202,13 @@ namespace _Scripts.Movement.States {
             #region Terminal Velocity
             if(_rb.velocity.y < -_terminalVelocity)
             {
-                _rb.velocity = new Vector2(_rb.velocity.x, -_terminalVelocity);
+                //_rb.velocity = new Vector2(_rb.velocity.x, -_terminalVelocity);
+                _rb.gravityScale = _gravityScale * 0.5f;
             }
             #endregion
 
             #region Wall Interaction
             if (WallCheck() != 0) {
-                    _acceleration = 0;
-                    _deceleration = 0;
-            
-
                 //wall friction
                 if (_rb.velocity.y < -_wallSlideSpeed)
                 {
@@ -224,15 +228,6 @@ namespace _Scripts.Movement.States {
                 HandleGrappleInput(_input, _hookShotForce);
                 _grappleInput = false;    
             }
-
-            
-
-            //continuing a ground jump
-            if (_queueCoyoteJump) {
-                GroundedJump();
-                _queueCoyoteJump = false;
-                return;
-            }
             
             #region WallJump
             if (_queueWallJump != 0) {
@@ -245,6 +240,7 @@ namespace _Scripts.Movement.States {
             #region CoyoteJump
             if (_queueCoyoteJump) {
                 _queueCoyoteJump = false;
+                _hasJumpEnded = false;
                 GroundedJump();
             }
             #endregion
@@ -259,15 +255,14 @@ namespace _Scripts.Movement.States {
         /// </summary>
         private void OnJumpEnd()
         {
-            Debug.Log("OnJumpEnd called");
             if(_rb.velocity.y > 0)
             {
-                Debug.Log("jump Cut");
                 _rb.AddForce(Vector2.down * _rb.velocity.y * (1 - _jumpCutMultiplier), ForceMode2D.Impulse);
             }
 
             _hasJumpEnded = true;
             _jumpEndCalled = false;
+            _sm.RemoveBufferedInputsFor("Jumped");
             //jumpInputReleased = true;
             //lastJumpTime = 0;
         }
@@ -279,13 +274,11 @@ namespace _Scripts.Movement.States {
         private void WallJump(int wallSide)
         {
             if (wallSide == 0 || _lastWallJump > 0.5 * _wallJumpPreservationTime){
-                Debug.Log("WallJump queued but no longer touching wall or last wall jump was too recent");
                 return;
             }
             _lastWallJump = _wallJumpPreservationTime;
             if (_rb.velocity.y < _wallJumpForce * 0.5 || _sm.CheckBufferedInputsFor("Ground Jump")){
                 _rb.velocity = new Vector2(0, 0);
-                Debug.Log("WallJump with canceled upwards momentum");
                 _rb.velocity = new Vector2(0, _rb.velocity.y);
                 _rb.AddForce(new Vector2(-1 * wallSide, 1) * _wallJumpForce, ForceMode2D.Impulse);
             } else {

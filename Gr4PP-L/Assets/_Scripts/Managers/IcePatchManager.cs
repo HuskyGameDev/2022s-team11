@@ -50,7 +50,7 @@ public class IcePatchManager : MonoBehaviour
             // Controls players movement when not pressing anything
             if (directionInput == 0)
             {
-                rigBody.velocity = constVelocity;
+                rigBody.velocity = new Vector2 (constVelocity.x, rigBody.velocity.y);
                 slip = 0f;
             } 
             else

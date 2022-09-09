@@ -15,10 +15,12 @@ MonoBehaviour:
   _jumpForce: 20
   _horizAxisThreshold: 0.1
   _vertAxisThreshold: 0.1
-  _grappleFireForce: 10
+  _canGrapple: 0
+  _grappleFireForce: 30
   _horizPullStrength: 60.6
-  _vertPullStrength: 80
+  _vertPullStrength: 100
   _grappleTimeOut: 3
   _downwardPullMagnitude: 0.056
-  _playerInputMagnitude: 0.2
+  _playerInputMagnitude: 10
   _tensionSpeedMultiplier: 1.113
+  isRefreshed: 0
