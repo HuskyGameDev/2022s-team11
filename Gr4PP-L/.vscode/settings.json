@@ -59,6 +59,7 @@
         "Decel",
         "Dont",
         "horiz",
-        "Mathf"
+        "Mathf",
+        "UGUI"
     ]
 }

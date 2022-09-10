@@ -7,31 +7,189 @@ using System.Runtime.Serialization.Json;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using TMPro;
 
 namespace _Scripts.Managers {
     /** Author: Nick Zimanski
-    * Version: 9/09/22
+    * Version: 9/10/22
     */
     public class DialogueManager : Manager
     {
-        ConversationCollection conversationCollection;
+        private ConversationCollection _allConversations;
+        private UsableConversation _currentConversation = null;
+        private bool _awaitingPlayerInput = false;
+        private bool _conversationInProgress = false;
+        private ConversationIterator _currentConversationIterator = null;
+        private int _text_charactersTyped = 0;
+        private float _text_lastCharacterTypedTime = 0;
+        private string _text_currentString = "";
+        private bool _text_incomingNewText = false;
+        private bool _delay_hasStarted = false;
+        private float _delay_endTime = 0;
+        [SerializeField]
+        private float _charsPerSecond = 7f;
+        [SerializeField]
+        private Canvas _dialogueCanvas;
+        [SerializeField]
+        private TextMeshProUGUI _dialogueText;
+        [SerializeField]
+        private TextMeshProUGUI _characterNameText;
+
+        private float _text_secondsPerChar { get => 1f / _charsPerSecond; }
         void Awake()
         {
-            conversationCollection = ImportJson<ConversationCollection>("Json/conversations");
-            conversationCollection.InitializeConversations();
-
-            
-            ConversationIterator ie = (ConversationIterator) conversationCollection.ConversationDictionary[0].GetEnumerator();
-            int g = 0;
-            do {
-                g++;
-                Debug.Log(ie.Current.type + " " + ie.Current.data);
-            } while (ie.MoveNext() && g < 1000);
+            _allConversations = ImportJson<ConversationCollection>("Json/conversations");
+            _allConversations.InitializeConversations();
         }
 
-        public UsableConversation GetConversationByID (int id) {
-            if (!conversationCollection.ConversationDictionary.ContainsKey(id)) return null;
-            return conversationCollection.ConversationDictionary.GetValueOrDefault(id);
+        private void Start()
+        {
+        }
+
+        void Update()
+        {
+            if (_currentConversation == null) return;
+
+            UpdateConversation();
+
+            //TODO Actually make the conversation display
+        }
+
+
+        
+        public bool RunConversation(int id) {
+            _currentConversation = GetConversationByID(id);
+            if (_currentConversation == null) return false;
+
+            _currentConversationIterator = (ConversationIterator) _currentConversation.GetEnumerator();
+            if (_currentConversationIterator.Current.data == null) {
+                _currentConversation = null;
+                return false;
+            }
+
+            _dialogueCanvas.enabled = true;
+
+            //Reset conversation-specific state
+            _text_charactersTyped = 0;
+            _text_lastCharacterTypedTime = 0;
+            _delay_hasStarted = false;
+            _delay_endTime = 0;
+
+            return true;
+        }
+
+        private void UpdateConversation() {
+            Debug.Log(_currentConversationIterator.Current.type);
+            switch (_currentConversationIterator.Current.type) {
+                case ConvInstruction.InstructionType.TEXT:
+                    UpdateText();
+                    break;
+                case ConvInstruction.InstructionType.DELAY:
+                    UpdateDelay();
+                    break;
+                case ConvInstruction.InstructionType.CHARACTER_CHANGE:
+                    UpdateCharacterChange();
+                    break;
+                default:
+                    break;
+            }
+
+            if (!_awaitingPlayerInput) return;
+            //Input
+
+            if (Input.GetAxisRaw("Submit") != 0) {
+                NextConversationInstruction();
+                _awaitingPlayerInput = false;
+            }
+
+        }
+
+        private void UpdateText() {
+            //Instantiate the current string
+            if (_text_incomingNewText) {
+                _text_currentString = _text_currentString + _currentConversationIterator.Current.data;
+                _text_incomingNewText = false;
+            }
+
+            //Check if we've reached the end of the string
+            if (_text_charactersTyped >= _text_currentString.Length) { 
+                _awaitingPlayerInput = true;
+
+                //End the text instruction automatically if the next up is a delay.
+                if (_currentConversationIterator.IsNextOfType(ConvInstruction.InstructionType.DELAY)) NextConversationInstruction();
+                return;
+            }
+
+            if (_text_lastCharacterTypedTime + _text_secondsPerChar > Time.time) return;
+
+            _text_lastCharacterTypedTime = Time.time;
+            _text_charactersTyped++;
+
+            _dialogueText.text = _text_currentString.Substring(0, _text_charactersTyped);
+            
+        }
+
+        private void UpdateDelay() {
+            if (!_delay_hasStarted) {
+                _delay_endTime = Time.time + (float) (Int32.Parse(_currentConversationIterator.Current.data)/1000f);
+                _awaitingPlayerInput = true;
+                _delay_hasStarted = true;
+                return;
+            }
+
+            if (_delay_endTime > Time.time) return;
+
+            _delay_endTime = 0;
+            _delay_hasStarted = false;
+
+            //Conversations shouldn't end on a delay
+            NextConversationInstruction();
+            
+        }
+
+        private void UpdateCharacterChange() {
+            //If the character actually changes. Empty square brackets are treated as a passage change and will wipe the text box.
+            if (_currentConversationIterator.Current.data != "")    {
+                _characterNameText.SetText(_currentConversationIterator.Current.data);
+
+                //TODO: set character portrait
+                //TODO: ready character voice
+
+            }
+
+            _dialogueText.text = "";
+            _text_currentString = "";
+            _text_charactersTyped = 0;
+            _text_lastCharacterTypedTime = 0;
+
+            //Conversations shouldn't end on a character change
+            NextConversationInstruction();
+        }
+
+        private void EndConversation() {
+            _dialogueCanvas.enabled = false;
+            _dialogueText.text = "";
+            _characterNameText.text = "";
+            _delay_endTime = 0;
+            _delay_hasStarted = false;
+            _text_currentString = "";
+            _text_charactersTyped = 0;
+            _text_lastCharacterTypedTime = 0;
+        }
+
+        private void NextConversationInstruction() {
+            if (!_currentConversationIterator.MoveNext()) {
+                _currentConversation = null;
+                EndConversation();
+            }
+
+            if (_currentConversationIterator.Current.type == ConvInstruction.InstructionType.TEXT)
+                _text_incomingNewText = true;
+        }
+
+        private UsableConversation GetConversationByID (int id) {
+            if (!_allConversations.ConversationDictionary.ContainsKey(id)) return null;
+            return _allConversations.ConversationDictionary.GetValueOrDefault(id);
         }
 
         private static T ImportJson<T>(string path)
@@ -42,6 +200,16 @@ namespace _Scripts.Managers {
             return JsonUtility.FromJson<T>(textAsset.text);
         }
 
+
+        /*
+        *
+        *   Other classes
+        *
+        */
+
+        /// <summary>
+        /// A utility class for converting raw json data into conversations. Only for use in DialogueManager
+        /// </summary>
         [SerializableAttribute]
         private class ConversationCollection {
             public RawConversation[] raw_conversations;
@@ -68,7 +236,7 @@ namespace _Scripts.Managers {
         /// <summary>
         /// Higher-level data storage for individual conversation data
         /// </summary>
-        public class UsableConversation : IEnumerable<ConvInstruction> {
+        private class UsableConversation : IEnumerable<ConvInstruction> {
                 private int id;
                 private string name;
                 public string[] characters;
@@ -85,10 +253,10 @@ namespace _Scripts.Managers {
                 /// <param name="s">the raw string from the json file</param>
                 /// <returns>the formatted steps</returns>
                 private LinkedList<ConvInstruction> ParseTextIntoSteps(string s) {
-                    Regex characterChangeMatch = new Regex("\\[(?<=\\[).*(?=\\])\\]");
-                    Regex characterChangeNameGrab = new Regex("(?<=\\[).*(?=\\])");
-                    Regex instructionMatch = new Regex("{(?<={).*(?=})}");
-                    Regex instructionGrabContent = new Regex("(?<={).*(?=})");
+                    Regex characterChangeMatch = new Regex("\\[(?<=\\[)[^\\[\\]]*(?=\\])\\]");
+                    Regex characterChangeNameGrab = new Regex("(?<=\\[)[^\\[\\]]*(?=\\])");
+                    Regex instructionMatch = new Regex("{(?<={)[^{}]*(?=})}");
+                    Regex instructionGrabContent = new Regex("(?<={)[^{}]*(?=})");
                     LinkedList<ConvInstruction> list = new LinkedList<ConvInstruction>();
                     string temp;
 
@@ -101,6 +269,8 @@ namespace _Scripts.Managers {
                             temp = characterChangeMatch.Match(s).Value;
                             s = s.Remove(0, temp.Length);
                             temp = characterChangeNameGrab.Match(temp).Value;
+
+                            if (temp == null) temp = "";
                             list.AddLast(new LinkedListNode<ConvInstruction>(new ConvInstruction(ConvInstruction.InstructionType.CHARACTER_CHANGE, temp)));
                             temp = "";
                             continue;
@@ -159,7 +329,7 @@ namespace _Scripts.Managers {
         /// <summary>
         /// Custom iterator for UsableConversation
         /// </summary>
-        public class ConversationIterator : IEnumerator<ConvInstruction> {
+        private class ConversationIterator : IEnumerator<ConvInstruction> {
             private LinkedList<ConvInstruction> _list;
             private LinkedListNode<ConvInstruction> _current;
             public ConversationIterator(LinkedList<ConvInstruction> ll) {
@@ -184,6 +354,12 @@ namespace _Scripts.Managers {
 
             public ConvInstruction Current {
                 get {return _current.Value;}
+            }
+
+            public bool IsNextOfType(ConvInstruction.InstructionType type) {
+                if (_current.Next == null) return false;
+                if (_current.Next.Value.type != type) return false;
+                return true;
             }
 
             object IEnumerator.Current {
