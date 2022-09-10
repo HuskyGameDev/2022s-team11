@@ -44,6 +44,7 @@ namespace _Scripts.Managers {
 
         private void Start()
         {
+            _dialogueCanvas.enabled = false;
         }
 
         void Update()
@@ -195,8 +196,6 @@ namespace _Scripts.Managers {
         private static T ImportJson<T>(string path)
         {
             TextAsset textAsset = Resources.Load<TextAsset>(path);
-
-            Debug.Log(textAsset);
             return JsonUtility.FromJson<T>(textAsset.text);
         }
 
