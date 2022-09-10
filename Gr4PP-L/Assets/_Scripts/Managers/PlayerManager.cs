@@ -96,11 +96,6 @@ namespace _Scripts.Managers {
         {
             return _airborneState;
         }
-        /**
-        private bool CheckIsGrappleReady() {
-            return 0;
-        }
-        */
         #endregion
         
         #region Unity Callbacks

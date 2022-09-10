@@ -54,10 +54,12 @@
         "Temp/":true
     },
     "cSpell.words": [
+        "Conv",
         "convo",
         "Decel",
         "Dont",
         "horiz",
-        "Mathf"
+        "Mathf",
+        "UGUI"
     ]
 }
