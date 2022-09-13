@@ -57,8 +57,8 @@ namespace _Scripts.Movement.States {
         #region MovementState Overrides
         protected override void HandleInput() {
             var gameTime = Time.time;
-            _input = GetInput();
-            _isCrouchingInput = _input.y < 0;
+            //_gameManager.Input = GetInput(); Unnecessary call
+            _isCrouchingInput = _gameManager.Input.y < 0;
             
             if (Input.GetButtonDown("Grapple")) {
                 _grappleInput = true;
@@ -77,7 +77,7 @@ namespace _Scripts.Movement.States {
         protected override void LogicUpdate() {
             #region Normal Movement
                 //calculates direction to move in and desired velocity
-                float targetSpeed = _input.x * _maxHorizontalSpeed;
+                float targetSpeed = _gameManager.Input.x * _maxHorizontalSpeed;
                 float speedDif = 0;
                 if (IsPlayerSpeedExceeding(targetSpeed))
                 {
@@ -116,7 +116,7 @@ namespace _Scripts.Movement.States {
             _rb.AddForce(_movement * Vector2.right);
 
             #region Friction
-                if (Mathf.Abs(_input.x) < 0.01f)
+                if (Mathf.Abs(_gameManager.Input.x) < 0.01f)
                 {
                     float amount = Mathf.Min(Mathf.Abs(_rb.velocity.x), Mathf.Abs(_frictionAmount));
                     amount *= Mathf.Sign(_rb.velocity.x);
@@ -129,7 +129,7 @@ namespace _Scripts.Movement.States {
                 // this allows the player while grounded to jump up the side of a wall if they're touching it.
                 // the second line of the if statement ensures that the player only gets a grounded jump when touching the wall if they've been in the grounded state for more than 0.1 seconds.
                 // this ensures that, should the player clip into the wall momentarily when trying to wall jump, they don't get a grounded jump.
-                if ((WallCheck() == 0 || _input.x == 0 ||(WallCheck() != 0 && Mathf.Sign(WallCheck()) == Mathf.Sign(_input.x)))
+                if ((WallCheck() == 0 || _gameManager.Input.x == 0 ||(WallCheck() != 0 && Mathf.Sign(WallCheck()) == Mathf.Sign(_gameManager.Input.x)))
                     && !_sm.CheckBufferedInputsFor("WallTouchTransition")) {
                     GroundedJump();
                 } else {
@@ -139,7 +139,7 @@ namespace _Scripts.Movement.States {
             }
 
             if(_sm.CheckBufferedInputsFor("Grapple")) {
-                HandleGrappleInput(_input, _hookShotForce);
+                HandleGrappleInput(_gameManager.Input, _hookShotForce);
                 _grappleInput = false;
             }
         }

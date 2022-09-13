@@ -96,7 +96,7 @@ namespace _Scripts.Movement.States {
             _rb.gravityScale = _gravityScale;
         }
         protected override void HandleInput() {
-            if(_input.y < 0) {
+            if(_gameManager.Input.y < 0) {
                 _sm.BufferInput("Down", 0.1f);
             }
             if (Input.GetButtonDown("Jump")) {
@@ -142,7 +142,7 @@ namespace _Scripts.Movement.States {
             #region Air Control
             //calculates direction to move in and desired velocity
             if (_lastWallJump < 0) {
-                float targetSpeed = _input.x * _maxHorizontalAirSpeed;
+                float targetSpeed = _gameManager.Input.x * _maxHorizontalAirSpeed;
                 float speedDif = 0;
                 if (IsPlayerSpeedExceeding(targetSpeed)) {
                     //when the character is exceeding our maximum velocity, speed dif will have a value of 1 in the opposite horizontal direction
@@ -212,7 +212,7 @@ namespace _Scripts.Movement.States {
                 //wall friction
                 if (_rb.velocity.y < -_wallSlideSpeed)
                 {
-                    if (_input.x * WallCheck() > 0.01f)
+                    if (_gameManager.Input.x * WallCheck() > 0.01f)
                     {
                         _rb.velocity = new Vector2(_rb.velocity.x, -_wallSlideSpeed);
                     }
@@ -225,7 +225,7 @@ namespace _Scripts.Movement.States {
             #endregion
 
             if (_grappleInput) {
-                HandleGrappleInput(_input, _hookShotForce);
+                HandleGrappleInput(_gameManager.Input, _hookShotForce);
                 _grappleInput = false;    
             }
             

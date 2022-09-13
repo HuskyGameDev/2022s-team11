@@ -54,7 +54,7 @@ namespace _Scripts.Movement.States {
         protected override void HandleInput() {
             _grappleInput = Input.GetButtonDown("Grapple");
 
-            if (_input.y < 0) {
+            if (_gameManager.Input.y < 0) {
                 _sm.BufferInput("Down", 0.1f);
             }
 
@@ -67,8 +67,8 @@ namespace _Scripts.Movement.States {
                 _sm.BufferInput("Jump", 0.15f);
             }
         }
-        //TODO: MAKE GRAPPLE FIRE MEMBER OF MOVEMENT STATE
-        //TODO: ONLY ENTER GRAPPLE STATE ONCE HOOK CONNECTS
+
+        
         protected override void LogicUpdate() {
 
             if (_hookController.IsHeld) {
@@ -106,7 +106,7 @@ namespace _Scripts.Movement.States {
 
             if (_grappleInput) {
                 //Fire the hook
-                //if (_hookController.IsHeld) _hookController.FireHook(_input, _grappleFireForce);
+                //if (_hookController.IsHeld) _hookController.FireHook(_gameManager.Input, _grappleFireForce);
                 //Retract the hook
                 //else _hookController.RetractHook();
                 return;
@@ -138,7 +138,7 @@ namespace _Scripts.Movement.States {
             ///pullVector = tetherVector.y < 0 ? pullVector * new Vector2(1, _downwardPullMagnitude) : pullVector;
 
             //Factor in player input
-            ///pullVector += new Vector2(_input.x * Mathf.Abs(pullVector.x), _input.y * Mathf.Abs(pullVector.y)) * _playerInputMagnitude;
+            ///pullVector += new Vector2(_gameManager.Input.x * Mathf.Abs(pullVector.x), _gameManager.Input.y * Mathf.Abs(pullVector.y)) * _playerInputMagnitude;
 
             //Constrain player to end of rope "circle"
             //Look forward to see if the player will break the circle
@@ -174,7 +174,7 @@ namespace _Scripts.Movement.States {
             float _vertPullStrengthAdjusted = (!_sm.CheckBufferedInputsFor("Jumped")) ? _vertPullStrength : 0;
             //Debug.Log(new Vector2(pullVector.x * _horizPullStrength, pullVector.y * _vertPullStrength));
             _rb.AddForce(new Vector2(pullVector.x * _horizPullStrength, pullVector.y * _vertPullStrengthAdjusted) , ForceMode2D.Force);
-            _rb.AddForce(new Vector2(_input.x * _playerInputMagnitude, 0));
+            _rb.AddForce(new Vector2(_gameManager.Input.x * _playerInputMagnitude, 0));
             
             _lastDistance = distance < _lastDistance ? distance : _lastDistance;
         }

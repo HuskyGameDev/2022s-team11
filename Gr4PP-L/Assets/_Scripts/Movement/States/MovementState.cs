@@ -1,5 +1,5 @@
-using System.Diagnostics;
 using _Scripts.Utility;
+using _Scripts.Managers;
 using UnityEngine;
 namespace _Scripts.Movement.States {
     /** Author: Nick Zimanski
@@ -9,8 +9,6 @@ namespace _Scripts.Movement.States {
     {
         [Header("Movement State")]
         [SerializeField]private float _jumpForce;
-        [SerializeField]private float _horizAxisThreshold;
-        [SerializeField]private float _vertAxisThreshold;
         #region Variables
         protected MovementStateMachine _sm {get; private set;}
         protected _Scripts.Managers.PlayerManager _owner {get; private set;}
@@ -18,10 +16,10 @@ namespace _Scripts.Movement.States {
         protected float _stateEnterTime;
         protected GrappleHookController _hook;
         protected Rigidbody2D _rb;
+        protected GameManager _gameManager;
         /// <summary>
         /// Stores the input data on a frame. Updated automatically every frame before HandleInput()
         /// </summary>
-        protected Vector2 _input;
 
         protected States? _transitionToState;
         public States? Name => null;
@@ -38,13 +36,13 @@ namespace _Scripts.Movement.States {
             _rb = player.PlayerRigidbody;
             _uncheckedInputBuffer = false;
             _hook = player.GrappleHookCtrl;
+            _gameManager = GameManager.gameManager;
         }
         public override void Enter() {
             base.Enter();
             _uncheckedInputBuffer = true;
             _stateEnterTime = Time.time;
             _transitionToState = null;
-            _input = GetInput();
         }
         public override void Exit() {
             base.Exit();
@@ -62,7 +60,6 @@ namespace _Scripts.Movement.States {
         /// </summary>
         protected virtual void PhysicsUpdate() {}
         public override void Execute() {
-            _input = GetInput();
             HandleInput();
             LogicUpdate();
             StateChangeUpdate();
@@ -90,13 +87,19 @@ namespace _Scripts.Movement.States {
         }
 
         protected void HandleGrappleInput(Vector2 direction, float force) {
+            Debug.Log("Handling grapple input...");
             if (_hook.IsAttached) return;
+            Debug.Log("The hook is not attached!");
             if (!_owner._canGrapple) return;
+            Debug.Log("We can Grapple!");
             
+
             if (!_hook.IsHeld) {
+                Debug.Log("Retracting...");
                 _hook.RetractHook();
                 return;
             } else {
+                Debug.Log("Firing...");
                  _hook.FireHook(direction, force);
             }
         }
@@ -151,19 +154,13 @@ namespace _Scripts.Movement.States {
         /// <returns>A bool, whether or not the player is moving faster than v</returns>
         protected bool IsPlayerSpeedExceeding(float v)
         {
-            if(Mathf.Abs(_rb.velocity.x) > Mathf.Abs(v) && Mathf.Abs(v) > 0.1f && Mathf.Sign(v) == Mathf.Sign(_rb.velocity.x))
+            if(Mathf.Abs(_rb.velocity.x) > Mathf.Abs(v) && Mathf.Sign(v) == Mathf.Sign(_rb.velocity.x))
             {
                 return true;
             } else
             {
                 return false;
             }
-        }
-
-        protected Vector2 GetInput() {
-            var h = Input.GetAxisRaw("Horizontal");
-            var v = Input.GetAxisRaw("Vertical");
-            return new Vector2(Mathf.Abs(h) >= _horizAxisThreshold ? h : 0, Mathf.Abs(v) >= _vertAxisThreshold ? v : 0);
         }
 
         new public enum States {
