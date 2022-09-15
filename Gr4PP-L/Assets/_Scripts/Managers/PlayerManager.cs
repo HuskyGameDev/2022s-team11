@@ -19,6 +19,7 @@ namespace _Scripts.Managers {
         public GrappleHookController GrappleHookCtrl => _grappleHookController;
         private Rigidbody2D _grappleHookRigidbody;
         public Rigidbody2D GrappleHookRigidbody => _grappleHookRigidbody;
+        [Header("States")]
         [SerializeField]private RunningState _runningState;
         [SerializeField]private SlidingState _slidingState;
         [SerializeField]private GrapplingState _grapplingState;
@@ -31,15 +32,19 @@ namespace _Scripts.Managers {
         [Tooltip("")]
         private Vector2 _wallCheckSize;
         public Vector2 WallCheckSize => _wallCheckSize;
+        
         [SerializeField]
         [Tooltip("")]
         private Vector2 _wallCheckOffset;
         public Vector2 WallCheckOffset => _wallCheckOffset;
+        
         [Space(10)]
+
         [SerializeField]
         [Tooltip("")]
         private Transform _groundCheckPoint;
         public Transform GroundCheckPoint => _groundCheckPoint;
+
         [SerializeField]
         [Tooltip("")]
         private Vector2 _groundCheckSize;
@@ -79,7 +84,7 @@ namespace _Scripts.Managers {
             _movementSM.AddState((int) MovementState.States.Grappling, _grapplingState);
             _movementSM.AddState((int) MovementState.States.Running, _runningState);
             
-            _movementSM.Initialize(this, _movementSM.GetState((int) MovementState.States.Running));
+            _movementSM.Initialize(GameManager.Instance, _movementSM.GetState((int) MovementState.States.Running));
         }
 
         private bool CheckIsGrounded() {

@@ -3,6 +3,7 @@ using _Scripts.Utility;
 using UnityEngine;
 using System.Collections.Generic;
 using System.Linq;
+
 namespace _Scripts.Movement.States
 {
     /** Author: Nick Zimanski
@@ -60,9 +61,9 @@ namespace _Scripts.Movement.States
             }
         }
 
-        public void Initialize(PlayerManager player, MovementState startingState) {
+        public void Initialize(GameManager game, MovementState startingState) {
             for (int i = 0; i < _validStates.Count; i++) {
-                _validStates.ElementAt(i).Value.Initialize(player, this);
+                _validStates.ElementAt(i).Value.Initialize(game, this);
             }
             base.Initialize(startingState);
         }

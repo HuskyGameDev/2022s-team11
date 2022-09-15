@@ -113017,6 +113017,8 @@ GameObject:
   m_Component:
   - component: {fileID: 1479365579}
   - component: {fileID: 1479365580}
+  - component: {fileID: 1479365582}
+  - component: {fileID: 1479365581}
   m_Layer: 0
   m_Name: Managers
   m_TagString: ObjectFolder
@@ -113040,6 +113042,36 @@ Transform:
   m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &1479365580
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1479365578}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b0263e3461557dc4f86228c83f516a88, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _charsPerSecond: 10
+  _dialogueCanvas: {fileID: 1143493159}
+  _dialogueText: {fileID: 1728264794}
+  _characterNameText: {fileID: 788935146}
+--- !u!114 &1479365581
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1479365578}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0a05ad7978158ee40873d48b688d7c68, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _horizAxisThreshold: 0.1
+  _vertAxisThreshold: 0.1
+--- !u!114 &1479365582
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -118126,7 +118158,7 @@ MonoBehaviour:
   _parent: {fileID: 1210927412}
   _grappleTether: {fileID: 1529722962}
   _defaultDirectionVector: {x: 1, y: 1}
-  _layerMask:
+  _validGrappleLayers:
     serializedVersion: 2
     m_Bits: 0
 --- !u!120 &1839364186

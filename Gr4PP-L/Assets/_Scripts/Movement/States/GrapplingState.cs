@@ -36,11 +36,11 @@ namespace _Scripts.Movement.States {
         public bool isRefreshed = false;
         #endregion
         new public States Name => States.Grappling;
-        public override void Initialize(_Scripts.Managers.PlayerManager player, MovementStateMachine sm)
+        public override void Initialize(_Scripts.Managers.GameManager game, MovementStateMachine sm)
         {
-            base.Initialize(player, sm);
-            _hookController = player.GrappleHookCtrl;
-            _hookRb = player.GrappleHookRigidbody;
+            base.Initialize(game, sm);
+            _hookController = game.playerManager.GrappleHookCtrl;
+            _hookRb = game.playerManager.GrappleHookRigidbody;
         }
         public override void Enter() {
             base.Enter();
@@ -54,7 +54,7 @@ namespace _Scripts.Movement.States {
         protected override void HandleInput() {
             _grappleInput = Input.GetButtonDown("Grapple");
 
-            if (_gameManager.Input.y < 0) {
+            if (_gameManager.DirectionalInput.y < 0) {
                 _sm.BufferInput("Down", 0.1f);
             }
 
@@ -174,7 +174,7 @@ namespace _Scripts.Movement.States {
             float _vertPullStrengthAdjusted = (!_sm.CheckBufferedInputsFor("Jumped")) ? _vertPullStrength : 0;
             //Debug.Log(new Vector2(pullVector.x * _horizPullStrength, pullVector.y * _vertPullStrength));
             _rb.AddForce(new Vector2(pullVector.x * _horizPullStrength, pullVector.y * _vertPullStrengthAdjusted) , ForceMode2D.Force);
-            _rb.AddForce(new Vector2(_gameManager.Input.x * _playerInputMagnitude, 0));
+            _rb.AddForce(new Vector2(_gameManager.DirectionalInput.x * _playerInputMagnitude, 0));
             
             _lastDistance = distance < _lastDistance ? distance : _lastDistance;
         }

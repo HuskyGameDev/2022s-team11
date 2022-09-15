@@ -39,9 +39,9 @@ namespace _Scripts.Movement.States
         new public States Name => States.Sliding;
         #endregion
 
-        public override void Initialize(_Scripts.Managers.PlayerManager player, MovementStateMachine sm)
+        public override void Initialize(_Scripts.Managers.GameManager game, MovementStateMachine sm)
         {
-            base.Initialize(player, sm);
+            base.Initialize(game, sm);
         }
 
         public override void Enter()
@@ -58,8 +58,7 @@ namespace _Scripts.Movement.States
         protected override void HandleInput()
         {
             var gameTime = Time.time;
-            //_gameManager.Input = GetInput(); Unnecessary call
-            _isCrouchingInput = _gameManager.Input.y < 0;
+            _isCrouchingInput = _gameManager.DirectionalInput.y < 0;
 
             if (Input.GetButtonDown("Grapple"))
             {
@@ -83,7 +82,7 @@ namespace _Scripts.Movement.States
         protected override void LogicUpdate()
         {
             //calculates direction to move in and desired velocity
-            float targetSpeed = _gameManager.Input.x * _maxHorizontalSpeed;
+            float targetSpeed = _gameManager.DirectionalInput.x * _maxHorizontalSpeed;
             float speedDif = 0;
             if (IsPlayerSpeedExceeding(targetSpeed))
             {
@@ -118,7 +117,7 @@ namespace _Scripts.Movement.States
         {
             _rb.AddForce(_movement * Vector2.right);
 
-            if (Mathf.Abs(_gameManager.Input.x) < 0.01f)
+            if (Mathf.Abs(_gameManager.DirectionalInput.x) < 0.01f)
             {
                 float amount = Mathf.Min(Mathf.Abs(_rb.velocity.x), Mathf.Abs(_frictionAmount));
                 amount *= Mathf.Sign(_rb.velocity.x);

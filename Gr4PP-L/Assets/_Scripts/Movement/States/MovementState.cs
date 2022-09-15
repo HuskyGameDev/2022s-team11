@@ -28,15 +28,15 @@ namespace _Scripts.Movement.States {
         public bool _canGrapple;
 
         #endregion
-        public virtual void Initialize(_Scripts.Managers.PlayerManager player, MovementStateMachine sm)
+        public virtual void Initialize(_Scripts.Managers.GameManager game, MovementStateMachine sm)
         {
+            _gameManager = game;
             base.Initialize();
-            _owner = player;
+            _owner = game.playerManager;
             _sm = sm;
-            _rb = player.PlayerRigidbody;
+            _rb = _owner.PlayerRigidbody;
             _uncheckedInputBuffer = false;
-            _hook = player.GrappleHookCtrl;
-            _gameManager = GameManager.gameManager;
+            _hook = _owner.GrappleHookCtrl;
         }
         public override void Enter() {
             base.Enter();
@@ -59,6 +59,7 @@ namespace _Scripts.Movement.States {
         /// Processes physics-based logic and moves the player. Called during FixedUpdate.
         /// </summary>
         protected virtual void PhysicsUpdate() {}
+
         public override void Execute() {
             HandleInput();
             LogicUpdate();
@@ -154,13 +155,7 @@ namespace _Scripts.Movement.States {
         /// <returns>A bool, whether or not the player is moving faster than v</returns>
         protected bool IsPlayerSpeedExceeding(float v)
         {
-            if(Mathf.Abs(_rb.velocity.x) > Mathf.Abs(v) && Mathf.Sign(v) == Mathf.Sign(_rb.velocity.x))
-            {
-                return true;
-            } else
-            {
-                return false;
-            }
+            return Mathf.Abs(_rb.velocity.x) > Mathf.Abs(v) && Mathf.Sign(v) == Mathf.Sign(_rb.velocity.x);
         }
 
         new public enum States {
