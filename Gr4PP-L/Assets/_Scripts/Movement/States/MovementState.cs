@@ -89,19 +89,14 @@ namespace Movement {
         }
 
         protected void HandleGrappleInput(Vector2 direction, float force) {
-            Debug.Log("Handling grapple input...");
             if (_hook.IsAttached) return;
-            Debug.Log("The hook is not attached!");
             if (!_owner.CanGrapple) return;
-            Debug.Log("We can Grapple!");
             
 
             if (!_hook.IsHeld) {
-                Debug.Log("Retracting...");
                 _hook.RetractHook();
                 return;
             } else {
-                Debug.Log("Firing...");
                  _hook.FireHook(direction, force);
             }
         }
@@ -156,6 +151,7 @@ namespace Movement {
         /// <returns>A bool, whether or not the player is moving faster than v</returns>
         protected bool IsPlayerSpeedExceeding(float v)
         {
+            if (v == 0 && _rb.velocity.x != 0) return true; 
             return Mathf.Abs(_rb.velocity.x) > Mathf.Abs(v) && Mathf.Sign(v) == Mathf.Sign(_rb.velocity.x);
         }
 

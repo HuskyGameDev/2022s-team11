@@ -1,7 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.SceneManagement;
 using Managers;
 
 public class GameManager : Manager
@@ -11,11 +10,14 @@ public class GameManager : Manager
     public static GameManager Instance {get; private set;}
     public DialogueManager dialogueManager;
     public InputManager inputManager;
+    public LevelManager levelManager;
+    public TimerManager timerManager;
 
-    [SerializeField] private Vector2 _lastCheckpointPos;
-    [SerializeField] private float _lastTime;
-    private float _initTime = 0;
-    private Vector2 _initPos;
+    private Movement.PlayerController _player;
+    public Movement.PlayerController GetPlayer() {
+        if (_player == null) _player = GameObject.FindGameObjectWithTag("Player").GetComponent<Movement.PlayerController>();
+        return _player;
+    }
 
     public static Camera MainCamera {get; private set;}
 
@@ -28,28 +30,47 @@ public class GameManager : Manager
 
         DontDestroyOnLoad(this.gameObject);
         Instance = this;
+
+        dialogueManager = GetComponentInChildren<DialogueManager>();
+        inputManager = GetComponentInChildren<InputManager>();
+        levelManager = GetComponentInChildren<LevelManager>();
+        timerManager = GetComponentInChildren<TimerManager>();
     }
 
     // Start is called before the first frame update
     void Start()
     {
-        dialogueManager = GetComponentInChildren<DialogueManager>();
-        inputManager = GetComponentInChildren<InputManager>();
+
+        _player = GameObject.FindGameObjectWithTag("Player").GetComponent<Movement.PlayerController>();
         
         MainCamera = Camera.main;
-
-        _initPos = _lastCheckpointPos;
     }
 
     // Update is called once per frame
     void Update()
     {
-        #region Player Resetting
-        if (inputManager.GetButton("Player Reset")) {
-            _lastCheckpointPos = _initPos;
-            _lastTime = 0;
-            SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
+        #region Scene Resetting
+        if (inputManager.GetButton("Level Reset")) {
+            GetPlayer().ResetPosition();
+            LevelManager.ResetScene();
         }
         #endregion
+    }
+
+    /// <summary>
+    /// Kills the current player, then eventually respawns them
+    /// </summary>
+    /// <param name="pc">The player</param>
+    public void KillPlayer(Movement.PlayerController pc) {
+        pc.Respawn();
+    }
+
+    public override void OnSceneReset() {
+        dialogueManager.OnSceneReset();
+        inputManager.OnSceneReset();
+        levelManager.OnSceneReset();
+        timerManager.OnSceneReset();
+
+        Start();
     }
 }   

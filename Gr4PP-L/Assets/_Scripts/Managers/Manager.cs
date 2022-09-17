@@ -6,9 +6,7 @@ namespace Managers
     */
     public abstract class Manager : MonoBehaviour
     {
-        void Awake()
-        {
-            
-        }
+
+        public abstract void OnSceneReset();
     }
 }

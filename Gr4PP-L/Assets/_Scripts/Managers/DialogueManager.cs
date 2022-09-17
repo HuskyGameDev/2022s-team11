@@ -54,9 +54,9 @@ namespace Managers {
             if (_currentConversation == null) return;
 
             UpdateConversation();
-
-            //TODO Actually make the conversation display
         }
+
+        public override void OnSceneReset() {Start();}
 
 
         

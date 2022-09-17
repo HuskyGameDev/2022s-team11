@@ -49,7 +49,7 @@ public class IcePatchManager : MonoBehaviour
         if (_collide)
         {
             // Gets the players input and their direction
-            _directionInput = Input.GetAxisRaw("Horizontal");
+            _directionInput = _gm.DirectionalInput.x;
             _directionMove = _rigBody.velocity.x;
             // Debug.Log(_directionMove);
 

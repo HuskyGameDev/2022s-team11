@@ -67,5 +67,9 @@ namespace Movement
             }
             base.Initialize(startingState);
         }
+
+        public MovementState GetCurrentState() {
+            return _currentState;
+        }
     }
 }

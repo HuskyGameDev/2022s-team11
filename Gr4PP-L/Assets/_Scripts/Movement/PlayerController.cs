@@ -73,6 +73,8 @@ namespace Movement {
             CoyoteTimeWindowEndTime;
         private bool _jumpInputReleased, 
             _isGrappleHeld = true;
+        private Vector2 _initialPosition;
+
         public bool IsGrappleHeld => _isGrappleHeld;
 
         public bool CanGrapple;
@@ -101,9 +103,32 @@ namespace Movement {
             }
         }
 
-        public AirborneState getAirborneState()
-        {
-            return _airborneState;
+
+        /// <summary>
+        /// Sets the player to their origin position
+        /// </summary>
+        public void ResetPosition() {
+            SetPosition(_initialPosition);
+        }
+
+        /// <summary>
+        /// Sets the player to any position in the world
+        /// </summary>
+        /// <param name="pos">the position to set to</param>
+        public void SetPosition(Vector2 pos) {
+            transform.position = pos;
+        }
+
+        /// <summary>
+        /// Resets the player's position to their last checkpoint
+        /// </summary>
+        public void Respawn() {
+            transform.position = _gm.levelManager.GetCheckpoint();
+        }
+
+        private void Die() {
+            GrappleHookCtrl.RetractHook();
+            _playerRigidbody.velocity = Vector2.zero;
         }
         #endregion
         
@@ -116,7 +141,7 @@ namespace Movement {
             GrappleHookRigidbody = _grappleHook.GetComponent<Rigidbody2D>();
             SetupStateMachine();
 
-            transform.position = _gm.lastCheckpointPos;
+            _initialPosition = transform.position;
         }
 
         void Update()
@@ -128,6 +153,16 @@ namespace Movement {
         void FixedUpdate()
         {
             _movementSM.FixedUpdate();
+        }
+
+        void OnCollisionEnter2D(Collision2D other)
+        {
+            if (other.gameObject.CompareTag("Hazard")) {
+                //We hit a hazard, time to die
+                Die();
+                _gm.KillPlayer(this);
+                
+            }
         }
         #endregion
 

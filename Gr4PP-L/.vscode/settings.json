@@ -60,6 +60,7 @@
         "Dont",
         "horiz",
         "Mathf",
+        "Rigidbody",
         "UGUI"
     ]
 }

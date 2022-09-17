@@ -11,6 +11,8 @@ TagManager:
   - Jump Pad
   - GM
   - Glass
+  - Hazard
+  - Room
   layers:
   - Default
   - TransparentFX

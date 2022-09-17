@@ -21,7 +21,7 @@ namespace Managers {
         private void OnTriggerEnter2D(Collider2D collision)
         {
             // Player container location
-            playContainer = GameObject.Find("Player Container");
+            playContainer = GameObject.FindGameObjectWithTag("Player");
 
             // If connected with player
             if (collision.tag == "Player")

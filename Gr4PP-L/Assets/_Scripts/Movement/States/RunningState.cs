@@ -88,9 +88,11 @@ namespace Movement {
                     //calculates difference between current velocity and desired velocity
                     speedDif = targetSpeed - _rb.velocity.x;
                 }
+
                 //change acceleration rate depending on the situation
                 //when target speed is > 0.01f, use acceleration variable, else use deceleration variable
-                _accelRate = (Mathf.Abs(targetSpeed) > 0.01f) ? _acceleration : _deceleration;
+                if (targetSpeed == 0) _accelRate = 0;
+                else _accelRate = (Mathf.Abs(targetSpeed) > 0.01f) ? _acceleration : _deceleration;
                 //applies acceleration to speed difference, then raises to a set power so acceleration increases with higher speeds
                 //finally multiplies by sing to reapply direction
                 _movement = Mathf.Pow(Mathf.Abs(speedDif) * _accelRate, _velPower) * Mathf.Sign(speedDif);
@@ -113,7 +115,8 @@ namespace Movement {
         }
         protected override void PhysicsUpdate() {
             //applies force to rigidbody, multiplying by Vector2.right so that it only affects X axis
-            _rb.AddForce(_movement * Vector2.right);
+            if (_movement != 0) _rb.AddForce(_movement * Vector2.right);
+        
 
             #region Friction
                 if (Mathf.Abs(_gameManager.DirectionalInput.x) < 0.01f)

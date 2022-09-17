@@ -2,17 +2,22 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class RoomManager : MonoBehaviour
+public class RoomController : MonoBehaviour
 {
     public GameObject virtualCam;
-    private GameMaster _gm;
-    private TimerManager _tm;
+    private GameManager _gm;
+    private Vector2 _pos;
 
     private void Start() {
-        _gm = GameObject.FindGameObjectWithTag("GM").GetComponent<GameMaster>();
-        if(_gm.lastCheckpointPos == new Vector2 (transform.position.x, transform.position.y)) {
+        _gm = GameManager.Instance;
+        _pos = transform.position;
+        
+        if(GameManager.Instance.levelManager.IsAtCheckpoint(_pos)) {
             virtualCam.SetActive(true);
         }
+
+        if (tag.Equals("Level Origin"))
+            _gm.levelManager.RegisterOrigin(gameObject);
     }
 
     // when the player enters this room, activate this room's camera
@@ -21,7 +26,7 @@ public class RoomManager : MonoBehaviour
         if (other.CompareTag("Player") && !other.isTrigger)
         {
             virtualCam.SetActive(true);
-            _gm.lastCheckpointPos = transform.position;
+            _gm.levelManager.SetCheckpoint(_pos);
         }
     }
 

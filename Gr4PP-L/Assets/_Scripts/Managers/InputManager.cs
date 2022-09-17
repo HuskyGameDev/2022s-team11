@@ -26,6 +26,8 @@ namespace Managers {
             DirectionalInput = GetInput();
         }
 
+        public override void OnSceneReset() {Start();}
+
         /// <summary>
         /// Returns a value between -1 and 1 for the given axis, with no smoothing applied
         /// </summary>

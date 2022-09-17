@@ -1666,8 +1666,6 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 113358694}
-  - component: {fileID: 113358696}
-  - component: {fileID: 113358695}
   m_Layer: 0
   m_Name: Player Container
   m_TagString: Untagged
@@ -1691,44 +1689,6 @@ Transform:
   m_Father: {fileID: 930767481}
   m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &113358695
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 113358693}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: e85697f96b6b6874bb28ee9956e32243, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  _playerRigidbody: {fileID: 1210927414}
-  _grappleHook: {fileID: 1839364184}
-  _runningState: {fileID: 11400000, guid: 6a78ca1108cdff24fa16231b2db27ff2, type: 2}
-  _slidingState: {fileID: 11400000, guid: 68e52ca9d6495134ca6f976b8c3ebb13, type: 2}
-  _grapplingState: {fileID: 11400000, guid: e72cafe1a06d5bf48aab072907737bca, type: 2}
-  _airborneState: {fileID: 11400000, guid: 5c7ad67761b4233448855a7a280f92a5, type: 2}
-  _groundLayer:
-    serializedVersion: 2
-    m_Bits: 8
-  _wallCheckSize: {x: 0.51, y: 1.48}
-  _wallCheckOffset: {x: 0.47, y: 0.16}
-  _groundCheckPoint: {fileID: 1210927413}
-  _groundCheckSize: {x: 1.14, y: 0.05}
-  _canGrapple: 0
---- !u!114 &113358696
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 113358693}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 285bd254eef57fe48a2aaeac6a12c993, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!1001 &119452344
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -7449,7 +7409,7 @@ GameObject:
   - component: {fileID: 584258617}
   - component: {fileID: 584258616}
   m_Layer: 5
-  m_Name: Text (Legacy)
+  m_Name: Current Time Text
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -8742,7 +8702,7 @@ GameObject:
   - component: {fileID: 693969194}
   m_Layer: 0
   m_Name: Room1
-  m_TagString: Untagged
+  m_TagString: Room
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -9072,9 +9032,9 @@ GameObject:
   - component: {fileID: 731638138}
   - component: {fileID: 731638137}
   - component: {fileID: 731638136}
-  - component: {fileID: 731638135}
+  - component: {fileID: 731638139}
   m_Layer: 5
-  m_Name: Canvas
+  m_Name: Timer Canvas
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -9102,20 +9062,6 @@ RectTransform:
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0, y: 0}
---- !u!114 &731638135
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 731638133}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: fb7a50cab408e05438828b02a469625f, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  currentTime: {fileID: 584258616}
-  bestTime: {fileID: 1135528798}
 --- !u!114 &731638136
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -9177,6 +9123,20 @@ Canvas:
   m_SortingLayerID: 0
   m_SortingOrder: 0
   m_TargetDisplay: 0
+--- !u!114 &731638139
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 731638133}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c5e4485f1d0e8df45a3f75afa0ff8c9d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _currentTimeText: {fileID: 584258616}
+  _bestTimeText: {fileID: 1135528798}
 --- !u!1 &732036392
 GameObject:
   m_ObjectHideFlags: 0
@@ -10029,7 +9989,7 @@ GameObject:
   - component: {fileID: 788935145}
   - component: {fileID: 788935147}
   - component: {fileID: 788935146}
-  m_Layer: 0
+  m_Layer: 5
   m_Name: CharacterNameText
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -10659,8 +10619,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3d491f14250ae9746bea2e3d827bce0e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  lastCheckpointPos: {x: 0, y: 0}
-  lastTime: 0
 --- !u!1001 &881860596
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -13914,7 +13872,7 @@ GameObject:
   - component: {fileID: 1135528799}
   - component: {fileID: 1135528798}
   m_Layer: 5
-  m_Name: Text (Legacy) (1)
+  m_Name: Best Time Text
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -14001,7 +13959,7 @@ GameObject:
   - component: {fileID: 1138533838}
   m_Layer: 0
   m_Name: Room2
-  m_TagString: Untagged
+  m_TagString: Room
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -14082,7 +14040,7 @@ GameObject:
   - component: {fileID: 1143493159}
   - component: {fileID: 1143493158}
   - component: {fileID: 1143493157}
-  m_Layer: 0
+  m_Layer: 5
   m_Name: DialogueCanvas
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -14827,7 +14785,7 @@ GameObject:
   - component: {fileID: 1191621463}
   - component: {fileID: 1191621465}
   - component: {fileID: 1191621464}
-  m_Layer: 0
+  m_Layer: 5
   m_Name: MainTextPanel
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -14913,6 +14871,7 @@ GameObject:
   - component: {fileID: 1210927414}
   - component: {fileID: 1210927415}
   - component: {fileID: 1210927417}
+  - component: {fileID: 1210927418}
   m_Layer: 0
   m_Name: Character
   m_TagString: Player
@@ -14928,7 +14887,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1210927412}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 77, y: -4, z: 0}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -15048,6 +15007,33 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 32faeceecab2e0e448f52165e9ce83cd, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _gm: {fileID: 0}
+--- !u!114 &1210927418
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1210927412}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e85697f96b6b6874bb28ee9956e32243, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _playerRigidbody: {fileID: 1210927414}
+  _grappleHook: {fileID: 1839364184}
+  _runningState: {fileID: 11400000, guid: 6a78ca1108cdff24fa16231b2db27ff2, type: 2}
+  _slidingState: {fileID: 11400000, guid: 68e52ca9d6495134ca6f976b8c3ebb13, type: 2}
+  _grapplingState: {fileID: 11400000, guid: e72cafe1a06d5bf48aab072907737bca, type: 2}
+  _airborneState: {fileID: 11400000, guid: 5c7ad67761b4233448855a7a280f92a5, type: 2}
+  _groundLayer:
+    serializedVersion: 2
+    m_Bits: 8
+  _wallCheckSize: {x: 0.51, y: 1.48}
+  _wallCheckOffset: {x: 0.47, y: 0.16}
+  _groundCheckPoint: {fileID: 1210927413}
+  _groundCheckSize: {x: 1.14, y: 0.05}
+  CanGrapple: 0
 --- !u!1 &1212973205
 GameObject:
   m_ObjectHideFlags: 0
@@ -110057,6 +110043,11 @@ PrefabInstance:
       propertyPath: m_Name
       value: Spike
       objectReference: {fileID: 0}
+    - target: {fileID: 4767275578160389812, guid: b91a142043b616840a80402d33ae9a0e,
+        type: 3}
+      propertyPath: m_IsTrigger
+      value: 0
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: b91a142043b616840a80402d33ae9a0e, type: 3}
 --- !u!4 &1424709766 stripped
@@ -113017,8 +113008,10 @@ GameObject:
   m_Component:
   - component: {fileID: 1479365579}
   - component: {fileID: 1479365580}
-  - component: {fileID: 1479365582}
   - component: {fileID: 1479365581}
+  - component: {fileID: 1479365584}
+  - component: {fileID: 1479365583}
+  - component: {fileID: 1479365585}
   m_Layer: 0
   m_Name: Managers
   m_TagString: ObjectFolder
@@ -113071,7 +113064,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _horizAxisThreshold: 0.1
   _vertAxisThreshold: 0.1
---- !u!114 &1479365582
+--- !u!114 &1479365583
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -113080,13 +113073,44 @@ MonoBehaviour:
   m_GameObject: {fileID: 1479365578}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: b0263e3461557dc4f86228c83f516a88, type: 3}
+  m_Script: {fileID: 11500000, guid: 2d993a4b9953dc842abac9d908d8bcba, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _charsPerSecond: 10
-  _dialogueCanvas: {fileID: 1143493159}
-  _dialogueText: {fileID: 1728264794}
-  _characterNameText: {fileID: 788935146}
+  _lastCheckpoint:
+    position: {x: 0, y: 0}
+    id: 0
+  _rooms: []
+--- !u!114 &1479365584
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1479365578}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1c2c6eeb6d489f8438f3a8c6e3557ac0, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  dialogueManager: {fileID: 0}
+  inputManager: {fileID: 0}
+  levelManager: {fileID: 0}
+  timerManager: {fileID: 0}
+  _lastTime: 0
+--- !u!114 &1479365585
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1479365578}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fb7a50cab408e05438828b02a469625f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  CurrentTime: 0
+  BestTime: 3.4028235e+38
 --- !u!4 &1479550041 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 4138980566082907668, guid: b91a142043b616840a80402d33ae9a0e,
@@ -116232,7 +116256,7 @@ GameObject:
   - component: {fileID: 1728264793}
   - component: {fileID: 1728264795}
   - component: {fileID: 1728264794}
-  m_Layer: 0
+  m_Layer: 5
   m_Name: DialogueText
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -116906,6 +116930,11 @@ PrefabInstance:
       propertyPath: m_Name
       value: Grapple_Refresh
       objectReference: {fileID: 0}
+    - target: {fileID: 4138980566082907674, guid: ec807467bc4e5b745a655e32884fa2a5,
+        type: 3}
+      propertyPath: playContainer
+      value: 
+      objectReference: {fileID: 113358693}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: ec807467bc4e5b745a655e32884fa2a5, type: 3}
 --- !u!1001 &1752352442
@@ -117221,7 +117250,7 @@ GameObject:
   - component: {fileID: 1763868866}
   m_Layer: 0
   m_Name: Room3
-  m_TagString: Untagged
+  m_TagString: Room
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -118160,7 +118189,7 @@ MonoBehaviour:
   _defaultDirectionVector: {x: 1, y: 1}
   _validGrappleLayers:
     serializedVersion: 2
-    m_Bits: 0
+    m_Bits: 8
 --- !u!120 &1839364186
 LineRenderer:
   m_ObjectHideFlags: 0
