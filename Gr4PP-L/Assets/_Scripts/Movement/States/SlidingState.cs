@@ -1,6 +1,6 @@
 using System;
 using UnityEngine;
-namespace _Scripts.Movement.States
+namespace Movement
 {
     /** Author: Nick Zimanski
     * Version 3/21/22
@@ -39,9 +39,9 @@ namespace _Scripts.Movement.States
         new public States Name => States.Sliding;
         #endregion
 
-        public override void Initialize(_Scripts.Managers.GameManager game, MovementStateMachine sm)
+        public override void Initialize(GameManager game, PlayerController player, MovementStateMachine sm)
         {
-            base.Initialize(game, sm);
+            base.Initialize(game, player, sm);
         }
 
         public override void Enter()

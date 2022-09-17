@@ -1,7 +1,7 @@
 using UnityEngine;
-namespace _Scripts.Movement.States {
+namespace Movement {
     /** Author: Nick Zimanski
-    * Version 3/21/22
+    * Version 9/16/22
     */
     [CreateAssetMenu(fileName = "AirborneStateData", menuName = "ScriptableObjects/MovementStates/AirborneStateScriptableObject")]
     public class AirborneState : MovementState
@@ -77,8 +77,8 @@ namespace _Scripts.Movement.States {
         private int _queueWallJump = 0;
         public float WallSlideSpeed => _wallSlideSpeed;
         private float _gravityScale, _horizontalInput, _acceleration, _deceleration;
-        public override void Initialize(_Scripts.Managers.GameManager game, MovementStateMachine sm) {
-            base.Initialize(game, sm);
+        public override void Initialize(GameManager game, PlayerController player, MovementStateMachine sm) {
+            base.Initialize(game, player, sm);
             _gravityScale = _rb.gravityScale;
         }
         public override void Enter() {
@@ -171,7 +171,7 @@ namespace _Scripts.Movement.States {
 
             if (_hook.IsAttached) {
                 _sm.RemoveBufferedInputsFor("Grapple");
-                _owner._canGrapple = false;
+                _owner.CanGrapple = false;
                 _transitionToState = States.Grappling;
             }
         }

@@ -1,13 +1,13 @@
-using _Scripts.Managers;
-using _Scripts.Utility;
+using Managers;
+using Utility;
 using UnityEngine;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace _Scripts.Movement.States
+namespace Movement
 {
     /** Author: Nick Zimanski
-    * Version 1/26/22
+    * Version 9/16/22
     */
     public class MovementStateMachine : StateMachine<MovementState> 
     {
@@ -61,9 +61,9 @@ namespace _Scripts.Movement.States
             }
         }
 
-        public void Initialize(GameManager game, MovementState startingState) {
+        public void Initialize(GameManager game, PlayerController player, MovementState startingState) {
             for (int i = 0; i < _validStates.Count; i++) {
-                _validStates.ElementAt(i).Value.Initialize(game, this);
+                _validStates.ElementAt(i).Value.Initialize(game, player, this);
             }
             base.Initialize(startingState);
         }

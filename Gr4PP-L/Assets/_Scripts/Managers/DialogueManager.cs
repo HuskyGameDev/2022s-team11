@@ -8,10 +8,11 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using TMPro;
+using Dialogue;
 
-namespace _Scripts.Managers {
+namespace Managers {
     /** Author: Nick Zimanski
-    * Version: 9/10/22
+    * Version: 9/16/22
     */
     public class DialogueManager : Manager
     {
@@ -36,6 +37,7 @@ namespace _Scripts.Managers {
         private TextMeshProUGUI _characterNameText;
 
         private float _text_secondsPerChar { get => 1f / _charsPerSecond; }
+        
         void Awake()
         {
             _allConversations = ImportJson<ConversationCollection>("Json/conversations");

@@ -1,24 +1,25 @@
 using System.Data;
 using System;
 using UnityEngine;
-using _Scripts.Movement.States;
-using _Scripts.Movement;
-using _Scripts.Utility;
-namespace _Scripts.Managers {
+using Movement;
+using Utility;
+
+namespace Movement {
     /** Author: Nick Zimanski
     * Version 3/21/22
     */
-    public class PlayerManager : Manager
+    public class PlayerController : MonoBehaviour
     {
         #region Serialized Variables
         [Header("Components")]
         [SerializeField]private Rigidbody2D _playerRigidbody;
         public Rigidbody2D PlayerRigidbody => _playerRigidbody;
-        [SerializeField]private GameObject _grappleHook;
-        private GrappleHookController _grappleHookController;
-        public GrappleHookController GrappleHookCtrl => _grappleHookController;
-        private Rigidbody2D _grappleHookRigidbody;
-        public Rigidbody2D GrappleHookRigidbody => _grappleHookRigidbody;
+
+        [SerializeField] private GameObject _grappleHook;
+
+        public GrappleHookController GrappleHookCtrl {get; private set;}
+        public Rigidbody2D GrappleHookRigidbody {get; private set;}
+
         [Header("States")]
         [SerializeField]private RunningState _runningState;
         [SerializeField]private SlidingState _slidingState;
@@ -53,10 +54,12 @@ namespace _Scripts.Managers {
 
         #region Variables
         private MovementStateMachine _movementSM;
+
         /// <summary>
         /// Whether or not the player is touching the ground
         /// </summary>
         public bool IsGrounded => CheckIsGrounded();
+
         /// <summary>
         /// Whether or not the player is dead
         /// </summary>
@@ -72,7 +75,8 @@ namespace _Scripts.Managers {
             _isGrappleHeld = true;
         public bool IsGrappleHeld => _isGrappleHeld;
 
-        public bool _canGrapple;
+        public bool CanGrapple;
+        private GameManager _gm;
         #endregion
 
         #region User Methods
@@ -84,7 +88,7 @@ namespace _Scripts.Managers {
             _movementSM.AddState((int) MovementState.States.Grappling, _grapplingState);
             _movementSM.AddState((int) MovementState.States.Running, _runningState);
             
-            _movementSM.Initialize(GameManager.Instance, _movementSM.GetState((int) MovementState.States.Running));
+            _movementSM.Initialize(_gm, this, _movementSM.GetState((int) MovementState.States.Running));
         }
 
         private bool CheckIsGrounded() {
@@ -106,9 +110,13 @@ namespace _Scripts.Managers {
         #region Unity Callbacks
         void Start()
         {
-            _grappleHookController = _grappleHook.GetComponent<GrappleHookController>();
-            _grappleHookRigidbody = _grappleHook.GetComponent<Rigidbody2D>();
+            _gm = GameManager.Instance;
+
+            GrappleHookCtrl = _grappleHook.GetComponent<GrappleHookController>();
+            GrappleHookRigidbody = _grappleHook.GetComponent<Rigidbody2D>();
             SetupStateMachine();
+
+            transform.position = _gm.lastCheckpointPos;
         }
 
         void Update()

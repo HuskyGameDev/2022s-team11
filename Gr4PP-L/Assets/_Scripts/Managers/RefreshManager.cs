@@ -3,10 +3,10 @@ using System.Collections.Generic;
 using UnityEngine;
 using System.Data;
 using System;
-using _Scripts.Movement.States;
-using _Scripts.Movement;
-using _Scripts.Utility;
-namespace _Scripts.Managers { 
+using Movement;
+using Utility;
+
+namespace Managers { 
 
     /** Author: Josh Robinson
         * Version 2/7/22
@@ -27,8 +27,8 @@ namespace _Scripts.Managers {
             if (collision.tag == "Player")
             {
                 // Gets the data from the grapplestate script and sets the isrefreshed value to true
-                PlayerManager playerScript = playContainer.GetComponent<PlayerManager>();
-                playerScript._canGrapple = true;
+                PlayerController playerScript = playContainer.GetComponent<PlayerController>();
+                playerScript.CanGrapple = true;
                 Destroy(gameObject);
             }
         }

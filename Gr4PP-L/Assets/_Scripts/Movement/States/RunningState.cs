@@ -1,6 +1,7 @@
 using System;
 using UnityEngine;
-namespace _Scripts.Movement.States {
+
+namespace Movement {
     /** Author: Nick Zimanski && Noah Kolczynski
     * Version 3/21/22
     */
@@ -39,16 +40,16 @@ namespace _Scripts.Movement.States {
         #endregion
 
         #region MovementState Callbacks
-        public override void Initialize(_Scripts.Managers.GameManager game, MovementStateMachine sm)
+        public override void Initialize(GameManager game, Movement.PlayerController player, MovementStateMachine sm)
         {
-            base.Initialize(game, sm);
+            base.Initialize(game, player, sm);
         }
         public override void Enter() {
             base.Enter();
             _acceleration = _givenAccel;
             _deceleration = _givenDecel;
             HandleInput();
-            _owner._canGrapple = true;
+            _owner.CanGrapple = true;
         }
         public override void Exit() {
             base.Exit();
@@ -57,7 +58,6 @@ namespace _Scripts.Movement.States {
         #region MovementState Overrides
         protected override void HandleInput() {
             var gameTime = Time.time;
-            //_gameManager.Input = GetInput(); Unnecessary call
             _isCrouchingInput = _gameManager.DirectionalInput.y < 0;
             
             if (Input.GetButtonDown("Grapple")) {
@@ -103,7 +103,7 @@ namespace _Scripts.Movement.States {
                 _transitionToState = States.Airborne;
             } else if (_hook.IsAttached) {
                 _sm.RemoveBufferedInputsFor("Grapple");
-                _owner._canGrapple = false;
+                _owner.CanGrapple = false;
                 _transitionToState = States.Grappling;
             } else if (Input.GetButton("Slide"))
             {

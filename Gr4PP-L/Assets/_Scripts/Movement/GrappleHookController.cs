@@ -1,5 +1,5 @@
 using UnityEngine;
-namespace _Scripts.Movement {
+namespace Movement {
     public class GrappleHookController : MonoBehaviour
     {
         private bool _isHeld, _isAttached;

@@ -1,41 +1,55 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
+using Managers;
 
-namespace _Scripts.Managers {
-    public class GameManager : Manager
+public class GameManager : Manager
+{
+    public Vector2 DirectionalInput => inputManager.DirectionalInput;
+
+    public static GameManager Instance {get; private set;}
+    public DialogueManager dialogueManager;
+    public InputManager inputManager;
+
+    [SerializeField] private Vector2 _lastCheckpointPos;
+    [SerializeField] private float _lastTime;
+    private float _initTime = 0;
+    private Vector2 _initPos;
+
+    public static Camera MainCamera {get; private set;}
+
+    void Awake() 
     {
-        public Vector2 DirectionalInput => inputManager.DirectionalInput;
+        if (Instance != null && Instance != this) {
+            Destroy(this);
+            return;
+        }
 
-        public static GameManager Instance;
-        public DialogueManager dialogueManager;
-        public InputManager inputManager;
-        public PlayerManager playerManager;
+        DontDestroyOnLoad(this.gameObject);
+        Instance = this;
+    }
+
+    // Start is called before the first frame update
+    void Start()
+    {
+        dialogueManager = GetComponentInChildren<DialogueManager>();
+        inputManager = GetComponentInChildren<InputManager>();
         
-        private static Camera s_mainCamera = null;
+        MainCamera = Camera.main;
 
-        void Awake() 
-        {
-            Instance = this;
+        _initPos = _lastCheckpointPos;
+    }
+
+    // Update is called once per frame
+    void Update()
+    {
+        #region Player Resetting
+        if (inputManager.GetButton("Player Reset")) {
+            _lastCheckpointPos = _initPos;
+            _lastTime = 0;
+            SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
         }
-
-        // Start is called before the first frame update
-        void Start()
-        {
-            dialogueManager = GetComponentInChildren<DialogueManager>();
-            inputManager = GetComponentInChildren<InputManager>();
-            playerManager = GetComponentInChildren<PlayerManager>();
-        }
-
-        // Update is called once per frame
-        void Update()
-        {
-
-        }
-
-        public static Camera MainCamera() {
-            if (s_mainCamera == null) s_mainCamera = Camera.main;
-            return s_mainCamera;
-        }
-    }   
-}
+        #endregion
+    }
+}   

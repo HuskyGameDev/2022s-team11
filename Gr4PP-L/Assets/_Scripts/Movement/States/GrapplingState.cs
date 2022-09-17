@@ -1,7 +1,7 @@
 
 using System;
 using UnityEngine;
-namespace _Scripts.Movement.States {
+namespace Movement {
     /** Author: Nick Zimanski
     * Version 2/20/22
     */
@@ -35,12 +35,14 @@ namespace _Scripts.Movement.States {
         private Vector2 oldVel;
         public bool isRefreshed = false;
         #endregion
+
         new public States Name => States.Grappling;
-        public override void Initialize(_Scripts.Managers.GameManager game, MovementStateMachine sm)
+        
+        public override void Initialize(GameManager game, PlayerController player, MovementStateMachine sm)
         {
-            base.Initialize(game, sm);
-            _hookController = game.playerManager.GrappleHookCtrl;
-            _hookRb = game.playerManager.GrappleHookRigidbody;
+            base.Initialize(game, player, sm);
+            _hookController = player.GrappleHookCtrl;
+            _hookRb = player.GrappleHookRigidbody;
         }
         public override void Enter() {
             base.Enter();

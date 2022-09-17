@@ -1,7 +1,7 @@
-using _Scripts.Utility;
-using _Scripts.Managers;
+using Utility;
+using Managers;
 using UnityEngine;
-namespace _Scripts.Movement.States {
+namespace Movement {
     /** Author: Nick Zimanski
     * Version 3/21/22
     */
@@ -11,7 +11,7 @@ namespace _Scripts.Movement.States {
         [SerializeField]private float _jumpForce;
         #region Variables
         protected MovementStateMachine _sm {get; private set;}
-        protected _Scripts.Managers.PlayerManager _owner {get; private set;}
+        protected PlayerController _owner {get; private set;}
         protected bool _uncheckedInputBuffer;
         protected float _stateEnterTime;
         protected GrappleHookController _hook;
@@ -25,18 +25,19 @@ namespace _Scripts.Movement.States {
         public States? Name => null;
         protected bool IsGrounded => GroundedCheck();
 
-        public bool _canGrapple;
+        public bool CanGrapple;
 
         #endregion
-        public virtual void Initialize(_Scripts.Managers.GameManager game, MovementStateMachine sm)
+
+        public virtual void Initialize(GameManager game, PlayerController player, MovementStateMachine sm)
         {
-            _gameManager = game;
             base.Initialize();
-            _owner = game.playerManager;
+            _owner = player;
             _sm = sm;
             _rb = _owner.PlayerRigidbody;
             _uncheckedInputBuffer = false;
             _hook = _owner.GrappleHookCtrl;
+            _gameManager = game;
         }
         public override void Enter() {
             base.Enter();
@@ -91,7 +92,7 @@ namespace _Scripts.Movement.States {
             Debug.Log("Handling grapple input...");
             if (_hook.IsAttached) return;
             Debug.Log("The hook is not attached!");
-            if (!_owner._canGrapple) return;
+            if (!_owner.CanGrapple) return;
             Debug.Log("We can Grapple!");
             
 

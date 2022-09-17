@@ -1,4 +1,4 @@
-namespace _Scripts.Dialogue {
+namespace Dialogue {
     public static class NPC
     {
         public enum Character {

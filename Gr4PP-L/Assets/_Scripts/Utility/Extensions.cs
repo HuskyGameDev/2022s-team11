@@ -1,5 +1,4 @@
-using _Scripts.Dialogue;
-namespace _Scripts.Utility
+namespace Utility
 {
     public static class Extensions
     {
