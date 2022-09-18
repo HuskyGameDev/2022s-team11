@@ -59,7 +59,7 @@ namespace Managers {
         }
         
         /// <summary>
-        /// Returns true on the fram that a button is depressed
+        /// Returns true on the frame that a button is depressed
         /// </summary>
         /// <param name="inputName">The unity name for the button</param>
         /// <returns>true if the button was first depressed this frame</returns>

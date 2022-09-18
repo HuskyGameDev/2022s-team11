@@ -86,11 +86,9 @@ namespace Movement {
 
             //RaycastHit2D _hit = Physics2D.Raycast(_parent.transform.position + new Vector3(0, 0.75f, 0), direction, 15, _validGrappleLayers);
             RaycastHit2D _hit = castHit(ref direction, 15, _validGrappleLayers);
-            Debug.Log("Casting ray...");
             //Debug.DrawRay(this.transform.position, direction, Color.red);
 
             if (_hit) {
-                Debug.Log("Hit! Attaching...");
                 Vector2 _locationDelta = _hit.distance * direction.normalized;
                 this.transform.Translate(_locationDelta);
                 _isHeld = false;
