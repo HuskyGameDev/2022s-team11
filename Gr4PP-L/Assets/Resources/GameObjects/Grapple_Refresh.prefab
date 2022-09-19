@@ -14,7 +14,7 @@ GameObject:
   - component: {fileID: 4138980566082907675}
   m_Layer: 0
   m_Name: Grapple_Refresh
-  m_TagString: Untagged
+  m_TagString: Powerup
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -99,7 +99,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6586367c1d82a8548a494982b1e56cd6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  playContainer: {fileID: 0}
 --- !u!58 &4138980566082907675
 CircleCollider2D:
   m_ObjectHideFlags: 0

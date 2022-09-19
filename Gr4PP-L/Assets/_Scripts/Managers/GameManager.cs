@@ -12,6 +12,7 @@ public class GameManager : Manager
     public InputManager inputManager;
     public LevelManager levelManager;
     public TimerManager timerManager;
+    public PowerupManager powerupManager;
 
     private Movement.PlayerController _player;
     public Movement.PlayerController GetPlayer() {
@@ -35,6 +36,7 @@ public class GameManager : Manager
         inputManager = GetComponentInChildren<InputManager>();
         levelManager = GetComponentInChildren<LevelManager>();
         timerManager = GetComponentInChildren<TimerManager>();
+        powerupManager = GetComponentInChildren<PowerupManager>();
     }
 
     // Start is called before the first frame update
@@ -62,6 +64,7 @@ public class GameManager : Manager
     /// </summary>
     /// <param name="pc">The player</param>
     public void KillPlayer(Movement.PlayerController pc) {
+        powerupManager.RespawnPowerups();
         pc.Respawn();
     }
 
@@ -70,6 +73,7 @@ public class GameManager : Manager
         inputManager.OnSceneReset();
         levelManager.OnSceneReset();
         timerManager.OnSceneReset();
+        powerupManager .OnSceneReset();
 
         Start();
     }
