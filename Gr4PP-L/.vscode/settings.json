@@ -62,5 +62,10 @@
         "Mathf",
         "Rigidbody",
         "UGUI"
-    ]
+    ],
+    "workbench.colorCustomizations": {
+        "activityBar.background": "#312F01",
+        "titleBar.activeBackground": "#454202",
+        "titleBar.activeForeground": "#FEFCCE"
+    }
 }

@@ -29,7 +29,7 @@ public class TimerDisplay : MonoBehaviour
         _currentTimeText.text = "Current Time: " + time.ToString(@"mm\:ss\:fff");
 
         // If the Level has not yet been completed, sets the BestTime value to be the same as CurrentTime
-        if (_gm.timerManager.BestTime > _gm.timerManager.CurrentTime)
+        if (_gm.timerManager.BestTimeFollowsCurrent)
             _bestTimeText.text = "Best Time: " + time.ToString(@"mm\:ss\:fff");
     }
 }

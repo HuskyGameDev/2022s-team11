@@ -18,28 +18,40 @@ namespace Managers {
         private bool _timerActive = true;
 
         public float CurrentTime = 0;
+        public bool BestTimeFollowsCurrent = false;
         public float BestTime = float.MaxValue; // Large Default value so new bestTime is set on level completion. THIS NUMBER SHOULD NEVER BEEN SEEN IN GAME
         
         void Start()
         {
-            BestTime = PlayerPrefs.GetFloat(SceneManager.GetActiveScene().name, 9999999);
+            //TODO: Reimplement this. It breaks in play mode :(
+            //BestTime = PlayerPrefs.GetFloat(SceneManager.GetActiveScene().name, 9999999f);
+            //BestTimeFollowsCurrent = (BestTime == 9999999f);
+
+            BestTimeFollowsCurrent = true;
+            
         }
 
         void Update()
         {
-            if (_timerActive == true)
-            {
-                CurrentTime = CurrentTime + Time.deltaTime;
-            }
+            if (!_timerActive) return;
+            
+            CurrentTime = CurrentTime + Time.deltaTime;
+            if (BestTimeFollowsCurrent) BestTime = CurrentTime;
 
+
+        }
+
+        public override void OnSceneReset() {
+            //LevelExit();
+            CurrentTime = 0;
+        }
+
+        public void LevelExit() {
             // Updates BestTime number for current scene
             if (CurrentTime < BestTime)
             {
                 PlayerPrefs.SetFloat(SceneManager.GetActiveScene().name, CurrentTime);
-
             }
         }
-
-        public override void OnSceneReset() {Start();}
     }
 }
