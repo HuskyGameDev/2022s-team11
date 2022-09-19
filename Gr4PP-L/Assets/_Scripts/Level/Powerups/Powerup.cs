@@ -3,6 +3,9 @@ using System.Collections.Generic;
 using UnityEngine;
 
 namespace Level {
+    /** Author: Nick Zimanski
+    * Version: 9/19/22
+    */
     public abstract class Powerup : MonoBehaviour
     {
         private SpriteRenderer _sr;

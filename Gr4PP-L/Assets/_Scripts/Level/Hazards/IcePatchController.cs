@@ -5,7 +5,7 @@ using UnityEngine;
 /** Author: Josh Robinson
     * Version 2/23/22
     */
-public class IcePatchManager : MonoBehaviour
+public class IcePatchController : MonoBehaviour
 {
     private GameManager _gm;
 

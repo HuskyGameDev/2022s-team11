@@ -5,7 +5,7 @@ using UnityEngine;
 /** Author: Josh Robinson
     * Version 2/23/22
     */
-public class JumpPadManager : MonoBehaviour
+public class JumpPadController : MonoBehaviour
 {
     // Variable to control the launch force of the 
     [SerializeField]

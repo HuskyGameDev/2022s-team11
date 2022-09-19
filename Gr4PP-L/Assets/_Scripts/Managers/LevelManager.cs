@@ -6,6 +6,9 @@ using UnityEngine.SceneManagement;
 using Utility;
 
 namespace Managers {
+    /** Author: Nick Zimanski
+    * Version: 9/19/22
+    */
     public class LevelManager : Manager
     {
         private SceneManager _sm;

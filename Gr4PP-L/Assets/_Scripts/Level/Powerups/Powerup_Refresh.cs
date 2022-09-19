@@ -9,7 +9,8 @@ using Utility;
 namespace Level { 
 
     /** Author: Josh Robinson
-        * Version 2/7/22
+        * Author: Nick Zimanski
+        * Version 9/19/22
         */
 
     public class Powerup_Refresh : Powerup
