@@ -13996,6 +13996,7 @@ GameObject:
   - component: {fileID: 1143493159}
   - component: {fileID: 1143493158}
   - component: {fileID: 1143493157}
+  - component: {fileID: 1143493160}
   m_Layer: 5
   m_Name: DialogueCanvas
   m_TagString: Untagged
@@ -14085,6 +14086,21 @@ Canvas:
   m_SortingLayerID: 0
   m_SortingOrder: 0
   m_TargetDisplay: 0
+--- !u!114 &1143493160
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1143493155}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 15c2a751072e96d49a423027a8a0ef39, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _dialogueCanvas: {fileID: 0}
+  _dialogueText: {fileID: 1728264794}
+  _characterNameText: {fileID: 788935146}
 --- !u!1001 &1144168159
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -112989,9 +113005,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _charsPerSecond: 10
-  _dialogueCanvas: {fileID: 1143493159}
-  _dialogueText: {fileID: 1728264794}
-  _characterNameText: {fileID: 788935146}
 --- !u!114 &1479365581
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -113048,6 +113061,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   CurrentTime: 0
+  BestTimeFollowsCurrent: 0
   BestTime: 3.4028235e+38
 --- !u!4 &1479550041 stripped
 Transform:
