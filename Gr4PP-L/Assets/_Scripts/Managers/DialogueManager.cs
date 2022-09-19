@@ -16,11 +16,14 @@ namespace Managers {
     public class DialogueManager : Manager
     {
         private ConversationCollection _allConversations;
-        private UsableConversation _currentConversation = null;
+        public UsableConversation CurrentConversation = null;
+        public ConvInstruction CurrentConvInstruction;
+        public ConversationIterator CurrentConversationIterator;
         [SerializeField]
         private float _charsPerSecond = 10f;
 
         public float Text_secondsPerChar { get => 1f / _charsPerSecond; }
+        public bool Text_incomingNewText;
         
         void Awake()
         {
@@ -37,18 +40,57 @@ namespace Managers {
 
         }
 
+        public bool IsConversationActive() {
+            return !(CurrentConversation == null);
+        }
+
         public override void OnSceneReset() {Start();}
 
 
-        public UsableConversation GetConversationByID (int id) {
-            if (!_allConversations.ConversationDictionary.ContainsKey(id)) return null;
-            return _allConversations.ConversationDictionary.GetValueOrDefault(id);
+        private UsableConversation GetConversationByID (int id) {
+            if (!_allConversations.Contains(id)) return null;
+            return _allConversations.GetConversation(id);
         }
 
         private static T ImportJson<T>(string path)
         {
             TextAsset textAsset = Resources.Load<TextAsset>(path);
             return JsonUtility.FromJson<T>(textAsset.text);
+        }
+
+        public bool RunConversation(int id) {
+            //We have a conversation running already
+            if (IsConversationActive()) return false;
+            //The requested conversation doesn't exist
+            if (!_allConversations.Contains(id)) return false;
+
+            CurrentConversation = GetConversationByID(id);
+
+            CurrentConversationIterator = (ConversationIterator) CurrentConversation.GetEnumerator();
+            if (CurrentConversationIterator.Current.data == null) {
+                CurrentConversation = null;
+                return false;
+            }
+
+
+
+            return true;
+        }
+
+        public void NextConversationInstruction() {
+            if (!CurrentConversationIterator.MoveNext()) {
+                EndConversation();
+                return;
+            }
+
+            if (CurrentConversationIterator.Current.type == ConvInstruction.InstructionType.TEXT)
+                Text_incomingNewText = true;
+        }
+
+        public void EndConversation() {
+            Text_incomingNewText = false;
+
+            CurrentConversation = null;
         }
 
 
@@ -67,13 +109,23 @@ namespace Managers {
             /// <summary>
             /// Holds all usable conversations, indexed by their id. This is what you should use to get your conversation to play.
             /// </summary>
-            public Dictionary<int, UsableConversation> ConversationDictionary;
+            private Dictionary<int, UsableConversation> _conversationDictionary;
 
             public void InitializeConversations() {
-                ConversationDictionary = new Dictionary<int, UsableConversation>();
+                _conversationDictionary = new Dictionary<int, UsableConversation>();
                 foreach (RawConversation rc in raw_conversations) {
-                    ConversationDictionary.Add(rc.id, new UsableConversation(rc));
+                    _conversationDictionary.Add(rc.id, new UsableConversation(rc));
                 }
+            }
+
+            public UsableConversation GetConversation(int id) {
+                if (!_conversationDictionary.ContainsKey(id)) return null;
+
+                return _conversationDictionary[id];
+            }
+
+            public bool Contains(int id) {
+                return _conversationDictionary.ContainsKey(id);
             }
 
         }
