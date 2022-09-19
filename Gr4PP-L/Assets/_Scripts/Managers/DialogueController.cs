@@ -46,6 +46,7 @@ public class DialogueController : MonoBehaviour
         if (_currentConversation == null) return;
 
         UpdateConversation();
+        //TODO: Store active conversation in the manager.
     }
 
     private bool RunConversation(int id) {
