@@ -13,6 +13,7 @@ TagManager:
   - Glass
   - Hazard
   - Room
+  - Powerup
   layers:
   - Default
   - TransparentFX

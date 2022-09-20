@@ -14781,11 +14781,11 @@ RectTransform:
   m_Father: {fileID: 1143493156}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 1, y: 0}
+  m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 0}
-  m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 1206, y: 218.6065}
-  m_Pivot: {x: 1, y: 0}
+  m_AnchoredPosition: {x: -0.19998169, y: 0}
+  m_SizeDelta: {x: 0.4000244, y: 218.6065}
+  m_Pivot: {x: 0.5, y: 0}
 --- !u!114 &1191621464
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -112970,6 +112970,7 @@ GameObject:
   - component: {fileID: 1479365584}
   - component: {fileID: 1479365583}
   - component: {fileID: 1479365585}
+  - component: {fileID: 1479365586}
   m_Layer: 0
   m_Name: Managers
   m_TagString: ObjectFolder
@@ -113005,6 +113006,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _charsPerSecond: 10
+  Text_incomingNewText: 0
 --- !u!114 &1479365581
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -113048,6 +113050,7 @@ MonoBehaviour:
   inputManager: {fileID: 0}
   levelManager: {fileID: 0}
   timerManager: {fileID: 0}
+  powerupManager: {fileID: 0}
 --- !u!114 &1479365585
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -113063,6 +113066,19 @@ MonoBehaviour:
   CurrentTime: 0
   BestTimeFollowsCurrent: 0
   BestTime: 3.4028235e+38
+--- !u!114 &1479365586
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1479365578}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bd647e4d7b524e44cb546f67e036d11f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _powerupsInScene: []
 --- !u!4 &1479550041 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 4138980566082907668, guid: b91a142043b616840a80402d33ae9a0e,
@@ -116230,11 +116246,11 @@ RectTransform:
   m_Father: {fileID: 1191621463}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0, y: 1}
-  m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 12, y: -14}
-  m_SizeDelta: {x: 200, y: 50}
-  m_Pivot: {x: 0, y: 1}
+  m_AnchorMin: {x: 0, y: 0}
+  m_AnchorMax: {x: 1, y: 1}
+  m_AnchoredPosition: {x: 0.000030517578, y: 0}
+  m_SizeDelta: {x: 0, y: 0}
+  m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1728264794
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -116318,7 +116334,7 @@ MonoBehaviour:
   m_VertexBufferAutoSizeReduction: 0
   m_useMaxVisibleDescender: 1
   m_pageToDisplay: 1
-  m_margin: {x: 0, y: 0, z: -975.7915, w: -140.19197}
+  m_margin: {x: 9.940117, y: 10.363953, z: 11.644409, w: 15.663345}
   m_isUsingLegacyAnimationComponent: 0
   m_isVolumetricText: 0
   m_hasFontAssetChanged: 0
@@ -116825,7 +116841,7 @@ PrefabInstance:
     - target: {fileID: 4138980566082907668, guid: ec807467bc4e5b745a655e32884fa2a5,
         type: 3}
       propertyPath: m_RootOrder
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 4138980566082907668, guid: ec807467bc4e5b745a655e32884fa2a5,
         type: 3}

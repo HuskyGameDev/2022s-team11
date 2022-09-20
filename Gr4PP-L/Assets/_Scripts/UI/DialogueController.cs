@@ -26,6 +26,7 @@ public class DialogueController : MonoBehaviour
     private string _text_currentString = "";
     private bool _delay_hasStarted = false;
     private float _delay_endTime = 0;
+    
     private GameManager _gm;
     private DialogueManager _dm;
     // Start is called before the first frame update
