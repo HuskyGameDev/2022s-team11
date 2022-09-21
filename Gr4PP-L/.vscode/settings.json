@@ -1,4 +1,4 @@
-﻿{
+{
     "files.exclude":
     {
         "**/.DS_Store":true,
@@ -52,5 +52,20 @@
         "ProjectSettings/":true,
         "temp/":true,
         "Temp/":true
+    },
+    "cSpell.words": [
+        "Conv",
+        "convo",
+        "Decel",
+        "Dont",
+        "horiz",
+        "Mathf",
+        "Rigidbody",
+        "UGUI"
+    ],
+    "workbench.colorCustomizations": {
+        "activityBar.background": "#312F01",
+        "titleBar.activeBackground": "#454202",
+        "titleBar.activeForeground": "#FEFCCE"
     }
 }

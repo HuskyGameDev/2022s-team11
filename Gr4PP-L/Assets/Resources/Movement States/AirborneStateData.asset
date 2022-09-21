@@ -1,0 +1,33 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d88124992ae8be34fa184d00b2ee91c6, type: 3}
+  m_Name: AirborneStateData
+  m_EditorClassIdentifier: 
+  _jumpForce: 20
+  _horizAxisThreshold: 0
+  _vertAxisThreshold: 0
+  _canGrapple: 0
+  _jumpCoyoteTime: 0.05
+  _jumpBufferTime: 0.15
+  _groundJumpToWallJumpDelay: 0.1
+  _jumpCutMultiplier: 0.3
+  _wallJumpForce: 18
+  _wallJumpPreservationTime: 0.1
+  _jumpWallJumpSpacing: 0.1
+  _fallGravityMultiplier: 2
+  _terminalVelocity: 20
+  _givenAccel: 4
+  _givenDecel: 3
+  _velPower: 0.96
+  _wallSlideSpeed: 5
+  _maxHorizontalAirSpeed: 13
+  _hookShotForce: 30
