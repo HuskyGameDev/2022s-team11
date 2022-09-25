@@ -15,6 +15,11 @@ public class MainMenu : MonoBehaviour
                    StartCoroutine(Controls());
             }
 
+    public void MenuButton()
+        {
+                 StartCoroutine(Menu());
+        }
+
     public void GameQuit()
         {
                 Application.Quit(); //quits the game
@@ -23,11 +28,17 @@ public class MainMenu : MonoBehaviour
     IEnumerator DelayedStart()
     {
         yield return new WaitForSeconds(.1f);
-        SceneManager.LoadScene("SampleScene"); //Loads the scene based off of button input
+        SceneManager.LoadScene("Playtesting"); //Loads the scene based off of button input
     }
     IEnumerator Controls()
         {
             yield return new WaitForSeconds(0.1f);
-           SceneManager.LoadScene("Controls"); //Loads the scene based off of button input
+           SceneManager.LoadScene("Options"); //Loads the scene based off of button input
         }
+
+    IEnumerator Menu()
+    {
+        yield return new WaitForSeconds(0.1f);
+        SceneManager.LoadScene("Main Menu"); //Loads the scene based off of button input
+    }
 }
