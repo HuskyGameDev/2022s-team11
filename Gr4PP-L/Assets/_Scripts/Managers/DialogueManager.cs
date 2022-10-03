@@ -22,8 +22,15 @@ namespace Managers {
         [SerializeField]
         private float _charsPerSecond = 10f;
 
+        [Tooltip("How long between blinking the '█' character at the end of the text")]
+        public float FullBlockBlinkInterval = 0.5f;
+
         public float Text_secondsPerChar { get => 1f / _charsPerSecond; }
+
+        [HideInInspector]
         public bool Text_incomingNewText;
+
+        private GameManager _gm;
         
         void Awake()
         {
@@ -33,6 +40,7 @@ namespace Managers {
 
         private void Start()
         {
+            _gm = GameManager.Instance;
         }
 
         void Update()
@@ -72,7 +80,8 @@ namespace Managers {
                 return false;
             }
 
-
+            _gm.timerManager.Pause();
+            _gm.inputManager.LockType(InputManager.ControlType.MOVEMENT);
 
             return true;
         }
@@ -91,6 +100,9 @@ namespace Managers {
             Text_incomingNewText = false;
 
             CurrentConversation = null;
+
+            _gm.timerManager.Resume();
+            _gm.inputManager.UnlockType(InputManager.ControlType.MOVEMENT);
         }
 
 
