@@ -75,7 +75,6 @@ public class DialogueController : MonoBehaviour
         }
 
         UpdateConversation();
-        //TODO: Store active conversation in the manager.
     }
 
         private void UpdateConversation() {
@@ -185,7 +184,8 @@ public class DialogueController : MonoBehaviour
             if (_dm.CurrentConversationIterator.Current.data != "")    {
                 _characterNameText.SetText(_dm.CurrentConversationIterator.Current.data);
 
-                //TODO: set character portrait
+                //TODO: set character portrait, if the name matches a character
+                //TODO: Gray out other character portraits
                 //TODO: ready character voice
 
             }
