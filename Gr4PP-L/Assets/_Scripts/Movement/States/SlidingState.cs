@@ -1,6 +1,5 @@
 using System;
 using UnityEngine;
-
 namespace Movement
 {
     /** Author: Nick Zimanski
@@ -59,15 +58,15 @@ namespace Movement
         protected override void HandleInput()
         {
             var gameTime = Time.time;
-            _isCrouchingInput = _gm.DirectionalInput.y < 0;
+            _isCrouchingInput = _gameManager.DirectionalInput.y < 0;
 
-            if (_gm.inputManager.GetButtonDown("Grapple"))
+            if (Input.GetButtonDown("Grapple"))
             {
                 _grappleInput = true;
                 _sm.BufferInput("Grapple", 0.1f);
             }
 
-            if (_gm.inputManager.GetButtonDown("Jump"))
+            if (Input.GetButtonDown("Jump"))
             {
                 _sm.BufferInput("Jump", _jumpBufferTime);
                 Debug.Log("Jump buffered");
@@ -83,7 +82,7 @@ namespace Movement
         protected override void LogicUpdate()
         {
             //calculates direction to move in and desired velocity
-            float targetSpeed = _gm.DirectionalInput.x * _maxHorizontalSpeed;
+            float targetSpeed = _gameManager.DirectionalInput.x * _maxHorizontalSpeed;
             float speedDif = 0;
             if (IsPlayerSpeedExceeding(targetSpeed))
             {
@@ -109,7 +108,7 @@ namespace Movement
             {
                 _transitionToState = States.Grappling;
             }
-            else if (!_gm.inputManager.GetButton("Slide"))
+            else if (!Input.GetButton("Slide"))
             {
                 _transitionToState = States.Running;
             }
@@ -118,7 +117,7 @@ namespace Movement
         {
             _rb.AddForce(_movement * Vector2.right);
 
-            if (Mathf.Abs(_gm.DirectionalInput.x) < 0.01f)
+            if (Mathf.Abs(_gameManager.DirectionalInput.x) < 0.01f)
             {
                 float amount = Mathf.Min(Mathf.Abs(_rb.velocity.x), Mathf.Abs(_frictionAmount));
                 amount *= Mathf.Sign(_rb.velocity.x);

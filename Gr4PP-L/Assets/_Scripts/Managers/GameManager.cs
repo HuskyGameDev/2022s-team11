@@ -13,7 +13,6 @@ public class GameManager : Manager
     public LevelManager levelManager;
     public TimerManager timerManager;
     public PowerupManager powerupManager;
-    public AudioManager audioManager;
 
     private Movement.PlayerController _player;
     public Movement.PlayerController GetPlayer() {
@@ -38,7 +37,6 @@ public class GameManager : Manager
         levelManager = GetComponentInChildren<LevelManager>();
         timerManager = GetComponentInChildren<TimerManager>();
         powerupManager = GetComponentInChildren<PowerupManager>();
-        audioManager = GetComponentInChildren<AudioManager>();
     }
 
     // Start is called before the first frame update
@@ -76,7 +74,6 @@ public class GameManager : Manager
         levelManager.OnSceneReset();
         timerManager.OnSceneReset();
         powerupManager .OnSceneReset();
-        audioManager.OnSceneReset();
 
         Start();
     }

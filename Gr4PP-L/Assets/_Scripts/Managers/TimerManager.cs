@@ -17,7 +17,6 @@ namespace Managers {
         // Plan on using this so timer doesn't tick up during dialogue bits (if any) or room changes
         private bool _timerActive = true;
 
-
         public float CurrentTime = 0;
         public bool BestTimeFollowsCurrent = false;
         public float BestTime = float.MaxValue; // Large Default value so new bestTime is set on level completion. THIS NUMBER SHOULD NEVER BEEN SEEN IN GAME
@@ -45,14 +44,6 @@ namespace Managers {
         public override void OnSceneReset() {
             //LevelExit();
             CurrentTime = 0;
-        }
-
-        public void Pause() {
-            _timerActive = false;
-        }
-
-        public void Resume() {
-            _timerActive = true;
         }
 
         public void LevelExit() {

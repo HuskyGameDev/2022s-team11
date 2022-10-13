@@ -9694,9 +9694,9 @@ GameObject:
   m_Component:
   - component: {fileID: 732036393}
   - component: {fileID: 732036397}
+  - component: {fileID: 732036396}
   - component: {fileID: 732036395}
   - component: {fileID: 732036394}
-  - component: {fileID: 732036398}
   m_Layer: 0
   m_Name: Main Camera
   m_TagString: MainCamera
@@ -9773,6 +9773,14 @@ MonoBehaviour:
   m_CropFrameX: 1
   m_CropFrameY: 1
   m_StretchFill: 0
+--- !u!81 &732036396
+AudioListener:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 732036392}
+  m_Enabled: 1
 --- !u!20 &732036397
 Camera:
   m_ObjectHideFlags: 0
@@ -9816,14 +9824,6 @@ Camera:
   m_OcclusionCulling: 0
   m_StereoConvergence: 10
   m_StereoSeparation: 0.022
---- !u!81 &732036398
-AudioListener:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 732036392}
-  m_Enabled: 1
 --- !u!1001 &733570631
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -113746,7 +113746,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _charsPerSecond: 10
-  FullBlockBlinkInterval: 0.5
   Text_incomingNewText: 0
 --- !u!114 &1479365581
 MonoBehaviour:
@@ -113762,23 +113761,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _horizAxisThreshold: 0.1
   _vertAxisThreshold: 0.1
-  _inputAxes:
-  - name: Horizontal
-    tags: 00000000
-  - name: Vertical
-    tags: 00000000
-  - name: Slide
-    tags: 00000000
-  - name: Jump
-    tags: 00000000
-  - name: Submit
-    tags: 01000000
-  - name: Cancel
-    tags: 02000000
-  - name: Grapple
-    tags: 02000000
-  - name: Level Reset
-    tags: 02000000
 --- !u!114 &1479365583
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -113809,7 +113791,6 @@ MonoBehaviour:
   levelManager: {fileID: 0}
   timerManager: {fileID: 0}
   powerupManager: {fileID: 0}
-  audioManager: {fileID: 0}
 --- !u!114 &1479365585
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -113847,17 +113828,10 @@ MonoBehaviour:
   m_GameObject: {fileID: 1479365578}
   m_Enabled: 1
   m_EditorHideFlags: 0
-<<<<<<< HEAD
   m_Script: {fileID: 11500000, guid: 16a9127580dd38544bc1d497b0fb0b63, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   pauseMenuUI: {fileID: 1839730717}
-=======
-  m_Script: {fileID: 11500000, guid: 9093cbb4a961dca4eb136f92dfa49956, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  sounds: []
->>>>>>> main
 --- !u!4 &1479550041 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 4138980566082907668, guid: b91a142043b616840a80402d33ae9a0e,
