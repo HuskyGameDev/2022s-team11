@@ -16,7 +16,7 @@ namespace Movement {
         protected float _stateEnterTime;
         protected GrappleHookController _hook;
         protected Rigidbody2D _rb;
-        protected GameManager _gameManager;
+        protected GameManager _gm;
         /// <summary>
         /// Stores the input data on a frame. Updated automatically every frame before HandleInput()
         /// </summary>
@@ -37,7 +37,7 @@ namespace Movement {
             _rb = _owner.PlayerRigidbody;
             _uncheckedInputBuffer = false;
             _hook = _owner.GrappleHookCtrl;
-            _gameManager = game;
+            _gm = game;
         }
         public override void Enter() {
             base.Enter();
