@@ -81,6 +81,9 @@ namespace Movement {
 
         protected void GroundedJump()
         {
+            //Ratchet ass fix for the jump pad issue
+            if (GroundCollider().gameObject.tag == "Jump Pad") return;
+
             _rb.velocity = new Vector2(_rb.velocity.x, 0);
             _rb.AddForce(Vector2.up * _jumpForce, ForceMode2D.Impulse);
             _sm.RemoveBufferedInputsFor("Jump");
@@ -105,7 +108,7 @@ namespace Movement {
         /// </summary>
         /// <returns>true if contacting the ground, false otherwise</returns>
         private bool GroundedCheck() {
-            return (Physics2D.OverlapBox(_owner.GroundCheckPoint.position - new Vector3(0, 1, 0), _owner.GroundCheckSize, 0, _owner.GroundLayer));
+            return (GroundCollider() != null);
         }
 
         /// <summary>
