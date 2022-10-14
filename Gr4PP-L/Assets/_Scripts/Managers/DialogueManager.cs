@@ -32,21 +32,6 @@ namespace Managers {
 
         private GameManager _gm;
         
-        void Awake()
-        {
-            _allConversations = ImportJson<ConversationCollection>("Json/conversations");
-            _allConversations.InitializeConversations();
-        }
-
-        private void Start()
-        {
-            _gm = GameManager.Instance;
-        }
-
-        void Update()
-        {
-
-        }
 
         public bool IsConversationActive() {
             return !(CurrentConversation == null);
@@ -296,10 +281,24 @@ namespace Managers {
             public string data;
         }
 
-        public DialogueManager() {
+        public new void Initialize() {
             base.Initialize();
 
-            _charsPerSecond = GameManager.Instance.Parameters.charsPerSecond;
+            _gm = GameManager.Instance;
+
+            _allConversations = ImportJson<ConversationCollection>("Json/conversations");
+            _allConversations.InitializeConversations();
+
+            _charsPerSecond = _gm.Parameters.charsPerSecond;
+        }
+
+        public DialogueManager() {
+            Initialize();
+        }
+
+        public override Manager GetNewInstance()
+        {
+            return new DialogueManager();
         }
 
         public override void Destroy()

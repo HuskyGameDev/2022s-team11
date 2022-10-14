@@ -1,7 +1,6 @@
 using System;
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.SceneManagement;
 using Managers;
 
 public class GameManager : MonoBehaviour
@@ -21,7 +20,7 @@ public class GameManager : MonoBehaviour
     private readonly Dictionary<string, Manager> _services = new Dictionary<string, Manager>();
 
     public Movement.PlayerController FindPlayer() {
-        if (_player == null) _player = GameObject.FindGameObjectWithTag("Player").GetComponent<Movement.PlayerController>();
+        if (_player == null && Get<LevelManager>().IsSceneLoaded) _player = GameObject.FindGameObjectWithTag("Player").GetComponent<Movement.PlayerController>();
         return _player;
     }
 
@@ -42,12 +41,12 @@ public class GameManager : MonoBehaviour
         Register<DialogueManager>(new DialogueManager());
         Register<InputManager>(new InputManager());
         Register<LevelManager>(new LevelManager());
-        Register<PowerupManager>(new PowerupManager());
+        Register<InteractiveManager>(new InteractiveManager());
         Register<TimerManager>(new TimerManager());
         Register<AudioManager>(new AudioManager());
         Initialize();
 
-        SceneManager.LoadSceneAsync(1, LoadSceneMode.Additive);
+        StartCoroutine(Get<LevelManager>().LoadFirstLevel());
     }
 
     // Start is called before the first frame update
@@ -69,7 +68,6 @@ public class GameManager : MonoBehaviour
     /// </summary>
     /// <param name="pc">The player</param>
     public void KillPlayer(Movement.PlayerController pc) {
-        Get<PowerupManager>().RespawnPowerups();
         pc.Respawn();
     }
 
@@ -77,9 +75,8 @@ public class GameManager : MonoBehaviour
         foreach(KeyValuePair<string, Manager> entry in _services) {
             string key = entry.Key;
             Manager val = entry.Value;
-            Debug.Log(val.GetName());
 
-            val.Initialize();
+            val = val.GetNewInstance();
         }
         
     }
@@ -125,5 +122,7 @@ public class GameManager : MonoBehaviour
         public InputManager.InputData[] inputAxes;
         [Header("Audio")]
         public Audio.Sound[] sounds;
+        [Header("UI")]
+        public GameObject loadingScreen;
     }
 }

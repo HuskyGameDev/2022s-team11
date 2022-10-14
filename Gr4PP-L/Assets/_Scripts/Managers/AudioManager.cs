@@ -7,15 +7,16 @@ namespace Managers
 {
     public class AudioManager : Manager
     {
-        public Audio.Sound[] sounds;
+        private Audio.Sound[] _sounds;
         private Dictionary<string, Sound> _soundSrc;
 
-        public AudioManager()
+        public new void Initialize()
         {
             _soundSrc = new Dictionary<string, Sound>();
             GameObject go = GameManager.Instance.gameObject;
+            _sounds = GameManager.Instance.Parameters.sounds;
 
-            foreach (var s in sounds)
+            foreach (var s in _sounds)
             {
                 s.source = go.AddComponent<AudioSource>();
 
@@ -26,6 +27,15 @@ namespace Managers
 
                 _soundSrc.Add(s.name, s);
             }
+        }
+
+        public AudioManager() {
+            Initialize();
+        }
+
+        public override Manager GetNewInstance()
+        {
+            return new AudioManager();
         }
 
         public override void Destroy()

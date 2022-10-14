@@ -58,17 +58,28 @@ namespace Managers {
             }
         }
 
-        public TimerManager() {
+        public new void Initialize() {
             base.Initialize();
 
             CurrentTime = 0;
 
             GameManager.updateCallback += Update;
+            LevelManager.OnLevelExit += LevelExit;
 
+        }
+
+        public override Manager GetNewInstance()
+        {
+            return new TimerManager();
+        }
+
+        public TimerManager() {
+            Initialize();
         }
 
         public override void Destroy() {
             GameManager.updateCallback -= Update;
+            LevelManager.OnLevelExit -= LevelExit;
         }
     }
 }

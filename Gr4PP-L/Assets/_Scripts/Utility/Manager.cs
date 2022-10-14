@@ -18,5 +18,7 @@ namespace Managers
 
         public abstract void Destroy();
 
+        public abstract Manager GetNewInstance();
+
     }
 }

@@ -115,7 +115,7 @@ namespace Managers {
             INTERACTION,
             SYSTEM
         }
-        public InputManager() {
+        public new void Initialize() {
             base.Initialize();
             
 
@@ -128,6 +128,15 @@ namespace Managers {
             RegisterInputs();
 
             GameManager.updateCallback += Update;
+        }
+
+        public InputManager() {
+            Initialize();
+        }
+
+        public override Manager GetNewInstance()
+        {
+            return new InputManager();
         }
 
         public override void Destroy()

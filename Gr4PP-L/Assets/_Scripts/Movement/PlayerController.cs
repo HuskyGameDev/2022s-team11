@@ -107,8 +107,15 @@ namespace Movement {
         /// <summary>
         /// Sets the player to their origin position
         /// </summary>
-        public void ResetPosition() {
+        public void ResetPositionToOrigin() {
             SetPosition(_initialPosition);
+        }
+
+        /// <summary>
+        /// Sets the player to their last checkpoint position
+        /// </summary>
+        public void ResetPositionToCheckpoint() {
+            SetPosition(_gm.Get<Managers.LevelManager>().GetLastCheckpoint());
         }
 
         /// <summary>
@@ -117,13 +124,14 @@ namespace Movement {
         /// <param name="pos">the position to set to</param>
         public void SetPosition(Vector2 pos) {
             transform.position = pos;
+            _playerRigidbody.velocity = Vector2.zero;
         }
 
         /// <summary>
         /// Resets the player's position to their last checkpoint
         /// </summary>
         public void Respawn() {
-            transform.position = _gm.Get<Managers.LevelManager>().GetCheckpoint();
+            _gm.Get<Managers.LevelManager>().ResetLevel();
         }
 
         private void Die() {
