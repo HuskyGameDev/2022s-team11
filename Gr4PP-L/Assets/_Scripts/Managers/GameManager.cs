@@ -44,6 +44,7 @@ public class GameManager : MonoBehaviour
         Register<LevelManager>(new LevelManager());
         Register<PowerupManager>(new PowerupManager());
         Register<TimerManager>(new TimerManager());
+        Register<AudioManager>(new AudioManager());
         Initialize();
 
         SceneManager.LoadSceneAsync(1, LoadSceneMode.Additive);
