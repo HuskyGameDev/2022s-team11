@@ -12,7 +12,6 @@ namespace Managers {
         private SceneManager _sm;
         private GameManager _gm;
         private GameObject _loadingScreen;
-        private Camera _loadingScreenCam;
 
         public Vector2 LevelOrigin {get; private set;}
         public bool IsSceneLoaded {get; private set;}
@@ -38,7 +37,6 @@ namespace Managers {
             base.Initialize();
             _gm = GameManager.Instance;
             _loadingScreen = _gm.Parameters.loadingScreen;
-            _loadingScreenCam = _loadingScreen.GetComponentInChildren<Camera>();
 
             OnLevelEnter = () => {};
             OnLevelExit = () => {};

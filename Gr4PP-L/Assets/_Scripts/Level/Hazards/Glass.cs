@@ -5,7 +5,6 @@ using UnityEngine.Tilemaps;
 
 namespace Level {
     public class Glass : Respawnable {
-        public GameObject _character; // specifically the Character GameObject, not Player Controller.
         
         [SerializeField]
         [Tooltip("How fast the player must be moving to break the glass")]
@@ -15,15 +14,17 @@ namespace Level {
         private bool _isHorizontal;
 
         private void OnCollisionEnter2D(Collision2D collision) {
-            Debug.Log(collision.relativeVelocity);
+            if (collision.transform.tag != "Player") return;
+            GameObject character = collision.gameObject;
+
             if (_isHorizontal) {
                 if (collision.gameObject.CompareTag("Player") && Mathf.Abs(collision.relativeVelocity.x) > _threshold) {
-                    _character.GetComponent<Rigidbody2D>().velocity = collision.relativeVelocity; // ensures player doesn't lose velocity on contact
+                    character.GetComponent<Rigidbody2D>().velocity = collision.relativeVelocity; // ensures player doesn't lose velocity on contact
                     Deactivate();
                 }
             } else {
                 if (collision.gameObject.CompareTag("Player") && Mathf.Abs(collision.relativeVelocity.y) > _threshold) {
-                    _character.GetComponent<Rigidbody2D>().velocity = collision.relativeVelocity; // ensures player doesn't lose velocity on contact
+                    character.GetComponent<Rigidbody2D>().velocity = collision.relativeVelocity; // ensures player doesn't lose velocity on contact
                     Deactivate();
                 }
             }
