@@ -78,9 +78,6 @@ namespace Managers {
 
             StartLoadScreen();
 
-            Debug.Log(SceneManager.sceneCount);
-            Debug.Log(SceneManager.GetActiveScene().name);
-
             while (SceneManager.sceneCount > 1) {
                 ao = SceneManager.UnloadSceneAsync(SceneManager.GetSceneAt(SceneManager.sceneCount - 1));
 
@@ -100,12 +97,35 @@ namespace Managers {
             EndLoadScreen(SceneManager.GetSceneAt(SceneManager.sceneCount - 1));
         }
 
-        public IEnumerator LoadFirstLevel() {
-            if (SceneManager.sceneCount == 1) {
-                yield return LoadScene(1);
-            } else {
-                EndLoadScreen(SceneManager.GetSceneAt(SceneManager.sceneCount - 1));
+        public IEnumerator LoadScene(string buildName) {
+            if (buildName == "Base Scene") {
+                Debug.Log($"Resetting");
+                buildName = "Playtesting";
             }
+
+            AsyncOperation ao;
+
+            yield return null;
+
+            StartLoadScreen();
+
+            while (SceneManager.sceneCount > 1) {
+                ao = SceneManager.UnloadSceneAsync(SceneManager.GetSceneAt(SceneManager.sceneCount - 1));
+
+                while (!(ao.isDone)){
+                    yield return null;
+                }
+            }
+            
+            ao = SceneManager.LoadSceneAsync(buildName, LoadSceneMode.Additive);
+            ao.allowSceneActivation = true;
+
+            while(!ao.isDone) {
+                UpdateLoadProgress(ao.progress);
+                yield return null;
+            }
+
+            EndLoadScreen(SceneManager.GetSceneAt(SceneManager.sceneCount - 1));
         }
 
         private void StartLoadScreen() {

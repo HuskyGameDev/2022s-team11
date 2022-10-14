@@ -46,7 +46,8 @@ public class GameManager : MonoBehaviour
         Register<AudioManager>(new AudioManager());
         Initialize();
 
-        StartCoroutine(Get<LevelManager>().LoadFirstLevel());
+        // CHANGE TESTING SCENE HERE
+        StartCoroutine(Get<LevelManager>().LoadScene("Playtesting"));
     }
 
     // Start is called before the first frame update
