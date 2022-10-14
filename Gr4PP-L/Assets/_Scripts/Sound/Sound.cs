@@ -22,6 +22,7 @@ namespace Audio {
         public SoundType type;
 
         public bool loop;
+        
 
         [HideInInspector]
         public AudioSource source;
