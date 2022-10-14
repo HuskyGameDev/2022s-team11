@@ -10,7 +10,7 @@ GameObject:
   m_Component:
   - component: {fileID: 4138980566082907668}
   - component: {fileID: 4138980566082907669}
-  - component: {fileID: 1625687833910069258}
+  - component: {fileID: 8213144460356060875}
   m_Layer: 0
   m_Name: Spike
   m_TagString: Hazard
@@ -85,8 +85,8 @@ SpriteRenderer:
   m_WasSpriteAssigned: 1
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
---- !u!68 &1625687833910069258
-EdgeCollider2D:
+--- !u!61 &8213144460356060875
+BoxCollider2D:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
@@ -98,25 +98,16 @@ EdgeCollider2D:
   m_IsTrigger: 0
   m_UsedByEffector: 0
   m_UsedByComposite: 0
-  m_Offset: {x: 0, y: 0}
+  m_Offset: {x: 0, y: -0.25}
+  m_SpriteTilingProperty:
+    border: {x: 0, y: 0, z: 0, w: 0}
+    pivot: {x: 0.5, y: 0.5}
+    oldSize: {x: 1, y: 1}
+    newSize: {x: 1, y: 1}
+    adaptiveTilingThreshold: 0.5
+    drawMode: 0
+    adaptiveTiling: 0
+  m_AutoTiling: 0
+  serializedVersion: 2
+  m_Size: {x: 0.75, y: 0.5}
   m_EdgeRadius: 0
-  m_Points:
-  - {x: -0.3748321, y: -0.12002401}
-  - {x: -0.37500843, y: -0.12489104}
-  - {x: -0.37457454, y: 0.12586826}
-  - {x: -0.2504367, y: 0.1258196}
-  - {x: -0.2501806, y: -0.12497714}
-  - {x: 0.0021375567, y: -0.12518889}
-  - {x: 0.12559666, y: -0.12503117}
-  - {x: 0.26408342, y: -0.12610483}
-  - {x: 0.28175735, y: -0.12602654}
-  - {x: 0.25108874, y: -0.14656185}
-  - {x: 0.37460667, y: -0.12511085}
-  - {x: 0.37461743, y: -0.4998129}
-  - {x: -0.49987778, y: -0.49999252}
-  - {x: -0.50000334, y: -0.12496997}
-  - {x: -0.3749988, y: -0.12497092}
-  m_AdjacentStartPoint: {x: 0, y: 0}
-  m_AdjacentEndPoint: {x: 0, y: 0}
-  m_UseAdjacentStartPoint: 0
-  m_UseAdjacentEndPoint: 0
