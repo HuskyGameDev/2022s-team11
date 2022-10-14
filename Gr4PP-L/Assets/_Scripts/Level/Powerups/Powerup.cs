@@ -14,7 +14,7 @@ namespace Level {
         private void Start() {
             _sr = gameObject.GetComponent<SpriteRenderer>();
             _active = true;
-            GameManager.Instance.powerupManager.RegisterPowerup(this);
+            GameManager.Instance.Get<Managers.PowerupManager>().RegisterPowerup(this);
         }
 
         public GameObject GetGameObject() {

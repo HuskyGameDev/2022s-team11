@@ -99,13 +99,13 @@ namespace Movement {
             if(_gm.DirectionalInput.y < 0) {
                 _sm.BufferInput("Down", 0.1f);
             }
-            if (_gm.inputManager.GetButtonDown("Jump")) {
+            if (_gm.Get<Managers.InputManager>().GetButtonDown("Jump")) {
                 _sm.BufferInput("Jump", _jumpBufferTime);
             }
 
-            _jumpPressed = _gm.inputManager.GetButton("Jump");
+            _jumpPressed = _gm.Get<Managers.InputManager>().GetButton("Jump");
             
-            if (_gm.inputManager.GetButtonDown("Grapple")) {
+            if (_gm.Get<Managers.InputManager>().GetButtonDown("Grapple")) {
                 _sm.BufferInput("Grapple", 0.1f);
                 _grappleInput = true;
             }

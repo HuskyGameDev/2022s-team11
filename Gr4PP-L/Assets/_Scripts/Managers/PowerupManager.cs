@@ -12,17 +12,6 @@ namespace Managers {
         [SerializeField]
         private List<Powerup> _powerupsInScene = new List<Powerup>();
 
-        // Start is called before the first frame update
-        void Start()
-        {
-            
-        }
-
-        // Update is called once per frame
-        void Update()
-        {
-            
-        }
 
         public void RegisterPowerup(Powerup p) {
             if (_powerupsInScene.Contains(p)) return;
@@ -36,8 +25,16 @@ namespace Managers {
             }
         }
 
-        public override void OnSceneReset() {
-            _powerupsInScene = new List<Powerup>();
+
+        public PowerupManager() {
+            base.Initialize();
+
+            
+        }
+
+        public override void Destroy()
+        {
+            
         }
     }
 }

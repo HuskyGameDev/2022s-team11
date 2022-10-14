@@ -54,7 +54,7 @@ namespace Movement {
             _hookController.RetractHook();
         }
         protected override void HandleInput() {
-            _grappleInput = _gm.inputManager.GetButtonDown("Grapple");
+            _grappleInput = _gm.Get<Managers.InputManager>().GetButtonDown("Grapple");
 
             if (_gm.DirectionalInput.y < 0) {
                 _sm.BufferInput("Down", 0.1f);
@@ -65,7 +65,7 @@ namespace Movement {
                 _uncheckedInputBuffer = false;
             }
 
-            if (_gm.inputManager.GetButtonDown("Jump")) {
+            if (_gm.Get<Managers.InputManager>().GetButtonDown("Jump")) {
                 _sm.BufferInput("Jump", 0.15f);
             }
         }
@@ -84,7 +84,7 @@ namespace Movement {
             }
 
             //Check for retraction
-            if (!_gm.inputManager.GetButton("Grapple")) {
+            if (!_gm.Get<Managers.InputManager>().GetButton("Grapple")) {
                 _hookController.RetractHook();
             }
 

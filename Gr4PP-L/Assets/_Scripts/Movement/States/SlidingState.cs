@@ -61,13 +61,13 @@ namespace Movement
             var gameTime = Time.time;
             _isCrouchingInput = _gm.DirectionalInput.y < 0;
 
-            if (_gm.inputManager.GetButtonDown("Grapple"))
+            if (_gm.Get<Managers.InputManager>().GetButtonDown("Grapple"))
             {
                 _grappleInput = true;
                 _sm.BufferInput("Grapple", 0.1f);
             }
 
-            if (_gm.inputManager.GetButtonDown("Jump"))
+            if (_gm.Get<Managers.InputManager>().GetButtonDown("Jump"))
             {
                 _sm.BufferInput("Jump", _jumpBufferTime);
                 Debug.Log("Jump buffered");
@@ -109,7 +109,7 @@ namespace Movement
             {
                 _transitionToState = States.Grappling;
             }
-            else if (!_gm.inputManager.GetButton("Slide"))
+            else if (!_gm.Get<Managers.InputManager>().GetButton("Slide"))
             {
                 _transitionToState = States.Running;
             }

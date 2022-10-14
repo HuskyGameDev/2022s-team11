@@ -7,21 +7,17 @@ namespace Managers
 {
     public class AudioManager : Manager
     {
-        [SerializeField]
         public Audio.Sound[] sounds;
         private Dictionary<string, Sound> _soundSrc;
 
-        void Start() {
-
-        }
-
-        void Awake()
+        public AudioManager()
         {
             _soundSrc = new Dictionary<string, Sound>();
+            GameObject go = GameManager.Instance.gameObject;
 
             foreach (var s in sounds)
             {
-                s.source = gameObject.AddComponent<AudioSource>();
+                s.source = go.AddComponent<AudioSource>();
 
                 s.source.clip = s.clip;
                 s.source.loop = s.loop;
@@ -30,6 +26,10 @@ namespace Managers
 
                 _soundSrc.Add(s.name, s);
             }
+        }
+
+        public override void Destroy()
+        {
         }
 
         public void Play(string soundName) {
@@ -45,7 +45,5 @@ namespace Managers
             
             Debug.LogWarning("Trying to play sound (" + soundName + ") but it can't be found!");
         }
-
-        public override void OnSceneReset() {Start();}
     }
 }

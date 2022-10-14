@@ -52,8 +52,6 @@ namespace Managers {
             return !(CurrentConversation == null);
         }
 
-        public override void OnSceneReset() {Start();}
-
 
         private UsableConversation GetConversationByID (int id) {
             if (!_allConversations.Contains(id)) return null;
@@ -80,8 +78,8 @@ namespace Managers {
                 return false;
             }
 
-            _gm.timerManager.Pause();
-            _gm.inputManager.LockType(InputManager.ControlType.MOVEMENT);
+            _gm.Get<TimerManager>().Pause();
+            _gm.Get<InputManager>().LockType(InputManager.ControlType.MOVEMENT);
 
             return true;
         }
@@ -101,8 +99,8 @@ namespace Managers {
 
             CurrentConversation = null;
 
-            _gm.timerManager.Resume();
-            _gm.inputManager.UnlockType(InputManager.ControlType.MOVEMENT);
+            _gm.Get<TimerManager>().Resume();
+            _gm.Get<InputManager>().UnlockType(InputManager.ControlType.MOVEMENT);
         }
 
 
@@ -298,6 +296,16 @@ namespace Managers {
             public string data;
         }
 
+        public DialogueManager() {
+            base.Initialize();
+
+            _charsPerSecond = GameManager.Instance.Parameters.charsPerSecond;
+        }
+
+        public override void Destroy()
+        {
+
+        }
     }
 
     

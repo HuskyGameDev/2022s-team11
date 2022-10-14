@@ -43,7 +43,7 @@ public class DialogueController : MonoBehaviour
         _dialogueCanvas.enabled = false;
 
         _gm = GameManager.Instance;
-        _dm = _gm.dialogueManager;
+        _dm = _gm.Get<DialogueManager>();
 
         _blockOnTextInterval = _dm.FullBlockBlinkInterval;
 
@@ -107,7 +107,7 @@ public class DialogueController : MonoBehaviour
 
             //Input
 
-            if (_gm.inputManager.GetAxisRaw("Submit") != 0) {
+            if (_gm.Get<InputManager>().GetAxisRaw("Submit") != 0) {
                 _dm.NextConversationInstruction();
                 _awaitingPlayerInput = false;
             }

@@ -7,33 +7,20 @@ namespace Managers {
     public class InputManager : Manager
     {
 
-        [Header("Input")]
-        [SerializeField]private float _horizAxisThreshold;
-        [SerializeField]private float _vertAxisThreshold;
-        [SerializeField]private InputData[] _inputAxes;
-
+        private InputData[] _inputAxes;
         private Dictionary<string, ControlType[]> _inputTags;
         private Dictionary<ControlType, bool> _lockedInputs;
 
+        private bool _inputLocked = false;
+        private float _horizAxisThreshold, _vertAxisThreshold;
+
         public Vector2 DirectionalInput {get; private set;}
 
-        void Awake() {
-            _lockedInputs = new Dictionary<ControlType, bool>();
-            _inputTags = new Dictionary<string, ControlType[]>();
-            RegisterInputs();
-        }
-        // Start is called before the first frame update
-        void Start()
-        {
-        }
-
         // Update is called once per frame
-        void Update()
+        public void Update()
         {
             DirectionalInput = GetInput();
         }
-
-        public override void OnSceneReset() {Start();}
 
         /// <summary>
         /// Returns a value between -1 and 1 for the given axis, with no smoothing applied
@@ -127,6 +114,25 @@ namespace Managers {
             MOVEMENT,
             INTERACTION,
             SYSTEM
+        }
+        public InputManager() {
+            base.Initialize();
+            
+
+            _horizAxisThreshold = GameManager.Instance.Parameters.horizAxisThreshold;
+            _vertAxisThreshold = GameManager.Instance.Parameters.vertAxisThreshold;
+            _inputAxes = GameManager.Instance.Parameters.inputAxes;
+
+            _lockedInputs = new Dictionary<ControlType, bool>();
+            _inputTags = new Dictionary<string, ControlType[]>();
+            RegisterInputs();
+
+            GameManager.updateCallback += Update;
+        }
+
+        public override void Destroy()
+        {
+            GameManager.updateCallback -= Update;
         }
     }
 }

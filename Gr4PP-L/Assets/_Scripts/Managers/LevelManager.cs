@@ -1,29 +1,46 @@
-using System;
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
-using Utility;
 
 namespace Managers {
     /** Author: Nick Zimanski
-    * Version: 9/19/22
-
-    
+    * Version: 10/13/22
     */
     public class LevelManager : Manager
     {
         private SceneManager _sm;
+        private GameManager _gm;
 
         public Vector2 LevelOrigin {get; private set;}
 
         [SerializeField]
         private Vector2 _lastCheckpoint;
 
+        public void Update()
+        {
+
+            #region Scene Resetting
+            if (_gm.Get<InputManager>().GetButton("Level Reset")) {
+                _gm.FindPlayer().ResetPosition();
+                LevelManager.ResetScene();
+            }
+            #endregion
+        }
+
+        public LevelManager() {
+            base.Initialize();
+            _gm = GameManager.Instance;
+
+            GameManager.updateCallback += Update;
+        }
+
+        public override void Destroy()
+        {
+            GameManager.updateCallback -= Update;
+        }
 
         public static void ResetScene() {
             LoadScene(SceneManager.GetActiveScene().buildIndex);
-            GameManager.Instance.OnSceneReset();
+            GameManager.Instance.Initialize();
         }
 
         public static void LoadScene(int buildIndex) {
@@ -54,24 +71,15 @@ namespace Managers {
         }
 
         public void RegisterOrigin(GameObject go) {
-            LevelOrigin = go.transform.position;
+            RegisterOrigin(go.transform);
         } 
 
-        // Start is called before the first frame update
-        void Start()
-        {
+        public void RegisterOrigin(Transform tsf) {
+            RegisterOrigin(tsf.position);
+        } 
 
-            LevelOrigin = transform.position;
-            SetCheckpoint(LevelOrigin);
-        }
-
-        // Update is called once per frame
-        void Update()
-        {
-            
-        }
-
-        public override void OnSceneReset() {Start();}
-
+        public void RegisterOrigin(Vector2 pos) {
+            LevelOrigin = pos;
+        } 
     }
 }

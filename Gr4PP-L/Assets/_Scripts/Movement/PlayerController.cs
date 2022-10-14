@@ -123,7 +123,7 @@ namespace Movement {
         /// Resets the player's position to their last checkpoint
         /// </summary>
         public void Respawn() {
-            transform.position = _gm.levelManager.GetCheckpoint();
+            transform.position = _gm.Get<Managers.LevelManager>().GetCheckpoint();
         }
 
         private void Die() {
@@ -142,6 +142,8 @@ namespace Movement {
             SetupStateMachine();
 
             _initialPosition = transform.position;
+
+            _gm.Get<Managers.LevelManager>().RegisterOrigin(_initialPosition);
         }
 
         void Update()
