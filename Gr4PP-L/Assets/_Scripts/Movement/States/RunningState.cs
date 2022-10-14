@@ -6,6 +6,8 @@ namespace Movement {
     * Version 3/21/22
     */
     [CreateAssetMenu(fileName = "RunningStateData", menuName = "ScriptableObjects/MovementStates/RunningStateScriptableObject")]
+    //idea: change player's velocity when they enter and when they exit the trigger.
+    //specifically, reduce the velocity by the "velocity" of the platform on enter and increase the velocity by the velocity of the platform on exit
     public class RunningState : MovementState
     {
         #region Serialized Variables

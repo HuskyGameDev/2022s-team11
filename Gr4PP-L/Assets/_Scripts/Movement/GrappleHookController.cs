@@ -103,7 +103,7 @@ namespace Movement {
         private RaycastHit2D castHit(ref Vector2 direction, float distance, LayerMask layerMask) {;
 
             RaycastHit2D hit = Physics2D.Raycast(_parent.transform.position + new Vector3(0, 0.75f, 0), direction, distance, layerMask);
-            if (hit && !hit.collider.gameObject.CompareTag("Ice") && !hit.collider.gameObject.CompareTag("Jump Pad") && !hit.collider.gameObject.CompareTag("Glass")) return hit;
+            if (ValidHit(hit, direction)) return hit;
 
             int width = 30;
             float fidelity = 1;
@@ -113,17 +113,25 @@ namespace Movement {
 
             for(float i = 1/fidelity; i <= width; i += 1/fidelity) {
                 hit = Physics2D.Raycast(_parent.transform.position + new Vector3(0, 0.75f, 0), getVectorFromAngle(Vector2.SignedAngle(Vector2.right, direction) + i), distance, layerMask);
-                if (hit && !hit.collider.gameObject.CompareTag("Ice") && !hit.collider.gameObject.CompareTag("Jump Pad") && !hit.collider.gameObject.CompareTag("Glass")) {
+                if (ValidHit(hit, direction)) {
                     direction = getVectorFromAngle(Vector2.SignedAngle(Vector2.right, direction) + i);
                     return hit;
                 }
                 hit = Physics2D.Raycast(_parent.transform.position + new Vector3(0, 0.75f, 0), getVectorFromAngle(Vector2.SignedAngle(Vector2.right, direction) - i), distance, layerMask);
-                if (hit && !hit.collider.gameObject.CompareTag("Ice") && !hit.collider.gameObject.CompareTag("Jump Pad") && !hit.collider.gameObject.CompareTag("Glass")) {
+                if (ValidHit(hit, direction)) {
                     direction = getVectorFromAngle(Vector2.SignedAngle(Vector2.right, direction) - i);
                     return hit;
                 }
             }
             return Physics2D.Raycast(_parent.transform.position + new Vector3(0, 0.75f, 0), direction, 0, layerMask);
+        }
+
+        private bool ValidHit(RaycastHit2D hit, Vector2 direction) {
+            return hit && !hit.collider.gameObject.CompareTag("Ice") && !hit.collider.gameObject.CompareTag("Jump Pad") && !hit.collider.gameObject.CompareTag("Glass")
+                && (!hit.collider.gameObject.CompareTag("1Way") || (hit.collider.GetComponent<PlatformEffector2D>().rotationalOffset == 0 && direction.y < 0)
+                || (hit.collider.GetComponent<PlatformEffector2D>().rotationalOffset == 90 && direction.x > 0)
+                || (hit.collider.GetComponent<PlatformEffector2D>().rotationalOffset == 180 && direction.y > 0)
+                || (hit.collider.GetComponent<PlatformEffector2D>().rotationalOffset == -90 && direction.x < 0));
         }
 
         /* gets a vector from a given angle

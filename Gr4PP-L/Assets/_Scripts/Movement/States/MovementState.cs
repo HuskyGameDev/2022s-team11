@@ -105,7 +105,8 @@ namespace Movement {
         /// </summary>
         /// <returns>true if contacting the ground, false otherwise</returns>
         private bool GroundedCheck() {
-            return (Physics2D.OverlapBox(_owner.GroundCheckPoint.position - new Vector3(0, 1, 0), _owner.GroundCheckSize, 0, _owner.GroundLayer));
+            Collider2D collision = Physics2D.OverlapBox(_owner.GroundCheckPoint.position - new Vector3(0, 1, 0), _owner.GroundCheckSize, 0, _owner.GroundLayer);
+            return (collision && !collision.CompareTag("GO") && (!collision.CompareTag("1Way") || (collision.CompareTag("1Way") && collision.GetComponent<PlatformEffector2D>().rotationalOffset == 0 && (!Input.GetButton("Jump") || _rb.velocity.y < 2))));
         }
 
         /// <summary>
@@ -130,11 +131,11 @@ namespace Movement {
             int _wallSide = 0;
             Collider2D collision;
             if ((collision = Physics2D.OverlapBox(_owner.GroundCheckPoint.position + new Vector3(-_owner.WallCheckOffset.x, _owner.WallCheckOffset.y, 0), _owner.WallCheckSize, 0, _owner.GroundLayer))
-                && !collision.CompareTag("Ice")) {
+                && !collision.CompareTag("Ice") && !collision.CompareTag("GO") && (!collision.CompareTag("1Way") || collision.GetComponent<PlatformEffector2D>().rotationalOffset == -90)) {
                 _wallSide = -1;
             }
             if ((collision = Physics2D.OverlapBox(_owner.GroundCheckPoint.position + new Vector3(_owner.WallCheckOffset.x, _owner.WallCheckOffset.y, 0), _owner.WallCheckSize, 0, _owner.GroundLayer))
-                && !collision.CompareTag("Ice")) {
+                && !collision.CompareTag("Ice") && !collision.CompareTag("GO") && (!collision.CompareTag("1Way") || collision.GetComponent<PlatformEffector2D>().rotationalOffset == 90)) {
                 if(_wallSide == 0) {
                     _wallSide = 1;
                 } else {
