@@ -147,6 +147,8 @@ namespace Managers {
             _loadingScreen.SetActive(false);
             _gm.Get<InputManager>().UnlockType(InputManager.ControlType.MOVEMENT);
             SceneManager.SetActiveScene(newScene);
+
+            _gm.Get<DialogueManager>().RunConversation(80085);
         }
 
         /// <summary>
