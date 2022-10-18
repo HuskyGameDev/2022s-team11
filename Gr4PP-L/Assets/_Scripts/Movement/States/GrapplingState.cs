@@ -1,6 +1,7 @@
 
+using System;
 using UnityEngine;
-namespace _Scripts.Movement.States {
+namespace Movement {
     /** Author: Nick Zimanski
     * Version 2/20/22
     */
@@ -23,7 +24,7 @@ namespace _Scripts.Movement.States {
         private float _downwardPullMagnitude;
         [SerializeField]
         [Tooltip("The percentage of the force vector to change the pull by according to the player's input")]
-        [Range(0,1)]
+        [Range(0,50)]
         private float _playerInputMagnitude;
         [SerializeField]
         [Range(1,3)]
@@ -32,11 +33,14 @@ namespace _Scripts.Movement.States {
         private bool _grappleInput = false;
         private Vector2 newVel;
         private Vector2 oldVel;
+        public bool isRefreshed = false;
         #endregion
+
         new public States Name => States.Grappling;
-        public override void Initialize(_Scripts.Managers.PlayerManager player, MovementStateMachine sm)
+        
+        public override void Initialize(GameManager game, PlayerController player, MovementStateMachine sm)
         {
-            base.Initialize(player, sm);
+            base.Initialize(game, player, sm);
             _hookController = player.GrappleHookCtrl;
             _hookRb = player.GrappleHookRigidbody;
         }
@@ -50,9 +54,9 @@ namespace _Scripts.Movement.States {
             _hookController.RetractHook();
         }
         protected override void HandleInput() {
-            _grappleInput = Input.GetButtonDown("Grapple");
+            _grappleInput = _gm.Get<Managers.InputManager>().GetButtonDown("Grapple");
 
-            if (_input.y < 0) {
+            if (_gm.DirectionalInput.y < 0) {
                 _sm.BufferInput("Down", 0.1f);
             }
 
@@ -60,39 +64,51 @@ namespace _Scripts.Movement.States {
                 CheckInputBuffer();
                 _uncheckedInputBuffer = false;
             }
+
+            if (_gm.Get<Managers.InputManager>().GetButtonDown("Jump")) {
+                _sm.BufferInput("Jump", 0.15f);
+            }
         }
-        //TODO: MAKE GRAPPLE FIRE MEMBER OF MOVEMENT STATE
-        //TODO: ONLY ENTER GRAPPLE STATE ONCE HOOK CONNECTS
+
+        
         protected override void LogicUpdate() {
 
-            //Check for retraction
-            if (_grappleInput) {
-                _hookController.RetractHook();
+            if (_hookController.IsHeld) {
                 if (IsGrounded) {
                     _transitionToState = States.Running;
                 } else {
+                    _sm.BufferInput("From Grapple", 1);
                     _transitionToState = States.Airborne;
                 }
+                return;
             }
 
+            //Check for retraction
+            if (!_gm.Get<Managers.InputManager>().GetButton("Grapple")) {
+                _hookController.RetractHook();
+            }
+
+            
+            if (isRefreshed)
+            {
+                isRefreshed = false;
+                _transitionToState = States.Airborne;
+            }
+            
+            if(IsGrounded && _sm.CheckBufferedInputsFor("Jump")) {
+                GroundedJump();
+            }
 
             //if (_stateEnterTime + _grappleTimeOut > Time.time) return;
 
-            if (_hookController.IsAttached) return;
-
-            //Hook hasn't hit anything in the timeout window -- change state
-            if (IsGrounded) {
-                _transitionToState = States.Running;
-            } else {
-                _transitionToState = States.Airborne;
-            }
+            //if (_hookController.IsAttached) return;
         }
         protected override void PhysicsUpdate() {
             if (!_grappleInput && !_hookController.IsAttached) return;
 
             if (_grappleInput) {
                 //Fire the hook
-                //if (_hookController.IsHeld) _hookController.FireHook(_input, _grappleFireForce);
+                //if (_hookController.IsHeld) _hookController.FireHook(_gm.Input, _grappleFireForce);
                 //Retract the hook
                 //else _hookController.RetractHook();
                 return;
@@ -115,32 +131,28 @@ namespace _Scripts.Movement.States {
             var pullVector = tetherVector;
 
             var playerVelocity = _rb.velocity;
-            //if (playerVelocity.mag) {
-            //    Debug.Log("Moving player back...");
-            //    _rb.MovePosition(_hookController.Position + Vector2.ClampMagnitude(tetherVector, _lastDistance) - tetherPlayerDifference);
-            //} //Stop player from going beyond grapple length
-            
-            //Pull player downward
-            pullVector = tetherVector.y < 0 ? pullVector * new Vector2(1, _downwardPullMagnitude) : pullVector;
-
-            //Factor in player input
-            pullVector += new Vector2(_input.x * Mathf.Abs(pullVector.x), _input.y * Mathf.Abs(pullVector.y)) * _playerInputMagnitude;
-
-            //Constrain player to end of rope "circle"
-            //Look forward to see if the player will break the circle
-            /**oldVel = (_hookController.TetherPosition + playerVelocity * Time.fixedDeltaTime);
+            oldVel = playerVelocity;
             newVel = playerVelocity;
-            if ((oldVel + tetherVector).magnitude > distance) {
-                newVel = Vector2.ClampMagnitude(oldVel + tetherVector, distance);
+
+            var tetherToVelAngle = Vector2.SignedAngle(playerVelocity, tetherVector);
+            if (Mathf.Abs(tetherToVelAngle) > 90) {
+                Vector2 tangentVector = Vector2.Perpendicular(tetherVector);
+
+                if (Mathf.Sign(tetherToVelAngle) == 1) tangentVector *= -1;
+
+                var newVelMag = oldVel.magnitude * Mathf.Abs(Mathf.Cos(Mathf.Deg2Rad * Vector2.Angle(playerVelocity, tangentVector)));
+                newVel = tangentVector.normalized * newVelMag;
+
+                //Reassign velocity
+                _rb.velocity = newVel;
             }
 
-            
-            //Reassign velocity
-            _rb.velocity = newVel;**/
-
+            //push the player
             pullVector = (pullVector - tetherPlayerDifference).normalized;
-            Debug.Log(new Vector2(pullVector.x * _horizPullStrength, pullVector.y * _vertPullStrength));
-            _rb.AddForce(new Vector2(pullVector.x * _horizPullStrength, pullVector.y * _vertPullStrength) , ForceMode2D.Force);
+            float _vertPullStrengthAdjusted = (!_sm.CheckBufferedInputsFor("Jumped")) ? _vertPullStrength : 0;
+            //Debug.Log(new Vector2(pullVector.x * _horizPullStrength, pullVector.y * _vertPullStrength));
+            _rb.AddForce(new Vector2(pullVector.x * _horizPullStrength, pullVector.y * _vertPullStrengthAdjusted) , ForceMode2D.Force);
+            _rb.AddForce(new Vector2(_gm.DirectionalInput.x * _playerInputMagnitude, 0));
             
             _lastDistance = distance < _lastDistance ? distance : _lastDistance;
         }

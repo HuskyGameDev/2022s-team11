@@ -1,5 +1,5 @@
 using UnityEngine;
-namespace _Scripts.Utility {
+namespace Utility {
     /** Author: Nick Zimanski
     * Version 1/25/22
     */    

@@ -1,7 +1,7 @@
 using UnityEngine;
-namespace _Scripts.Movement.States {
+namespace Movement {
     /** Author: Nick Zimanski
-    * Version 3/21/22
+    * Version 9/16/22
     */
     [CreateAssetMenu(fileName = "AirborneStateData", menuName = "ScriptableObjects/MovementStates/AirborneStateScriptableObject")]
     public class AirborneState : MovementState
@@ -77,8 +77,8 @@ namespace _Scripts.Movement.States {
         private int _queueWallJump = 0;
         public float WallSlideSpeed => _wallSlideSpeed;
         private float _gravityScale, _horizontalInput, _acceleration, _deceleration;
-        public override void Initialize(_Scripts.Managers.PlayerManager player, MovementStateMachine sm) {
-            base.Initialize(player, sm);
+        public override void Initialize(GameManager game, PlayerController player, MovementStateMachine sm) {
+            base.Initialize(game, player, sm);
             _gravityScale = _rb.gravityScale;
         }
         public override void Enter() {
@@ -96,16 +96,17 @@ namespace _Scripts.Movement.States {
             _rb.gravityScale = _gravityScale;
         }
         protected override void HandleInput() {
-            if(_input.y < 0) {
+            if(_gm.DirectionalInput.y < 0) {
                 _sm.BufferInput("Down", 0.1f);
             }
-            if (Input.GetButtonDown("Jump")) {
+            if (_gm.Get<Managers.InputManager>().GetButtonDown("Jump")) {
                 _sm.BufferInput("Jump", _jumpBufferTime);
             }
 
-            _jumpPressed = Input.GetButton("Jump");
+            _jumpPressed = _gm.Get<Managers.InputManager>().GetButton("Jump");
             
-            if (Input.GetButtonDown("Grapple")) {
+            if (_gm.Get<Managers.InputManager>().GetButtonDown("Grapple")) {
+                _sm.BufferInput("Grapple", 0.1f);
                 _grappleInput = true;
             }
 
@@ -114,16 +115,16 @@ namespace _Scripts.Movement.States {
                 CheckInputBuffer();
             }
         }
+
         protected override void LogicUpdate() {
             if (IsGrounded && ((_sm.CheckBufferedInputsFor("Jump") == false) || (_sm.CheckBufferedInputsFor("Jump") == true && WallCheck() == 0))) {
                 if(WallCheck() != 0) {
                     _sm.BufferInput("WallTouchTransition", 0.05f);
-                    Debug.Log("WallTouchTransition");
                 }
                 _transitionToState = _sm.CheckBufferedInputsFor("Down") ? States.Sliding : States.Running;
-            } else if (!_owner.IsGrappleHeld) {
+            } /**else if (!_owner.IsGrappleHeld) {
                 _transitionToState = States.Grappling;
-            }
+            }*/
 
             if(!_jumpPressed && !_hasJumpEnded) {
                 _jumpEndCalled = true;
@@ -133,7 +134,7 @@ namespace _Scripts.Movement.States {
             if (WallCheck() != 0 && _sm.CheckBufferedInputsFor("Jump")) {
                 _queueWallJump = WallCheck();
             }
-            if(WallCheck() == 0 && _sm.CheckBufferedInputsFor("Jump") && _stateEnterTime > Time.time - _jumpCoyoteTime && _lastWallJump < 0) {
+            if(WallCheck() == 0 && _sm.CheckBufferedInputsFor("Jump") && _stateEnterTime > Time.time - _jumpCoyoteTime && _lastWallJump < 0 && _sm.CheckBufferedInputsFor("Ground to Air")) {
                 _queueCoyoteJump = true;
             }
             #endregion
@@ -141,7 +142,7 @@ namespace _Scripts.Movement.States {
             #region Air Control
             //calculates direction to move in and desired velocity
             if (_lastWallJump < 0) {
-                float targetSpeed = _input.x * _maxHorizontalAirSpeed;
+                float targetSpeed = _gm.DirectionalInput.x * _maxHorizontalAirSpeed;
                 float speedDif = 0;
                 if (IsPlayerSpeedExceeding(targetSpeed)) {
                     //when the character is exceeding our maximum velocity, speed dif will have a value of 1 in the opposite horizontal direction
@@ -167,6 +168,12 @@ namespace _Scripts.Movement.States {
                 _lastWallJump -= Time.deltaTime;
             }
             #endregion
+
+            if (_hook.IsAttached) {
+                _sm.RemoveBufferedInputsFor("Grapple");
+                _owner.CanGrapple = false;
+                _transitionToState = States.Grappling;
+            }
         }
         protected override void PhysicsUpdate() {
             #region Horizontal Movement
@@ -195,20 +202,17 @@ namespace _Scripts.Movement.States {
             #region Terminal Velocity
             if(_rb.velocity.y < -_terminalVelocity)
             {
-                _rb.velocity = new Vector2(_rb.velocity.x, -_terminalVelocity);
+                //_rb.velocity = new Vector2(_rb.velocity.x, -_terminalVelocity);
+                _rb.gravityScale = _gravityScale * 0.5f;
             }
             #endregion
 
             #region Wall Interaction
             if (WallCheck() != 0) {
-                    _acceleration = 0;
-                    _deceleration = 0;
-            
-
                 //wall friction
                 if (_rb.velocity.y < -_wallSlideSpeed)
                 {
-                    if (_input.x * WallCheck() > 0.01f)
+                    if (_gm.DirectionalInput.x * WallCheck() > 0.01f)
                     {
                         _rb.velocity = new Vector2(_rb.velocity.x, -_wallSlideSpeed);
                     }
@@ -220,17 +224,9 @@ namespace _Scripts.Movement.States {
             }
             #endregion
 
-            
-            if(_grappleInput) {
-                HandleGrappleInput(_input, _hookShotForce);
-                _grappleInput = false;
-            }
-
-            //continuing a ground jump
-            if (_queueCoyoteJump) {
-                GroundedJump();
-                _queueCoyoteJump = false;
-                return;
+            if (_grappleInput) {
+                HandleGrappleInput(_gm.DirectionalInput, _hookShotForce);
+                _grappleInput = false;    
             }
             
             #region WallJump
@@ -244,6 +240,7 @@ namespace _Scripts.Movement.States {
             #region CoyoteJump
             if (_queueCoyoteJump) {
                 _queueCoyoteJump = false;
+                _hasJumpEnded = false;
                 GroundedJump();
             }
             #endregion
@@ -258,15 +255,14 @@ namespace _Scripts.Movement.States {
         /// </summary>
         private void OnJumpEnd()
         {
-            Debug.Log("OnJumpEnd called");
             if(_rb.velocity.y > 0)
             {
-                Debug.Log("jump Cut");
                 _rb.AddForce(Vector2.down * _rb.velocity.y * (1 - _jumpCutMultiplier), ForceMode2D.Impulse);
             }
 
             _hasJumpEnded = true;
             _jumpEndCalled = false;
+            _sm.RemoveBufferedInputsFor("Jumped");
             //jumpInputReleased = true;
             //lastJumpTime = 0;
         }
@@ -278,13 +274,11 @@ namespace _Scripts.Movement.States {
         private void WallJump(int wallSide)
         {
             if (wallSide == 0 || _lastWallJump > 0.5 * _wallJumpPreservationTime){
-                Debug.Log("WallJump queued but no longer touching wall or last wall jump was too recent");
                 return;
             }
             _lastWallJump = _wallJumpPreservationTime;
             if (_rb.velocity.y < _wallJumpForce * 0.5 || _sm.CheckBufferedInputsFor("Ground Jump")){
                 _rb.velocity = new Vector2(0, 0);
-                Debug.Log("WallJump with canceled upwards momentum");
                 _rb.velocity = new Vector2(0, _rb.velocity.y);
                 _rb.AddForce(new Vector2(-1 * wallSide, 1) * _wallJumpForce, ForceMode2D.Impulse);
             } else {

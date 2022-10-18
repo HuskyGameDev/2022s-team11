@@ -6,6 +6,14 @@ TagManager:
   tags:
   - ObjectFolder
   - Ground
+  - GrappleMarker
+  - Ice
+  - Jump Pad
+  - GM
+  - Glass
+  - Hazard
+  - Room
+  - Powerup
   layers:
   - Default
   - TransparentFX

@@ -1,5 +1,5 @@
 using UnityEngine;
-namespace _Scripts.Movement {
+namespace Movement {
     public class GrappleHookController : MonoBehaviour
     {
         private bool _isHeld, _isAttached;
@@ -11,6 +11,7 @@ namespace _Scripts.Movement {
         [SerializeField] private GameObject _parent;
         [SerializeField] private Transform _grappleTether;
         [SerializeField] private Vector2 _defaultDirectionVector;
+        [SerializeField] private LayerMask _validGrappleLayers;
         private Rigidbody2D _rb;
         private LineRenderer _lr;
 
@@ -33,6 +34,7 @@ namespace _Scripts.Movement {
             _lr.SetPosition(1, _grappleTether.position);  
         }
 
+        /*
         void OnTriggerEnter2D(Collider2D c)
         {
             if (_isHeld) return;
@@ -42,6 +44,13 @@ namespace _Scripts.Movement {
             } else if (_isAttached) {
                 RetractHook();
             }
+        }
+        */
+
+        void OnTriggerEnter2D(Collider2D c) {
+            if (_isHeld) return;
+
+            if (c.gameObject.CompareTag("Player") && _isAttached) RetractHook();
         }
 
         /// <summary>
@@ -74,12 +83,57 @@ namespace _Scripts.Movement {
 
         public void FireHook(Vector2 direction, float force) {
             if (direction.x == 0 && direction.y == 0) direction = _defaultDirectionVector;
-            
-            _rb.isKinematic = false;
-            _rb.velocity = direction.normalized * force;
-            _isHeld = false;
-            _lr.enabled = true;
+
+            //RaycastHit2D _hit = Physics2D.Raycast(_parent.transform.position + new Vector3(0, 0.75f, 0), direction, 15, _validGrappleLayers);
+            RaycastHit2D _hit = castHit(ref direction, 15, _validGrappleLayers);
+            //Debug.DrawRay(this.transform.position, direction, Color.red);
+
+            if (_hit) {
+                Vector2 _locationDelta = _hit.distance * direction.normalized;
+                this.transform.Translate(_locationDelta);
+                _isHeld = false;
+                _lr.enabled = true;
+                AttachHookTo(_hit.collider.gameObject);
+            }
+
+            //_rb.isKinematic = false;
+            //_rb.velocity = direction.normalized * force;
         }
 
+        private RaycastHit2D castHit(ref Vector2 direction, float distance, LayerMask layerMask) {;
+
+            RaycastHit2D hit = Physics2D.Raycast(_parent.transform.position + new Vector3(0, 0.75f, 0), direction, distance, layerMask);
+            if (hit && !hit.collider.gameObject.CompareTag("Ice") && !hit.collider.gameObject.CompareTag("Jump Pad") && !hit.collider.gameObject.CompareTag("Glass")) return hit;
+
+            int width = 30;
+            float fidelity = 1;
+            if(direction.normalized.y == 0 || direction.normalized.x == 0) {
+                width = 0;
+            }
+
+            for(float i = 1/fidelity; i <= width; i += 1/fidelity) {
+                hit = Physics2D.Raycast(_parent.transform.position + new Vector3(0, 0.75f, 0), getVectorFromAngle(Vector2.SignedAngle(Vector2.right, direction) + i), distance, layerMask);
+                if (hit && !hit.collider.gameObject.CompareTag("Ice") && !hit.collider.gameObject.CompareTag("Jump Pad") && !hit.collider.gameObject.CompareTag("Glass")) {
+                    direction = getVectorFromAngle(Vector2.SignedAngle(Vector2.right, direction) + i);
+                    return hit;
+                }
+                hit = Physics2D.Raycast(_parent.transform.position + new Vector3(0, 0.75f, 0), getVectorFromAngle(Vector2.SignedAngle(Vector2.right, direction) - i), distance, layerMask);
+                if (hit && !hit.collider.gameObject.CompareTag("Ice") && !hit.collider.gameObject.CompareTag("Jump Pad") && !hit.collider.gameObject.CompareTag("Glass")) {
+                    direction = getVectorFromAngle(Vector2.SignedAngle(Vector2.right, direction) - i);
+                    return hit;
+                }
+            }
+            return Physics2D.Raycast(_parent.transform.position + new Vector3(0, 0.75f, 0), direction, 0, layerMask);
+        }
+
+        /* gets a vector from a given angle
+         * 
+         * parameter angle: angle to get the vector from
+         * return: Vector3 equivalent to the angle given
+         */
+        public static Vector2 getVectorFromAngle(float angle) {
+            float angleRad = angle * (Mathf.PI / 180f);
+            return new Vector2(Mathf.Cos(angleRad), Mathf.Sin(angleRad));
+        }
     }
 }

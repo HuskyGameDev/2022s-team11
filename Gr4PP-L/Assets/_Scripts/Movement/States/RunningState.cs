@@ -1,6 +1,7 @@
 using System;
 using UnityEngine;
-namespace _Scripts.Movement.States {
+
+namespace Movement {
     /** Author: Nick Zimanski && Noah Kolczynski
     * Version 3/21/22
     */
@@ -39,15 +40,16 @@ namespace _Scripts.Movement.States {
         #endregion
 
         #region MovementState Callbacks
-        public override void Initialize(_Scripts.Managers.PlayerManager player, MovementStateMachine sm)
+        public override void Initialize(GameManager game, Movement.PlayerController player, MovementStateMachine sm)
         {
-            base.Initialize(player, sm);
+            base.Initialize(game, player, sm);
         }
         public override void Enter() {
             base.Enter();
             _acceleration = _givenAccel;
             _deceleration = _givenDecel;
             HandleInput();
+            _owner.CanGrapple = true;
         }
         public override void Exit() {
             base.Exit();
@@ -56,17 +58,15 @@ namespace _Scripts.Movement.States {
         #region MovementState Overrides
         protected override void HandleInput() {
             var gameTime = Time.time;
-            _input = GetInput();
-            _isCrouchingInput = _input.y < 0;
+            _isCrouchingInput = _gm.DirectionalInput.y < 0;
             
-            if (Input.GetButtonDown("Grapple")) {
+            if (_gm.Get<Managers.InputManager>().GetButtonDown("Grapple")) {
                 _grappleInput = true;
                 _sm.BufferInput("Grapple", 0.1f);
             }
 
-            if (Input.GetButtonDown("Jump")) {
+            if (_gm.Get<Managers.InputManager>().GetButtonDown("Jump")) {
                 _sm.BufferInput("Jump", _jumpBufferTime);
-                Debug.Log("Jump buffered");
             }
 
             if (_uncheckedInputBuffer) {
@@ -77,7 +77,7 @@ namespace _Scripts.Movement.States {
         protected override void LogicUpdate() {
             #region Normal Movement
                 //calculates direction to move in and desired velocity
-                float targetSpeed = _input.x * _maxHorizontalSpeed;
+                float targetSpeed = _gm.DirectionalInput.x * _maxHorizontalSpeed;
                 float speedDif = 0;
                 if (IsPlayerSpeedExceeding(targetSpeed))
                 {
@@ -88,9 +88,11 @@ namespace _Scripts.Movement.States {
                     //calculates difference between current velocity and desired velocity
                     speedDif = targetSpeed - _rb.velocity.x;
                 }
+
                 //change acceleration rate depending on the situation
                 //when target speed is > 0.01f, use acceleration variable, else use deceleration variable
-                _accelRate = (Mathf.Abs(targetSpeed) > 0.01f) ? _acceleration : _deceleration;
+                if (targetSpeed == 0) _accelRate = 0;
+                else _accelRate = (Mathf.Abs(targetSpeed) > 0.01f) ? _acceleration : _deceleration;
                 //applies acceleration to speed difference, then raises to a set power so acceleration increases with higher speeds
                 //finally multiplies by sing to reapply direction
                 _movement = Mathf.Pow(Mathf.Abs(speedDif) * _accelRate, _velPower) * Mathf.Sign(speedDif);
@@ -99,18 +101,25 @@ namespace _Scripts.Movement.States {
 
             #region StateChecks
             if (!IsGrounded) {
+                _sm.BufferInput("Ground to Air", 0.1f);
                 _transitionToState = States.Airborne;
             } else if (_hook.IsAttached) {
+                _sm.RemoveBufferedInputsFor("Grapple");
+                _owner.CanGrapple = false;
                 _transitionToState = States.Grappling;
+            } else if (_gm.Get<Managers.InputManager>().GetButton("Slide"))
+            {
+                _transitionToState = States.Sliding;
             }
             #endregion
         }
         protected override void PhysicsUpdate() {
             //applies force to rigidbody, multiplying by Vector2.right so that it only affects X axis
-            _rb.AddForce(_movement * Vector2.right);
+            if (_movement != 0) _rb.AddForce(_movement * Vector2.right);
+        
 
             #region Friction
-                if (Mathf.Abs(_input.x) < 0.01f)
+                if (Mathf.Abs(_gm.DirectionalInput.x) < 0.01f)
                 {
                     float amount = Mathf.Min(Mathf.Abs(_rb.velocity.x), Mathf.Abs(_frictionAmount));
                     amount *= Mathf.Sign(_rb.velocity.x);
@@ -118,14 +127,13 @@ namespace _Scripts.Movement.States {
                 }
             #endregion
 
-            if (_sm.CheckBufferedInputsFor("Jump")) {
+            if (_sm.CheckBufferedInputsFor("Jump") && !GroundCollider().CompareTag("Jump Pad")) {
                 // this ugly if statement checks to see if the player is either not touching a wall, not holding a direction, or touching the wall, but holding in the direction of the wall.
                 // this allows the player while grounded to jump up the side of a wall if they're touching it.
                 // the second line of the if statement ensures that the player only gets a grounded jump when touching the wall if they've been in the grounded state for more than 0.1 seconds.
                 // this ensures that, should the player clip into the wall momentarily when trying to wall jump, they don't get a grounded jump.
-                if ((WallCheck() == 0 || _input.x == 0 ||(WallCheck() != 0 && Mathf.Sign(WallCheck()) == Mathf.Sign(_input.x)))
+                if ((WallCheck() == 0 || _gm.DirectionalInput.x == 0 ||(WallCheck() != 0 && Mathf.Sign(WallCheck()) == Mathf.Sign(_gm.DirectionalInput.x)))
                     && !_sm.CheckBufferedInputsFor("WallTouchTransition")) {
-                    Debug.Log("WallCheck() = " + WallCheck() + " !_sm.CheckBufferedInputsFor(WallTouchTransition) = " + !_sm.CheckBufferedInputsFor("WallTouchTransition"));
                     GroundedJump();
                 } else {
                     _sm.RemoveBufferedInputsFor("WallTouchTransition");
@@ -133,8 +141,8 @@ namespace _Scripts.Movement.States {
                 }
             }
 
-            if(_grappleInput) {
-                HandleGrappleInput(_input, _hookShotForce);
+            if(_sm.CheckBufferedInputsFor("Grapple")) {
+                HandleGrappleInput(_gm.DirectionalInput, _hookShotForce);
                 _grappleInput = false;
             }
         }
