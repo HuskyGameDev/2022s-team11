@@ -13,12 +13,12 @@ namespace Level {
             _gm = GameManager.Instance;
             _pos = transform.position;
             
-            if(_gm.Get<Managers.LevelManager>().IsAtCheckpoint(_pos)) {
+            if(GameManager.Instance.levelManager.IsAtCheckpoint(_pos)) {
                 virtualCam.SetActive(true);
             }
 
             if (tag.Equals("Level Origin"))
-                _gm.Get<Managers.LevelManager>().RegisterOrigin(gameObject);
+                _gm.levelManager.RegisterOrigin(gameObject);
         }
 
         // when the player enters this room, activate this room's camera
@@ -27,7 +27,7 @@ namespace Level {
             if (other.CompareTag("Player") && !other.isTrigger)
             {
                 virtualCam.SetActive(true);
-                _gm.Get<Managers.LevelManager>().SetCheckpoint(_pos);
+                _gm.levelManager.SetCheckpoint(_pos);
             }
         }
 

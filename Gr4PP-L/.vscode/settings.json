@@ -60,11 +60,7 @@
         "Dont",
         "horiz",
         "Mathf",
-        "Powerup",
-        "Powerups",
-        "Respawn",
         "Rigidbody",
-        "typeparam",
         "UGUI"
     ],
     "workbench.colorCustomizations": {

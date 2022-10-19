@@ -4,21 +4,9 @@ namespace Managers
     /** Author: Nick Zimanski
     * Version 9/16/22
     */
-    public abstract class Manager : IGameService
+    public abstract class Manager : MonoBehaviour
     {
-        private string _name;
 
-        public string GetName() {
-            return this._name;
-        }
-
-        public void Initialize() {
-            _name = this.GetType().Name;
-        }
-
-        public abstract void Destroy();
-
-        public abstract Manager GetNewInstance();
-
+        public abstract void OnSceneReset();
     }
 }

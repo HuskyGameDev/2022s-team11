@@ -8,7 +8,7 @@ using UnityEngine.SceneManagement;
 namespace Managers {
     //Author:        Ethan Hohman
     //Author: Nick Zimanski
-    //Last Updated:  10/13/2022
+    //Last Updated:  9/17/2022
     public class TimerManager : Manager
     {
         private Text[] _texts;
@@ -16,7 +16,6 @@ namespace Managers {
 
         // Plan on using this so timer doesn't tick up during dialogue bits (if any) or room changes
         private bool _timerActive = true;
-
 
         public float CurrentTime = 0;
         public bool BestTimeFollowsCurrent = false;
@@ -42,12 +41,9 @@ namespace Managers {
 
         }
 
-        public void Pause() {
-            _timerActive = false;
-        }
-
-        public void Resume() {
-            _timerActive = true;
+        public override void OnSceneReset() {
+            //LevelExit();
+            CurrentTime = 0;
         }
 
         public void LevelExit() {
@@ -56,30 +52,6 @@ namespace Managers {
             {
                 PlayerPrefs.SetFloat(SceneManager.GetActiveScene().name, CurrentTime);
             }
-        }
-
-        public new void Initialize() {
-            base.Initialize();
-
-            CurrentTime = 0;
-
-            GameManager.updateCallback += Update;
-            LevelManager.OnLevelExit += LevelExit;
-
-        }
-
-        public override Manager GetNewInstance()
-        {
-            return new TimerManager();
-        }
-
-        public TimerManager() {
-            Initialize();
-        }
-
-        public override void Destroy() {
-            GameManager.updateCallback -= Update;
-            LevelManager.OnLevelExit -= LevelExit;
         }
     }
 }

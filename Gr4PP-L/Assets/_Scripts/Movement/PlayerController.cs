@@ -107,15 +107,8 @@ namespace Movement {
         /// <summary>
         /// Sets the player to their origin position
         /// </summary>
-        public void ResetPositionToOrigin() {
+        public void ResetPosition() {
             SetPosition(_initialPosition);
-        }
-
-        /// <summary>
-        /// Sets the player to their last checkpoint position
-        /// </summary>
-        public void ResetPositionToCheckpoint() {
-            SetPosition(_gm.Get<Managers.LevelManager>().GetLastCheckpoint());
         }
 
         /// <summary>
@@ -124,14 +117,13 @@ namespace Movement {
         /// <param name="pos">the position to set to</param>
         public void SetPosition(Vector2 pos) {
             transform.position = pos;
-            _playerRigidbody.velocity = Vector2.zero;
         }
 
         /// <summary>
         /// Resets the player's position to their last checkpoint
         /// </summary>
         public void Respawn() {
-            _gm.Get<Managers.LevelManager>().ResetLevel();
+            transform.position = _gm.levelManager.GetCheckpoint();
         }
 
         private void Die() {
@@ -150,8 +142,6 @@ namespace Movement {
             SetupStateMachine();
 
             _initialPosition = transform.position;
-
-            _gm.Get<Managers.LevelManager>().RegisterOrigin(_initialPosition);
         }
 
         void Update()
