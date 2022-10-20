@@ -88,8 +88,11 @@ namespace Movement {
             _gravityScale = _rb.gravityScale;
             _jumpEndCalled = false;
             _lastWallJump = -1;
+            _queueWallJump = 0;
 
-            _hasJumpEnded = !(_sm.CheckBufferedInputsFor("Grounded Jump"));
+            if(_sm.CheckBufferedInputsFor("Grounded Jump")) {
+                _hasJumpEnded = false;
+            }
         }
         public override void Exit() {
             base.Exit();
@@ -132,6 +135,7 @@ namespace Movement {
 
             #region Jump
             if (WallCheck() != 0 && _sm.CheckBufferedInputsFor("Jump")) {
+                Debug.Log("Airborne Jump Buffered? " + _sm.CheckBufferedInputsFor("Jump"));
                 _queueWallJump = WallCheck();
             }
             if(WallCheck() == 0 && _sm.CheckBufferedInputsFor("Jump") && _stateEnterTime > Time.time - _jumpCoyoteTime && _lastWallJump < 0 && _sm.CheckBufferedInputsFor("Ground to Air")) {
@@ -273,21 +277,24 @@ namespace Movement {
         /// <param name="wallSide">The side of the player the wall is located to. -1 for the player's left. 1 for the player's right</param>
         private void WallJump(int wallSide)
         {
+
             if (wallSide == 0 || _lastWallJump > 0.5 * _wallJumpPreservationTime){
                 return;
             }
             _lastWallJump = _wallJumpPreservationTime;
-            if (_rb.velocity.y < _wallJumpForce * 0.5 || _sm.CheckBufferedInputsFor("Ground Jump")){
+            if (_rb.velocity.y < _wallJumpForce * 0.5 || _sm.CheckBufferedInputsFor("GroundedJump")){
                 _rb.velocity = new Vector2(0, 0);
-                _rb.velocity = new Vector2(0, _rb.velocity.y);
+                //_rb.velocity = new Vector2(0, _rb.velocity.y);
                 _rb.AddForce(new Vector2(-1 * wallSide, 1) * _wallJumpForce, ForceMode2D.Impulse);
+                Debug.Log("WJ");
             } else {
                 _rb.velocity = new Vector2(0, _rb.velocity.y);
                 _rb.AddForce(new Vector2(-1 * wallSide, 0.5f) * _wallJumpForce, ForceMode2D.Impulse);
+                Debug.Log("Multiplying WJ");
             }
             
             _sm.RemoveBufferedInputsFor("Jump");
-            _hasJumpEnded = !_jumpPressed;
+            _hasJumpEnded = false;
         }
     }
 }

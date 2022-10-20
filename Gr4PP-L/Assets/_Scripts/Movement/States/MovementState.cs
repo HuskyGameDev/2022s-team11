@@ -84,8 +84,10 @@ namespace Movement {
             _rb.velocity = new Vector2(_rb.velocity.x, 0);
             _rb.AddForce(Vector2.up * _jumpForce, ForceMode2D.Impulse);
             _sm.RemoveBufferedInputsFor("Jump");
+            Debug.Log(_sm.CheckBufferedInputsFor("Jump"));
             _sm.BufferInput("Grounded Jump", 0.1f);
             _sm.BufferInput("Jumped", 0.15f);
+            Debug.Log("Grounded Jump");
         }
 
         protected void HandleGrappleInput(Vector2 direction, float force) {
@@ -131,11 +133,11 @@ namespace Movement {
             int _wallSide = 0;
             Collider2D collision;
             if ((collision = Physics2D.OverlapBox(_owner.GroundCheckPoint.position + new Vector3(-_owner.WallCheckOffset.x, _owner.WallCheckOffset.y, 0), _owner.WallCheckSize, 0, _owner.GroundLayer))
-                && !collision.CompareTag("Ice") && !collision.CompareTag("GO") && (!collision.CompareTag("1Way") || collision.GetComponent<PlatformEffector2D>().rotationalOffset == -90)) {
+                && (collision.CompareTag("Ground") || (collision.CompareTag("1Way") && collision.GetComponent<PlatformEffector2D>().rotationalOffset == -90))) {
                 _wallSide = -1;
             }
             if ((collision = Physics2D.OverlapBox(_owner.GroundCheckPoint.position + new Vector3(_owner.WallCheckOffset.x, _owner.WallCheckOffset.y, 0), _owner.WallCheckSize, 0, _owner.GroundLayer))
-                && !collision.CompareTag("Ice") && !collision.CompareTag("GO") && (!collision.CompareTag("1Way") || collision.GetComponent<PlatformEffector2D>().rotationalOffset == 90)) {
+                && (collision.CompareTag("Ground") || (collision.CompareTag("1Way") && collision.GetComponent<PlatformEffector2D>().rotationalOffset == -90))) {
                 if(_wallSide == 0) {
                     _wallSide = 1;
                 } else {
