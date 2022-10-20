@@ -44,7 +44,7 @@ public class GameManager : MonoBehaviour
         Register<InteractiveManager>(new InteractiveManager());
         Register<TimerManager>(new TimerManager());
         Register<AudioManager>(new AudioManager());
-        Initialize();
+        //Initialize();
 
         // CHANGE TESTING SCENE HERE
         StartCoroutine(Get<LevelManager>().LoadScene("Playtesting"));
@@ -77,6 +77,7 @@ public class GameManager : MonoBehaviour
             string key = entry.Key;
             Manager val = entry.Value;
 
+            //val.Destroy();
             val = val.GetNewInstance();
         }
         
