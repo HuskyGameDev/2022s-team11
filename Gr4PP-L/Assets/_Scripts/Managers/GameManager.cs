@@ -3,6 +3,9 @@ using System.Collections.Generic;
 using UnityEngine;
 using Managers;
 
+/** Author: Nick Zimanski
+    *   Version: 10/25/22
+    */
 public class GameManager : MonoBehaviour
 {
     public Vector2 DirectionalInput => Get<InputManager>().DirectionalInput;
@@ -92,7 +95,7 @@ public class GameManager : MonoBehaviour
         return (T) _services[type];
     }
 
-    public void Register<T>(T service) where T : Manager {
+    private void Register<T>(T service) where T : Manager {
         string type = typeof(T).Name;
         if (_services.ContainsKey(type)) { 
             Debug.LogError($"Already have type {type} in the registered services!");
@@ -103,7 +106,7 @@ public class GameManager : MonoBehaviour
         _services.Add(type, service);
     }
 
-    public void Unregister<T>() where T : Manager {
+    private void Unregister<T>() where T : Manager {
         string type = typeof(T).Name;
         if (!_services.ContainsKey(type)) {
             Debug.LogError($"Service {type} not found in the registered services!");

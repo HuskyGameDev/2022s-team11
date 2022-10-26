@@ -4,6 +4,9 @@ using System.Collections.Generic;
 using UnityEngine;
 
 namespace Managers {
+    /** Author: Nick Zimanski
+    *   Version: 10/25/22
+    */
     public class InputManager : Manager
     {
 
@@ -87,6 +90,7 @@ namespace Managers {
 
         public void UnlockType(ControlType type) {
             _lockedInputs[type] = false;
+            Debug.Log("Unlocking "+ type + " inputs");
         }
 
         
