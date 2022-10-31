@@ -1,7 +1,7 @@
 using UnityEngine;
-namespace _Scripts.Movement.States {
+namespace Movement {
     /** Author: Nick Zimanski
-    * Version 3/21/22
+    * Version 9/16/22
     */
     [CreateAssetMenu(fileName = "AirborneStateData", menuName = "ScriptableObjects/MovementStates/AirborneStateScriptableObject")]
     public class AirborneState : MovementState
@@ -77,8 +77,8 @@ namespace _Scripts.Movement.States {
         private int _queueWallJump = 0;
         public float WallSlideSpeed => _wallSlideSpeed;
         private float _gravityScale, _horizontalInput, _acceleration, _deceleration;
-        public override void Initialize(_Scripts.Managers.PlayerManager player, MovementStateMachine sm) {
-            base.Initialize(player, sm);
+        public override void Initialize(GameManager game, PlayerController player, MovementStateMachine sm) {
+            base.Initialize(game, player, sm);
             _gravityScale = _rb.gravityScale;
         }
         public override void Enter() {
@@ -96,16 +96,16 @@ namespace _Scripts.Movement.States {
             _rb.gravityScale = _gravityScale;
         }
         protected override void HandleInput() {
-            if(_input.y < 0) {
+            if(_gm.DirectionalInput.y < 0) {
                 _sm.BufferInput("Down", 0.1f);
             }
-            if (Input.GetButtonDown("Jump")) {
+            if (_gm.Get<Managers.InputManager>().GetButtonDown("Jump")) {
                 _sm.BufferInput("Jump", _jumpBufferTime);
             }
 
-            _jumpPressed = Input.GetButton("Jump");
+            _jumpPressed = _gm.Get<Managers.InputManager>().GetButton("Jump");
             
-            if (Input.GetButtonDown("Grapple")) {
+            if (_gm.Get<Managers.InputManager>().GetButtonDown("Grapple")) {
                 _sm.BufferInput("Grapple", 0.1f);
                 _grappleInput = true;
             }
@@ -142,7 +142,7 @@ namespace _Scripts.Movement.States {
             #region Air Control
             //calculates direction to move in and desired velocity
             if (_lastWallJump < 0) {
-                float targetSpeed = _input.x * _maxHorizontalAirSpeed;
+                float targetSpeed = _gm.DirectionalInput.x * _maxHorizontalAirSpeed;
                 float speedDif = 0;
                 if (IsPlayerSpeedExceeding(targetSpeed)) {
                     //when the character is exceeding our maximum velocity, speed dif will have a value of 1 in the opposite horizontal direction
@@ -171,7 +171,7 @@ namespace _Scripts.Movement.States {
 
             if (_hook.IsAttached) {
                 _sm.RemoveBufferedInputsFor("Grapple");
-                _owner._canGrapple = false;
+                _owner.CanGrapple = false;
                 _transitionToState = States.Grappling;
             }
         }
@@ -212,7 +212,7 @@ namespace _Scripts.Movement.States {
                 //wall friction
                 if (_rb.velocity.y < -_wallSlideSpeed)
                 {
-                    if (_input.x * WallCheck() > 0.01f)
+                    if (_gm.DirectionalInput.x * WallCheck() > 0.01f)
                     {
                         _rb.velocity = new Vector2(_rb.velocity.x, -_wallSlideSpeed);
                     }
@@ -225,7 +225,7 @@ namespace _Scripts.Movement.States {
             #endregion
 
             if (_grappleInput) {
-                HandleGrappleInput(_input, _hookShotForce);
+                HandleGrappleInput(_gm.DirectionalInput, _hookShotForce);
                 _grappleInput = false;    
             }
             

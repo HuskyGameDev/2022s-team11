@@ -1,7 +1,8 @@
-using System.Diagnostics;
-using _Scripts.Utility;
+using Utility;
+using Managers;
 using UnityEngine;
-namespace _Scripts.Movement.States {
+using System.Collections.Generic;
+namespace Movement {
     /** Author: Nick Zimanski
     * Version 3/21/22
     */
@@ -9,42 +10,50 @@ namespace _Scripts.Movement.States {
     {
         [Header("Movement State")]
         [SerializeField]private float _jumpForce;
-        [SerializeField]private float _horizAxisThreshold;
-        [SerializeField]private float _vertAxisThreshold;
         #region Variables
         protected MovementStateMachine _sm {get; private set;}
-        protected _Scripts.Managers.PlayerManager _owner {get; private set;}
+        protected PlayerController _owner {get; private set;}
         protected bool _uncheckedInputBuffer;
         protected float _stateEnterTime;
         protected GrappleHookController _hook;
         protected Rigidbody2D _rb;
+        protected GameManager _gm;
         /// <summary>
         /// Stores the input data on a frame. Updated automatically every frame before HandleInput()
         /// </summary>
-        protected Vector2 _input;
 
         protected States? _transitionToState;
         public States? Name => null;
         protected bool IsGrounded => GroundedCheck();
 
-        public bool _canGrapple;
+        public bool CanGrapple;
+
+        private ContactFilter2D _filter;
+        private List<Collider2D> _collisions;
 
         #endregion
-        public virtual void Initialize(_Scripts.Managers.PlayerManager player, MovementStateMachine sm)
+
+        public virtual void Initialize(GameManager game, PlayerController player, MovementStateMachine sm)
         {
             base.Initialize();
             _owner = player;
             _sm = sm;
-            _rb = player.PlayerRigidbody;
+            _rb = _owner.PlayerRigidbody;
             _uncheckedInputBuffer = false;
-            _hook = player.GrappleHookCtrl;
+            _hook = _owner.GrappleHookCtrl;
+            _gm = game;
+
+            _collisions = new List<Collider2D>();
+
+            _filter = new ContactFilter2D();
+            _filter.layerMask = _owner.GroundLayer;
+            _filter.useLayerMask = true;
         }
         public override void Enter() {
             base.Enter();
             _uncheckedInputBuffer = true;
             _stateEnterTime = Time.time;
             _transitionToState = null;
-            _input = GetInput();
         }
         public override void Exit() {
             base.Exit();
@@ -61,8 +70,8 @@ namespace _Scripts.Movement.States {
         /// Processes physics-based logic and moves the player. Called during FixedUpdate.
         /// </summary>
         protected virtual void PhysicsUpdate() {}
+
         public override void Execute() {
-            _input = GetInput();
             HandleInput();
             LogicUpdate();
             StateChangeUpdate();
@@ -82,6 +91,9 @@ namespace _Scripts.Movement.States {
 
         protected void GroundedJump()
         {
+            //Ratchet ass fix for the jump pad issue
+            if (GroundCollider().gameObject.tag == "Jump Pad") return;
+
             _rb.velocity = new Vector2(_rb.velocity.x, 0);
             _rb.AddForce(Vector2.up * _jumpForce, ForceMode2D.Impulse);
             _sm.RemoveBufferedInputsFor("Jump");
@@ -91,8 +103,9 @@ namespace _Scripts.Movement.States {
 
         protected void HandleGrappleInput(Vector2 direction, float force) {
             if (_hook.IsAttached) return;
-            if (!_owner._canGrapple) return;
+            if (!_owner.CanGrapple) return;
             
+
             if (!_hook.IsHeld) {
                 _hook.RetractHook();
                 return;
@@ -105,7 +118,7 @@ namespace _Scripts.Movement.States {
         /// </summary>
         /// <returns>true if contacting the ground, false otherwise</returns>
         private bool GroundedCheck() {
-            return (Physics2D.OverlapBox(_owner.GroundCheckPoint.position - new Vector3(0, 1, 0), _owner.GroundCheckSize, 0, _owner.GroundLayer));
+            return (GroundCollider() != null);
         }
 
         /// <summary>
@@ -127,21 +140,34 @@ namespace _Scripts.Movement.States {
             // this cannot be fixed by returning 0 if the grounded collider is touching the ground, because sometimes the grounded collider will touch the wall when the player jumps into a wall
             // since they player will slightly clip into the wall.
 
-            int _wallSide = 0;
-            Collider2D collision;
-            if ((collision = Physics2D.OverlapBox(_owner.GroundCheckPoint.position + new Vector3(-_owner.WallCheckOffset.x, _owner.WallCheckOffset.y, 0), _owner.WallCheckSize, 0, _owner.GroundLayer))
-                && !collision.CompareTag("Ice")) {
-                _wallSide = -1;
+            //Number of colliders to our left
+            int numCollidersContacting = Physics2D.OverlapBox(_owner.GroundCheckPoint.position + new Vector3(-_owner.WallCheckOffset.x, _owner.WallCheckOffset.y, 0), _owner.WallCheckSize, 0f, _filter, _collisions);
+            int wallSide = 0;
+
+            //If the player is not touching a left wall.
+            if (numCollidersContacting == 0) {
+
+                //use right walls instead
+                numCollidersContacting = Physics2D.OverlapBox(_owner.GroundCheckPoint.position + new Vector3(_owner.WallCheckOffset.x, _owner.WallCheckOffset.y, 0), _owner.WallCheckSize, 0f, _filter, _collisions);
+                
+                //If we're still not touching a wall, then we're done.
+                if (numCollidersContacting == 0) return 0;
+                
+                wallSide = 1;
+            } else {
+                //We have walls on both sides of us, panic (don't wall jump).
+                if (Physics2D.OverlapBox(_owner.GroundCheckPoint.position + new Vector3(_owner.WallCheckOffset.x, _owner.WallCheckOffset.y, 0), _owner.WallCheckSize, 0f, _filter, new Collider2D[1]) > 0) 
+                    return 0;
+
+                wallSide = -1;
             }
-            if ((collision = Physics2D.OverlapBox(_owner.GroundCheckPoint.position + new Vector3(_owner.WallCheckOffset.x, _owner.WallCheckOffset.y, 0), _owner.WallCheckSize, 0, _owner.GroundLayer))
-                && !collision.CompareTag("Ice")) {
-                if(_wallSide == 0) {
-                    _wallSide = 1;
-                } else {
-                    _wallSide = 0;
-                }
+            
+            
+            foreach (Collider2D collision in _collisions)
+            {
+                if (collision.tag != "Ice") return wallSide;
             }
-            return _wallSide;
+            return 0;
         }
 
         /// <summary>
@@ -151,19 +177,8 @@ namespace _Scripts.Movement.States {
         /// <returns>A bool, whether or not the player is moving faster than v</returns>
         protected bool IsPlayerSpeedExceeding(float v)
         {
-            if(Mathf.Abs(_rb.velocity.x) > Mathf.Abs(v) && Mathf.Abs(v) > 0.1f && Mathf.Sign(v) == Mathf.Sign(_rb.velocity.x))
-            {
-                return true;
-            } else
-            {
-                return false;
-            }
-        }
-
-        protected Vector2 GetInput() {
-            var h = Input.GetAxisRaw("Horizontal");
-            var v = Input.GetAxisRaw("Vertical");
-            return new Vector2(Mathf.Abs(h) >= _horizAxisThreshold ? h : 0, Mathf.Abs(v) >= _vertAxisThreshold ? v : 0);
+            if (v == 0 && _rb.velocity.x != 0) return true; 
+            return Mathf.Abs(_rb.velocity.x) > Mathf.Abs(v) && Mathf.Sign(v) == Mathf.Sign(_rb.velocity.x);
         }
 
         new public enum States {

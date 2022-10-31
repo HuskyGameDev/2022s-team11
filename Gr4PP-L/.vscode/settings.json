@@ -54,10 +54,22 @@
         "Temp/":true
     },
     "cSpell.words": [
+        "Conv",
         "convo",
         "Decel",
         "Dont",
         "horiz",
-        "Mathf"
-    ]
+        "Mathf",
+        "Powerup",
+        "Powerups",
+        "Respawn",
+        "Rigidbody",
+        "typeparam",
+        "UGUI"
+    ],
+    "workbench.colorCustomizations": {
+        "activityBar.background": "#312F01",
+        "titleBar.activeBackground": "#454202",
+        "titleBar.activeForeground": "#FEFCCE"
+    }
 }

@@ -1,6 +1,7 @@
 using System;
 using UnityEngine;
-namespace _Scripts.Movement.States
+
+namespace Movement
 {
     /** Author: Nick Zimanski
     * Version 3/21/22
@@ -39,9 +40,9 @@ namespace _Scripts.Movement.States
         new public States Name => States.Sliding;
         #endregion
 
-        public override void Initialize(_Scripts.Managers.PlayerManager player, MovementStateMachine sm)
+        public override void Initialize(GameManager game, PlayerController player, MovementStateMachine sm)
         {
-            base.Initialize(player, sm);
+            base.Initialize(game, player, sm);
         }
 
         public override void Enter()
@@ -58,16 +59,15 @@ namespace _Scripts.Movement.States
         protected override void HandleInput()
         {
             var gameTime = Time.time;
-            _input = GetInput();
-            _isCrouchingInput = _input.y < 0;
+            _isCrouchingInput = _gm.DirectionalInput.y < 0;
 
-            if (Input.GetButtonDown("Grapple"))
+            if (_gm.Get<Managers.InputManager>().GetButtonDown("Grapple"))
             {
                 _grappleInput = true;
                 _sm.BufferInput("Grapple", 0.1f);
             }
 
-            if (Input.GetButtonDown("Jump"))
+            if (_gm.Get<Managers.InputManager>().GetButtonDown("Jump"))
             {
                 _sm.BufferInput("Jump", _jumpBufferTime);
                 Debug.Log("Jump buffered");
@@ -83,7 +83,7 @@ namespace _Scripts.Movement.States
         protected override void LogicUpdate()
         {
             //calculates direction to move in and desired velocity
-            float targetSpeed = _input.x * _maxHorizontalSpeed;
+            float targetSpeed = _gm.DirectionalInput.x * _maxHorizontalSpeed;
             float speedDif = 0;
             if (IsPlayerSpeedExceeding(targetSpeed))
             {
@@ -109,7 +109,7 @@ namespace _Scripts.Movement.States
             {
                 _transitionToState = States.Grappling;
             }
-            else if (!Input.GetButton("Slide"))
+            else if (!_gm.Get<Managers.InputManager>().GetButton("Slide"))
             {
                 _transitionToState = States.Running;
             }
@@ -118,7 +118,7 @@ namespace _Scripts.Movement.States
         {
             _rb.AddForce(_movement * Vector2.right);
 
-            if (Mathf.Abs(_input.x) < 0.01f)
+            if (Mathf.Abs(_gm.DirectionalInput.x) < 0.01f)
             {
                 float amount = Mathf.Min(Mathf.Abs(_rb.velocity.x), Mathf.Abs(_frictionAmount));
                 amount *= Mathf.Sign(_rb.velocity.x);
