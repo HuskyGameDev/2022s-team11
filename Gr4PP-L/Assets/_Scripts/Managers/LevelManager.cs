@@ -5,7 +5,7 @@ using System;
 
 namespace Managers {
     /** Author: Nick Zimanski
-    * Version: 10/13/22
+    *   Version: 10/25/22
     */
     public class LevelManager : Manager
     {
@@ -98,7 +98,7 @@ namespace Managers {
         public IEnumerator LoadScene(string buildName) {
             if (buildName == "Base Scene") {
                 Debug.Log($"Resetting");
-                buildName = "Playtesting";
+                buildName = "HubScene";
             }
 
             AsyncOperation ao;

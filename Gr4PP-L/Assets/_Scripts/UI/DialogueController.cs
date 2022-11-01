@@ -7,11 +7,13 @@ using TMPro;
 using Managers;
 using static Managers.DialogueManager;
 
+/** Author: Nick Zimanski
+    *   Version: 10/25/22
+    */
 public class DialogueController : MonoBehaviour
 {
-
     [SerializeField]
-    private Canvas _dialogueCanvas;
+    private GameObject _dialogueBox;
     [SerializeField]
     private TextMeshProUGUI _dialogueText;
     [SerializeField]
@@ -38,8 +40,7 @@ public class DialogueController : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        _dialogueCanvas = this.gameObject.GetComponent<Canvas>();
-        _dialogueCanvas.enabled = false;
+        SetDialogueBox(false);
 
         _gm = GameManager.Instance;
         _dm = _gm.Get<DialogueManager>();
@@ -61,7 +62,7 @@ public class DialogueController : MonoBehaviour
 
         //Starting a new conversation
         if (!_conversationInProgress) {
-            _dialogueCanvas.enabled = true;
+            SetDialogueBox(true);
 
             //Reset conversation-specific state
             _text_charactersTyped = 0;
@@ -106,7 +107,7 @@ public class DialogueController : MonoBehaviour
 
             //Input
 
-            if (_gm.Get<InputManager>().GetAxisRaw("Submit") != 0) {
+            if (_gm.Get<InputManager>().GetButtonUp("Submit")) {
                 _dm.NextConversationInstruction();
                 _awaitingPlayerInput = false;
             }
@@ -166,9 +167,10 @@ public class DialogueController : MonoBehaviour
         }
 
         private void EndConversation() {
-            _dialogueCanvas.enabled = false;
             SetText("");
+            SetDialogueBox(false);
 
+            _conversationInProgress = false;
             _characterNameText.text = "";
             _delay_endTime = 0;
             _delay_hasStarted = false;
@@ -197,5 +199,9 @@ public class DialogueController : MonoBehaviour
 
             //Conversations shouldn't end on a character change
             _dm.NextConversationInstruction();
+        }
+
+        private void SetDialogueBox(bool toggle) {
+            _dialogueBox.SetActive(toggle);
         }
 }

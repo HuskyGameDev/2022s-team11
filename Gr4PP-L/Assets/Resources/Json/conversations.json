@@ -6,6 +6,11 @@
             "text": "[Gr4PP-L]Hey Kid...{delay=1000} it's been a while.[E-CLA1R3]Rrrr...{delay=600}[]Arf! Arf!"
         },
         {
+            "id": 1337,
+            "name": "test2",
+            "text": "[system]Test dialogue!"
+        },
+        {
             "id": 0,
             "name": "Gr4PP-L Introduction 0",
             "text": "[system]You quickly jack into the crane. A wave of static shoots up the machine from the control panel. A robotic voice sparks from the top of the device.[Robotic Voice]Ah!{delay=400} What was that?!{delay=800} Was that you?[system]The voice pauses here for a moment[Robotic Voice]A fine mess you've started here kiddo. You're gonna want to delta, fast, before the techs get back. Just take the door out."
