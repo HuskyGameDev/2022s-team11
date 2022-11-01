@@ -14,7 +14,6 @@ namespace Managers {
         private Dictionary<string, ControlType[]> _inputTags;
         private Dictionary<ControlType, bool> _lockedInputs;
 
-        private bool _inputLocked = false;
         private float _horizAxisThreshold, _vertAxisThreshold;
 
         public Vector2 DirectionalInput {get; private set;}

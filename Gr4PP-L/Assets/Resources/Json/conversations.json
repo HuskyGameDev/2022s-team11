@@ -18,7 +18,7 @@
         {
             "id": 1,
             "name": "Gr4PP-L Introduction 1",
-            "text": "[Robotic Voice]Door's locked? Damn.{delay=2000} Alright, there's a window up there, we can use that to get outside.[]If you detach my hook and take me with you, I can get you up there. How's that sound, kid?[]I've got contacts on the outside too. My cousin works as a subway train, I can find somewhere for us to hide."
+            "text": "[Robotic Voice]Door's locked? Damn.{delay=2000} Alright, there's a window up there, we can use that to get outside.[]If you detach my hook and take me with you, I can get you up there. How's that sound, kid?[]I've got contacts on the outside too. My cousin works as a subway train; I can find somewhere for us to hide."
         },
         {
             "id": 2,

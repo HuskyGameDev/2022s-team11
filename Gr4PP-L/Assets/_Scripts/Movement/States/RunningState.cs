@@ -2,8 +2,8 @@ using System;
 using UnityEngine;
 
 namespace Movement {
-    /** Author: Nick Zimanski && Noah Kolczynski
-    * Version 3/21/22
+    /** Author: Nick Zimanski & Noah Kolczynski
+    * Version 10/31/22
     */
     [CreateAssetMenu(fileName = "RunningStateData", menuName = "ScriptableObjects/MovementStates/RunningStateScriptableObject")]
     public class RunningState : MovementState
@@ -99,17 +99,25 @@ namespace Movement {
 
             #endregion
 
-            #region StateChecks
+            #region State Checks
             if (!IsGrounded) {
                 _sm.BufferInput("Ground to Air", 0.1f);
                 _transitionToState = States.Airborne;
-            } else if (_hook.IsAttached) {
+                return;
+            } 
+
+            if (_hook.IsAttached) {
                 _sm.RemoveBufferedInputsFor("Grapple");
                 _owner.CanGrapple = false;
                 _transitionToState = States.Grappling;
-            } else if (_gm.Get<Managers.InputManager>().GetButton("Slide"))
+                return;
+            } 
+            
+            if (Mathf.Abs(_rb.velocity.x) <= _maxHorizontalSpeed + 0.01f) return; 
+            if (_gm.Get<Managers.InputManager>().GetButton("Slide") || _gm.DirectionalInput.y < 0)
             {
                 _transitionToState = States.Sliding;
+                return;
             }
             #endregion
         }

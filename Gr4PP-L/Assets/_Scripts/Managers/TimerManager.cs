@@ -6,9 +6,9 @@ using System;
 using UnityEngine.SceneManagement;
 
 namespace Managers {
-    //Author:        Ethan Hohman
+    //Author: than Hohman
     //Author: Nick Zimanski
-    //Last Updated:  10/20/2022
+    //Last Updated:  10/31/2022
     public class TimerManager : Manager
     {
         private Text[] _texts;
@@ -16,7 +16,6 @@ namespace Managers {
 
         // Plan on using this so timer doesn't tick up during dialogue bits (if any) or room changes
         private bool _timerActive;
-
 
         public float CurrentTime = 0;
         public bool BestTimeFollowsCurrent = false;
@@ -52,6 +51,7 @@ namespace Managers {
         }
 
         public void LevelEnter() {
+            CurrentTime = 0;
             Resume();
         }
 

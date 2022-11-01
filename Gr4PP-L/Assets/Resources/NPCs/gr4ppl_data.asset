@@ -9,15 +9,11 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: d05b87045cd3f00459d4e99364c03fbe, type: 3}
-  m_Name: SlidingStateData
+  m_Script: {fileID: 11500000, guid: c1709308d0f08c343aa7e7fe21aab2d8, type: 3}
+  m_Name: gr4ppl_data
   m_EditorClassIdentifier: 
-  _jumpForce: 20
-  CanGrapple: 0
-  _givenAccel: 1
-  _givenDecel: 1
-  _frictionAmount: 0.2
-  _velPower: 0
-  _maxHorizontalSpeed: 20
-  _jumpBufferTime: 0.1
-  _hookShotForce: 20
+  _character: 0
+  _randomConversations: 01000000
+  _orderedConversations: 
+  _sprite: {fileID: 7482667652216324306, guid: 3fb9d33e4b5ff8540b761296bb1ba9e5, type: 3}
+  _dialogueSounds: 

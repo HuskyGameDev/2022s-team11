@@ -65,6 +65,7 @@
         "Powerups",
         "Respawn",
         "Rigidbody",
+        "Scriptable",
         "typeparam",
         "UGUI"
     ],
