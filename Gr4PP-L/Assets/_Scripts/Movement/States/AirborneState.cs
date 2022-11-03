@@ -99,16 +99,16 @@ namespace Movement {
             _rb.gravityScale = _gravityScale;
         }
         protected override void HandleInput() {
-            if(_gameManager.DirectionalInput.y < 0) {
+            if(_gm.DirectionalInput.y < 0) {
                 _sm.BufferInput("Down", 0.1f);
             }
-            if (Input.GetButtonDown("Jump")) {
+            if (_gm.Get<Managers.InputManager>().GetButtonDown("Jump")) {
                 _sm.BufferInput("Jump", _jumpBufferTime);
             }
 
-            _jumpPressed = Input.GetButton("Jump");
+            _jumpPressed = _gm.Get<Managers.InputManager>().GetButton("Jump");
             
-            if (Input.GetButtonDown("Grapple")) {
+            if (_gm.Get<Managers.InputManager>().GetButtonDown("Grapple")) {
                 _sm.BufferInput("Grapple", 0.1f);
                 _grappleInput = true;
             }
@@ -146,7 +146,7 @@ namespace Movement {
             #region Air Control
             //calculates direction to move in and desired velocity
             if (_lastWallJump < 0) {
-                float targetSpeed = _gameManager.DirectionalInput.x * _maxHorizontalAirSpeed;
+                float targetSpeed = _gm.DirectionalInput.x * _maxHorizontalAirSpeed;
                 float speedDif = 0;
                 if (IsPlayerSpeedExceeding(targetSpeed)) {
                     //when the character is exceeding our maximum velocity, speed dif will have a value of 1 in the opposite horizontal direction
@@ -216,7 +216,7 @@ namespace Movement {
                 //wall friction
                 if (_rb.velocity.y < -_wallSlideSpeed)
                 {
-                    if (_gameManager.DirectionalInput.x * WallCheck() > 0.01f)
+                    if (_gm.DirectionalInput.x * WallCheck() > 0.01f)
                     {
                         _rb.velocity = new Vector2(_rb.velocity.x, -_wallSlideSpeed);
                     }
@@ -229,7 +229,7 @@ namespace Movement {
             #endregion
 
             if (_grappleInput) {
-                HandleGrappleInput(_gameManager.DirectionalInput, _hookShotForce);
+                HandleGrappleInput(_gm.DirectionalInput, _hookShotForce);
                 _grappleInput = false;    
             }
             

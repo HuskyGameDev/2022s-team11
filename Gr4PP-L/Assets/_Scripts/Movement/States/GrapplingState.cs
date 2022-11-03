@@ -54,9 +54,9 @@ namespace Movement {
             _hookController.RetractHook();
         }
         protected override void HandleInput() {
-            _grappleInput = Input.GetButtonDown("Grapple");
+            _grappleInput = _gm.Get<Managers.InputManager>().GetButtonDown("Grapple");
 
-            if (_gameManager.DirectionalInput.y < 0) {
+            if (_gm.DirectionalInput.y < 0) {
                 _sm.BufferInput("Down", 0.1f);
             }
 
@@ -65,7 +65,7 @@ namespace Movement {
                 _uncheckedInputBuffer = false;
             }
 
-            if (Input.GetButtonDown("Jump")) {
+            if (_gm.Get<Managers.InputManager>().GetButtonDown("Jump")) {
                 _sm.BufferInput("Jump", 0.15f);
             }
         }
@@ -84,7 +84,7 @@ namespace Movement {
             }
 
             //Check for retraction
-            if (!Input.GetButton("Grapple")) {
+            if (!_gm.Get<Managers.InputManager>().GetButton("Grapple")) {
                 _hookController.RetractHook();
             }
 
@@ -108,7 +108,7 @@ namespace Movement {
 
             if (_grappleInput) {
                 //Fire the hook
-                //if (_hookController.IsHeld) _hookController.FireHook(_gameManager.Input, _grappleFireForce);
+                //if (_hookController.IsHeld) _hookController.FireHook(_gm.Input, _grappleFireForce);
                 //Retract the hook
                 //else _hookController.RetractHook();
                 return;
@@ -131,30 +131,6 @@ namespace Movement {
             var pullVector = tetherVector;
 
             var playerVelocity = _rb.velocity;
-            //if (playerVelocity.mag) {
-            //    Debug.Log("Moving player back...");
-            //    _rb.MovePosition(_hookController.Position + Vector2.ClampMagnitude(tetherVector, _lastDistance) - tetherPlayerDifference);
-            //} //Stop player from going beyond grapple length
-            
-            //Pull player downward
-            ///pullVector = tetherVector.y < 0 ? pullVector * new Vector2(1, _downwardPullMagnitude) : pullVector;
-
-            //Factor in player input
-            ///pullVector += new Vector2(_gameManager.Input.x * Mathf.Abs(pullVector.x), _gameManager.Input.y * Mathf.Abs(pullVector.y)) * _playerInputMagnitude;
-
-            //Constrain player to end of rope "circle"
-            //Look forward to see if the player will break the circle
-            
-            /**
-            oldVel = (_hookController.TetherPosition + playerVelocity * Time.fixedDeltaTime);
-            newVel = playerVelocity;
-            if ((oldVel + tetherVector).magnitude > distance) {
-                Debug.Log("Shlorking");
-                newVel = Vector2.ClampMagnitude(oldVel + tetherVector, distance);
-            }
-            **/
-
-            //oldVel = (_hookController.TetherPosition + playerVelocity * Time.fixedDeltaTime);
             oldVel = playerVelocity;
             newVel = playerVelocity;
 
@@ -176,7 +152,7 @@ namespace Movement {
             float _vertPullStrengthAdjusted = (!_sm.CheckBufferedInputsFor("Jumped")) ? _vertPullStrength : 0;
             //Debug.Log(new Vector2(pullVector.x * _horizPullStrength, pullVector.y * _vertPullStrength));
             _rb.AddForce(new Vector2(pullVector.x * _horizPullStrength, pullVector.y * _vertPullStrengthAdjusted) , ForceMode2D.Force);
-            _rb.AddForce(new Vector2(_gameManager.DirectionalInput.x * _playerInputMagnitude, 0));
+            _rb.AddForce(new Vector2(_gm.DirectionalInput.x * _playerInputMagnitude, 0));
             
             _lastDistance = distance < _lastDistance ? distance : _lastDistance;
         }
