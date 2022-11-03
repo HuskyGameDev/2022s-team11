@@ -1405,11 +1405,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1c2c6eeb6d489f8438f3a8c6e3557ac0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  dialogueManager: {fileID: 0}
-  inputManager: {fileID: 0}
-  levelManager: {fileID: 0}
-  timerManager: {fileID: 0}
-  powerupManager: {fileID: 0}
+  _parameters:
+    charsPerSecond: 0
+    horizAxisThreshold: 0
+    vertAxisThreshold: 0
+    inputAxes: []
+    sounds: []
+    loadingScreen: {fileID: 0}
 --- !u!114 &796186838
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1706,7 +1708,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a4264c68e51f4ce4f863f1b26a1b234f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _character: {fileID: 443472136}
   _threshold: 1
   _isHorizontal: 1
 --- !u!483693784 &867986550
@@ -2308,6 +2309,7 @@ MonoBehaviour:
   - {fileID: 632303146}
   - {fileID: 1020530608}
   speed: 10
+  startActive: 1
 --- !u!1 &869968009
 GameObject:
   m_ObjectHideFlags: 0
@@ -2846,7 +2848,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1020530608}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 17, y: 10, z: 0}
+  m_LocalPosition: {x: 30, y: -1, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []

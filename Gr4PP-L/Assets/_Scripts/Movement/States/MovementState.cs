@@ -92,12 +92,11 @@ namespace Movement {
         protected void GroundedJump()
         {
             //Ratchet ass fix for the jump pad issue
-            if (GroundCollider().gameObject.tag == "Jump Pad") return;
+            if (_rb.velocity.y > 3 || (GroundCollider() && GroundCollider().gameObject.tag == "Jump Pad")) return;
 
             _rb.velocity = new Vector2(_rb.velocity.x, 0);
             _rb.AddForce(Vector2.up * _jumpForce, ForceMode2D.Impulse);
             _sm.RemoveBufferedInputsFor("Jump");
-            Debug.Log(_sm.CheckBufferedInputsFor("Jump"));
             _sm.BufferInput("Grounded Jump", 0.1f);
             _sm.BufferInput("Jumped", 0.15f);
             Debug.Log("Grounded Jump");
@@ -168,7 +167,7 @@ namespace Movement {
             
             foreach (Collider2D collision in _collisions)
             {
-                if (collision.CompareTag("Ground") || (collision.CompareTag("1Way") && collision.GetComponent<PlatformEffector2D>().rotationalOffset == -90)) return wallSide;
+                if (collision.CompareTag("Ground") || (collision.CompareTag("1Way") && collision.GetComponent<PlatformEffector2D>().rotationalOffset == 90 * wallSide)) return wallSide;
             }
             return 0;
         }

@@ -92,6 +92,8 @@ namespace Movement {
 
             if(_sm.CheckBufferedInputsFor("Grounded Jump")) {
                 _hasJumpEnded = false;
+            } else {
+                _hasJumpEnded = true;
             }
         }
         public override void Exit() {
@@ -176,6 +178,7 @@ namespace Movement {
             if (_hook.IsAttached) {
                 _sm.RemoveBufferedInputsFor("Grapple");
                 _owner.CanGrapple = false;
+                _hasJumpEnded = true;
                 _transitionToState = States.Grappling;
             }
         }
@@ -242,10 +245,13 @@ namespace Movement {
             #endregion
 
             #region CoyoteJump
-            if (_queueCoyoteJump) {
+            if (_queueCoyoteJump) { 
                 _queueCoyoteJump = false;
-                _hasJumpEnded = false;
-                GroundedJump();
+
+                if (_rb.velocity.y < 3) {
+                    _hasJumpEnded = false;
+                    GroundedJump();
+                }
             }
             #endregion
         }

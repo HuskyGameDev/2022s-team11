@@ -13,7 +13,13 @@ public class StickyPlatform : MonoBehaviour
     //works pretty well, but buffered jumps can mess it up. also the camera doesn't follow it very well, ends up being jittery.
 
     private void OnTriggerEnter2D(Collider2D collision) {
+        Debug.Log("Trigger Entered");
         if (collision.gameObject.CompareTag("Player")) {
+            if (!wf.GetActive()) {
+                collision.gameObject.transform.SetParent(transform);
+                return;
+            }
+
             collision.gameObject.transform.SetParent(transform);
 
             GameObject[] waypoints = wf.GetWaypoints();
@@ -37,6 +43,10 @@ public class StickyPlatform : MonoBehaviour
     }
 
     private void OnTriggerExit2D(Collider2D collision) {
+        if (!wf.GetActive()) {
+            collision.gameObject.transform.SetParent(null);
+            return;
+        }
         if (collision.gameObject.CompareTag("Player")) {
             collision.gameObject.transform.SetParent(null);
 
