@@ -4,6 +4,31 @@
             "id": 80085,
             "name": "test",
             "text": "[Gr4PP-L]Hey Kid...{delay=1000} it's been a while.[E-CLA1R3]Rrrr...{delay=600}[]Arf! Arf!"
+        },
+        {
+            "id": 0,
+            "name": "Gr4PP-L Introduction 0",
+            "text": "[system]You quickly jack into the crane. A wave of static shoots up the machine from the control panel. A robotic voice sparks from the top of the device.[Robotic Voice]Ah!{delay=400} What was that?!{delay=800} Was that you?[system]The voice pauses here for a moment[Robotic Voice]A fine mess you've started here kiddo. You're gonna want to delta, fast, before the techs get back. Just take the door out."
+        },
+        {
+            "id": 1,
+            "name": "Gr4PP-L Introduction 1",
+            "text": "[Robotic Voice]Door's locked? Damn.{delay=2000} Alright, there's a window up there, we can use that to get outside.[]If you detach my hook and take me with you, I can get you up there. How's that sound, kid?[]I've got contacts on the outside too. My cousin works as a subway train, I can find somewhere for us to hide."
+        },
+        {
+            "id": 2,
+            "name": "Gr4PP-L Introduction 2",
+            "text": "[system]You jack back into the crane and dig around for a moment.{delay=450} After some time, the hook detaches from the machine's arm and falls to the floor with a clank.[]You pick up the hook, and install it into one of your Multi-purpose OmniDirectional Slots. The voice sparks back up.[Robotic Voice]It's been a minute since I've been moving. Feels good to get around again.[Gr4PP-L]Now's a good enough time for introductions as any, my SC is Gr4PP-L. You got a code?[].{delay=700}.{delay=700}.{delay=1250} Not much of a talker, huh kid. That's fine, you'll warm up. Let's delta."
+        },
+        {
+            "id": 3,
+            "name": "Hub Area Unlock 0",
+            "text": "[system]You're walking down a dimly lit subway tunnel. Your battery is reaching critical levels.[Gr4PP-L]Do your legs not get tired, kid? We've been walking for hours.{delay=600}Our spot should be coming up.[system]You reach a rusted metal door, locked with an antique electric lock. You easily short the lock and the door's creaks bellow into the echoing tunnel."
+        },
+        {
+            "id": 4,
+            "name": "Hub Area Unlock 1",
+            "text": "[system]The door leads into a dark, cramped hallway, just big enough for your chassis. At the end of the hallway, a small closet door opens into a large storage room.[Gr4PP-L]Impressive, ain't it? This should be more than enough room to do whatever you need to outside of the corpos' line of sight.[system]You plug into the central line to recharge your battery.[Gr4PP-L]You're gonna need to fix up that battery if you want to go anywhere in this city, kid. I've got a connection that might be able to help with that."
         }
     ]
 }

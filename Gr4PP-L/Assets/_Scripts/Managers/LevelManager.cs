@@ -1,33 +1,151 @@
-using System;
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
-using Utility;
+using System.Collections;
+using System;
 
 namespace Managers {
     /** Author: Nick Zimanski
-    * Version: 9/19/22
-
-    
+    * Version: 10/13/22
     */
     public class LevelManager : Manager
     {
         private SceneManager _sm;
+        private GameManager _gm;
+        private GameObject _loadingScreen;
 
         public Vector2 LevelOrigin {get; private set;}
-
-        [SerializeField]
+        public bool IsSceneLoaded {get; private set;}
+        public static event Action OnLevelExit;
+        public static event Action OnLevelEnter;
         private Vector2 _lastCheckpoint;
 
+        public void Update()
+        {
 
-        public static void ResetScene() {
-            LoadScene(SceneManager.GetActiveScene().buildIndex);
-            GameManager.Instance.OnSceneReset();
+            #region Scene Resetting
+            if (_gm.Get<InputManager>().GetButtonDown("Level Reset")) {
+                ResetLevel();
+            }
+            #endregion
         }
 
-        public static void LoadScene(int buildIndex) {
-            SceneManager.LoadScene(buildIndex);
+        public LevelManager() {
+            Initialize();
+        }
+
+        public new void Initialize() {
+            base.Initialize();
+            _gm = GameManager.Instance;
+            _loadingScreen = _gm.Parameters.loadingScreen;
+
+            OnLevelEnter = () => {};
+            OnLevelExit = () => {};
+
+            GameManager.updateCallback += Update;
+        }
+
+        public override Manager GetNewInstance()
+        {
+            return new LevelManager();
+        }
+
+        public override void Destroy()
+        {
+            GameManager.updateCallback -= Update;
+        }
+
+        public void ResetLevel() {
+            _gm.FindPlayer().ResetPositionToCheckpoint();
+            InteractiveManager.RespawnAll();
+        }
+
+        private void ReloadScene() {
+            GameManager.Instance.StartCoroutine(LoadScene(SceneManager.GetActiveScene().buildIndex));
+            GameManager.Instance.Initialize();
+        }
+
+        public IEnumerator LoadScene(int buildIndex) {
+            if (buildIndex == 0) {
+                Debug.Log($"Resetting");
+                buildIndex = 1;
+            }
+
+            AsyncOperation ao;
+
+            yield return null;
+
+            StartLoadScreen();
+
+            while (SceneManager.sceneCount > 1) {
+                ao = SceneManager.UnloadSceneAsync(SceneManager.GetSceneAt(SceneManager.sceneCount - 1));
+
+                while (!(ao.isDone)){
+                    yield return null;
+                }
+            }
+            
+            ao = SceneManager.LoadSceneAsync(buildIndex, LoadSceneMode.Additive);
+            ao.allowSceneActivation = true;
+
+            while(!ao.isDone) {
+                UpdateLoadProgress(ao.progress);
+                yield return null;
+            }
+
+            EndLoadScreen(SceneManager.GetSceneAt(SceneManager.sceneCount - 1));
+        }
+
+        public IEnumerator LoadScene(string buildName) {
+            if (buildName == "Base Scene") {
+                Debug.Log($"Resetting");
+                buildName = "Playtesting";
+            }
+
+            AsyncOperation ao;
+
+            yield return null;
+
+            StartLoadScreen();
+
+            while (SceneManager.sceneCount > 1) {
+                ao = SceneManager.UnloadSceneAsync(SceneManager.GetSceneAt(SceneManager.sceneCount - 1));
+
+                while (!(ao.isDone)){
+                    yield return null;
+                }
+            }
+            
+            ao = SceneManager.LoadSceneAsync(buildName, LoadSceneMode.Additive);
+            ao.allowSceneActivation = true;
+
+            while(!ao.isDone) {
+                UpdateLoadProgress(ao.progress);
+                yield return null;
+            }
+
+            EndLoadScreen(SceneManager.GetSceneAt(SceneManager.sceneCount - 1));
+        }
+
+        private void StartLoadScreen() {
+            OnLevelExit();
+
+            IsSceneLoaded = false;
+            _loadingScreen.SetActive(true);
+            _gm.Get<InputManager>().LockType(InputManager.ControlType.MOVEMENT);
+        }
+
+        private void UpdateLoadProgress(float progressPercentage) {
+
+        }
+
+        private void EndLoadScreen(Scene newScene) {
+            OnLevelEnter();
+            
+            IsSceneLoaded = true;
+            _loadingScreen.SetActive(false);
+            _gm.Get<InputManager>().UnlockType(InputManager.ControlType.MOVEMENT);
+            SceneManager.SetActiveScene(newScene);
+
         }
 
         /// <summary>
@@ -40,7 +158,7 @@ namespace Managers {
         }
 
 
-        public Vector2 GetCheckpoint() {
+        public Vector2 GetLastCheckpoint() {
             return _lastCheckpoint;
         }
 
@@ -54,24 +172,15 @@ namespace Managers {
         }
 
         public void RegisterOrigin(GameObject go) {
-            LevelOrigin = go.transform.position;
+            RegisterOrigin(go.transform);
         } 
 
-        // Start is called before the first frame update
-        void Start()
-        {
+        public void RegisterOrigin(Transform tsf) {
+            RegisterOrigin(tsf.position);
+        } 
 
-            LevelOrigin = transform.position;
-            SetCheckpoint(LevelOrigin);
-        }
-
-        // Update is called once per frame
-        void Update()
-        {
-            
-        }
-
-        public override void OnSceneReset() {Start();}
-
+        public void RegisterOrigin(Vector2 pos) {
+            LevelOrigin = pos;
+        } 
     }
 }
