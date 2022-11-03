@@ -22,20 +22,29 @@ namespace Managers {
         [SerializeField]
         private float _charsPerSecond = 10f;
 
-        [Tooltip("How long between blinking the '█' character at the end of the text")]
-        public float FullBlockBlinkInterval = 0.5f;
-
         public float Text_secondsPerChar { get => 1f / _charsPerSecond; }
-
-        [HideInInspector]
         public bool Text_incomingNewText;
-
-        private GameManager _gm;
         
+        void Awake()
+        {
+            _allConversations = ImportJson<ConversationCollection>("Json/conversations");
+            _allConversations.InitializeConversations();
+        }
+
+        private void Start()
+        {
+        }
+
+        void Update()
+        {
+
+        }
 
         public bool IsConversationActive() {
             return !(CurrentConversation == null);
         }
+
+        public override void OnSceneReset() {Start();}
 
 
         private UsableConversation GetConversationByID (int id) {
@@ -63,8 +72,7 @@ namespace Managers {
                 return false;
             }
 
-            _gm.Get<TimerManager>().Pause();
-            _gm.Get<InputManager>().LockType(InputManager.ControlType.MOVEMENT);
+
 
             return true;
         }
@@ -83,9 +91,6 @@ namespace Managers {
             Text_incomingNewText = false;
 
             CurrentConversation = null;
-
-            _gm.Get<TimerManager>().Resume();
-            _gm.Get<InputManager>().UnlockType(InputManager.ControlType.MOVEMENT);
         }
 
 
@@ -281,30 +286,6 @@ namespace Managers {
             public string data;
         }
 
-        public new void Initialize() {
-            base.Initialize();
-
-            _gm = GameManager.Instance;
-
-            _allConversations = ImportJson<ConversationCollection>("Json/conversations");
-            _allConversations.InitializeConversations();
-
-            _charsPerSecond = _gm.Parameters.charsPerSecond;
-        }
-
-        public DialogueManager() {
-            Initialize();
-        }
-
-        public override Manager GetNewInstance()
-        {
-            return new DialogueManager();
-        }
-
-        public override void Destroy()
-        {
-
-        }
     }
 
     

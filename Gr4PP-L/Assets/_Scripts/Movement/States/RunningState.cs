@@ -60,14 +60,14 @@ namespace Movement {
         #region MovementState Overrides
         protected override void HandleInput() {
             var gameTime = Time.time;
-            _isCrouchingInput = _gm.DirectionalInput.y < 0;
+            _isCrouchingInput = _gameManager.DirectionalInput.y < 0;
             
-            if (_gm.Get<Managers.InputManager>().GetButtonDown("Grapple")) {
+            if (Input.GetButtonDown("Grapple")) {
                 _grappleInput = true;
                 _sm.BufferInput("Grapple", 0.1f);
             }
 
-            if (_gm.Get<Managers.InputManager>().GetButtonDown("Jump")) {
+            if (Input.GetButtonDown("Jump")) {
                 _sm.BufferInput("Jump", _jumpBufferTime);
             }
 
@@ -79,7 +79,7 @@ namespace Movement {
         protected override void LogicUpdate() {
             #region Normal Movement
                 //calculates direction to move in and desired velocity
-                float targetSpeed = _gm.DirectionalInput.x * _maxHorizontalSpeed;
+                float targetSpeed = _gameManager.DirectionalInput.x * _maxHorizontalSpeed;
                 float speedDif = 0;
                 if (IsPlayerSpeedExceeding(targetSpeed))
                 {
@@ -109,7 +109,7 @@ namespace Movement {
                 _sm.RemoveBufferedInputsFor("Grapple");
                 _owner.CanGrapple = false;
                 _transitionToState = States.Grappling;
-            } else if (_gm.Get<Managers.InputManager>().GetButton("Slide"))
+            } else if (Input.GetButton("Slide"))
             {
                 _transitionToState = States.Sliding;
             }
@@ -121,7 +121,7 @@ namespace Movement {
         
 
             #region Friction
-                if (Mathf.Abs(_gm.DirectionalInput.x) < 0.01f)
+                if (Mathf.Abs(_gameManager.DirectionalInput.x) < 0.01f)
                 {
                     float amount = Mathf.Min(Mathf.Abs(_rb.velocity.x), Mathf.Abs(_frictionAmount));
                     amount *= Mathf.Sign(_rb.velocity.x);
@@ -134,7 +134,7 @@ namespace Movement {
                 // this allows the player while grounded to jump up the side of a wall if they're touching it.
                 // the second line of the if statement ensures that the player only gets a grounded jump when touching the wall if they've been in the grounded state for more than 0.1 seconds.
                 // this ensures that, should the player clip into the wall momentarily when trying to wall jump, they don't get a grounded jump.
-                if ((WallCheck() == 0 || _gm.DirectionalInput.x == 0 ||(WallCheck() != 0 && Mathf.Sign(WallCheck()) == Mathf.Sign(_gm.DirectionalInput.x)))
+                if ((WallCheck() == 0 || _gameManager.DirectionalInput.x == 0 ||(WallCheck() != 0 && Mathf.Sign(WallCheck()) == Mathf.Sign(_gameManager.DirectionalInput.x)))
                     && !_sm.CheckBufferedInputsFor("WallTouchTransition")) {
                     GroundedJump();
                 } else {
@@ -144,7 +144,7 @@ namespace Movement {
             }
 
             if(_sm.CheckBufferedInputsFor("Grapple")) {
-                HandleGrappleInput(_gm.DirectionalInput, _hookShotForce);
+                HandleGrappleInput(_gameManager.DirectionalInput, _hookShotForce);
                 _grappleInput = false;
             }
         }

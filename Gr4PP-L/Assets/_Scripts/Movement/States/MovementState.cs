@@ -1,7 +1,6 @@
 using Utility;
 using Managers;
 using UnityEngine;
-using System.Collections.Generic;
 namespace Movement {
     /** Author: Nick Zimanski
     * Version 3/21/22
@@ -17,7 +16,7 @@ namespace Movement {
         protected float _stateEnterTime;
         protected GrappleHookController _hook;
         protected Rigidbody2D _rb;
-        protected GameManager _gm;
+        protected GameManager _gameManager;
         /// <summary>
         /// Stores the input data on a frame. Updated automatically every frame before HandleInput()
         /// </summary>
@@ -27,9 +26,6 @@ namespace Movement {
         protected bool IsGrounded => GroundedCheck();
 
         public bool CanGrapple;
-
-        private ContactFilter2D _filter;
-        private List<Collider2D> _collisions;
 
         #endregion
 
@@ -41,13 +37,7 @@ namespace Movement {
             _rb = _owner.PlayerRigidbody;
             _uncheckedInputBuffer = false;
             _hook = _owner.GrappleHookCtrl;
-            _gm = game;
-
-            _collisions = new List<Collider2D>();
-
-            _filter = new ContactFilter2D();
-            _filter.layerMask = _owner.GroundLayer;
-            _filter.useLayerMask = true;
+            _gameManager = game;
         }
         public override void Enter() {
             base.Enter();
@@ -91,9 +81,6 @@ namespace Movement {
 
         protected void GroundedJump()
         {
-            //Ratchet ass fix for the jump pad issue
-            if (GroundCollider().gameObject.tag == "Jump Pad") return;
-
             _rb.velocity = new Vector2(_rb.velocity.x, 0);
             _rb.AddForce(Vector2.up * _jumpForce, ForceMode2D.Impulse);
             _sm.RemoveBufferedInputsFor("Jump");
@@ -143,34 +130,21 @@ namespace Movement {
             // this cannot be fixed by returning 0 if the grounded collider is touching the ground, because sometimes the grounded collider will touch the wall when the player jumps into a wall
             // since they player will slightly clip into the wall.
 
-            //Number of colliders to our left
-            int numCollidersContacting = Physics2D.OverlapBox(_owner.GroundCheckPoint.position + new Vector3(-_owner.WallCheckOffset.x, _owner.WallCheckOffset.y, 0), _owner.WallCheckSize, 0f, _filter, _collisions);
-            int wallSide = 0;
-
-            //If the player is not touching a left wall.
-            if (numCollidersContacting == 0) {
-
-                //use right walls instead
-                numCollidersContacting = Physics2D.OverlapBox(_owner.GroundCheckPoint.position + new Vector3(_owner.WallCheckOffset.x, _owner.WallCheckOffset.y, 0), _owner.WallCheckSize, 0f, _filter, _collisions);
-                
-                //If we're still not touching a wall, then we're done.
-                if (numCollidersContacting == 0) return 0;
-                
-                wallSide = 1;
-            } else {
-                //We have walls on both sides of us, panic (don't wall jump).
-                if (Physics2D.OverlapBox(_owner.GroundCheckPoint.position + new Vector3(_owner.WallCheckOffset.x, _owner.WallCheckOffset.y, 0), _owner.WallCheckSize, 0f, _filter, new Collider2D[1]) > 0) 
-                    return 0;
-
-                wallSide = -1;
+            int _wallSide = 0;
+            Collider2D collision;
+            if ((collision = Physics2D.OverlapBox(_owner.GroundCheckPoint.position + new Vector3(-_owner.WallCheckOffset.x, _owner.WallCheckOffset.y, 0), _owner.WallCheckSize, 0, _owner.GroundLayer))
+                && (collision.CompareTag("Ground") || (collision.CompareTag("1Way") && collision.GetComponent<PlatformEffector2D>().rotationalOffset == -90))) {
+                _wallSide = -1;
             }
-            
-            
-            foreach (Collider2D collision in _collisions)
-            {
-                if (collision.CompareTag("Ground") || (collision.CompareTag("1Way") && collision.GetComponent<PlatformEffector2D>().rotationalOffset == -90)) return wallSide;
+            if ((collision = Physics2D.OverlapBox(_owner.GroundCheckPoint.position + new Vector3(_owner.WallCheckOffset.x, _owner.WallCheckOffset.y, 0), _owner.WallCheckSize, 0, _owner.GroundLayer))
+                && (collision.CompareTag("Ground") || (collision.CompareTag("1Way") && collision.GetComponent<PlatformEffector2D>().rotationalOffset == -90))) {
+                if(_wallSide == 0) {
+                    _wallSide = 1;
+                } else {
+                    _wallSide = 0;
+                }
             }
-            return 0;
+            return _wallSide;
         }
 
         /// <summary>

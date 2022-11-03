@@ -1,5 +1,3 @@
-using System.Timers;
-using System.Threading;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -24,15 +22,10 @@ public class DialogueController : MonoBehaviour
     private bool _conversationInProgress = false;
     private ConversationIterator _currentConversationIterator = null;
     private int _text_charactersTyped = 0;
-    private int _text_lastCharactersTyped = 0;
     private float _text_lastCharacterTypedTime = 0;
     private string _text_currentString = "";
     private bool _delay_hasStarted = false;
     private float _delay_endTime = 0;
-
-    private float _blockOnTextTime = 0;
-    private bool _blockOn = false;
-    private float _blockOnTextInterval;
     
     private GameManager _gm;
     private DialogueManager _dm;
@@ -43,9 +36,7 @@ public class DialogueController : MonoBehaviour
         _dialogueCanvas.enabled = false;
 
         _gm = GameManager.Instance;
-        _dm = _gm.Get<DialogueManager>();
-
-        _blockOnTextInterval = _dm.FullBlockBlinkInterval;
+        _dm = _gm.dialogueManager;
 
     }
 
@@ -66,7 +57,6 @@ public class DialogueController : MonoBehaviour
 
             //Reset conversation-specific state
             _text_charactersTyped = 0;
-            _text_lastCharactersTyped = 0;
             _text_lastCharacterTypedTime = 0;
             _delay_hasStarted = false;
             _delay_endTime = 0;
@@ -75,6 +65,7 @@ public class DialogueController : MonoBehaviour
         }
 
         UpdateConversation();
+        //TODO: Store active conversation in the manager.
     }
 
         private void UpdateConversation() {
@@ -93,21 +84,9 @@ public class DialogueController : MonoBehaviour
             }
 
             if (!_awaitingPlayerInput) return;
-            
-
-            //Blinking FullBlock character at the end of the text
-            if (_blockOnTextTime + _blockOnTextInterval < Time.time) {
-                _blockOn = !_blockOn;
-                _blockOnTextTime = Time.time;
-
-                if (_blockOn) {
-                    SetText(_text_currentString + "|");
-                } else SetText(_text_currentString);
-            }
-
             //Input
 
-            if (_gm.Get<InputManager>().GetAxisRaw("Submit") != 0) {
+            if (_gm.inputManager.GetAxisRaw("Submit") != 0) {
                 _dm.NextConversationInstruction();
                 _awaitingPlayerInput = false;
             }
@@ -134,16 +113,9 @@ public class DialogueController : MonoBehaviour
 
             _text_lastCharacterTypedTime = Time.time;
             _text_charactersTyped++;
-            if (_text_lastCharactersTyped < _text_charactersTyped) {
-                string s = _text_currentString.Substring(0, _text_charactersTyped);
-                SetText(s);
-                _text_lastCharactersTyped = _text_charactersTyped;
-            }
-            
-        }
 
-        private void SetText(string text) {
-            _dialogueText.text = ">" + text;
+            _dialogueText.text = _text_currentString.Substring(0, _text_charactersTyped);
+            
         }
 
         private void UpdateDelay() {
@@ -154,13 +126,11 @@ public class DialogueController : MonoBehaviour
                 return;
             }
 
-
             if (_delay_endTime > Time.time) return;
 
             _delay_endTime = 0;
             _delay_hasStarted = false;
-            _awaitingPlayerInput = false;            
-            
+
             //Conversations shouldn't end on a delay
             _dm.NextConversationInstruction();
             
@@ -168,14 +138,13 @@ public class DialogueController : MonoBehaviour
 
         private void EndConversation() {
             _dialogueCanvas.enabled = false;
-            SetText("");
+            _dialogueText.text = "";
 
             _characterNameText.text = "";
             _delay_endTime = 0;
             _delay_hasStarted = false;
             _text_currentString = "";
             _text_charactersTyped = 0;
-            _text_lastCharactersTyped = 0;
             _text_lastCharacterTypedTime = 0;
         }
 
@@ -184,16 +153,14 @@ public class DialogueController : MonoBehaviour
             if (_dm.CurrentConversationIterator.Current.data != "")    {
                 _characterNameText.SetText(_dm.CurrentConversationIterator.Current.data);
 
-                //TODO: set character portrait, if the name matches a character
-                //TODO: Gray out other character portraits
+                //TODO: set character portrait
                 //TODO: ready character voice
 
             }
 
-            SetText("");
+            _dialogueText.text = "";
             _text_currentString = "";
             _text_charactersTyped = 0;
-            _text_lastCharactersTyped = 0;
             _text_lastCharacterTypedTime = 0;
 
             //Conversations shouldn't end on a character change
