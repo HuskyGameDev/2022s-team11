@@ -1,6 +1,7 @@
 using Utility;
 using Managers;
 using UnityEngine;
+using System.Collections.Generic;
 namespace Movement {
     /** Author: Nick Zimanski
     * Version 3/21/22
@@ -27,6 +28,9 @@ namespace Movement {
 
         public bool CanGrapple;
 
+        private ContactFilter2D _filter;
+        private List<Collider2D> _collisions;
+
         #endregion
 
         public virtual void Initialize(GameManager game, PlayerController player, MovementStateMachine sm)
@@ -38,6 +42,12 @@ namespace Movement {
             _uncheckedInputBuffer = false;
             _hook = _owner.GrappleHookCtrl;
             _gm = game;
+
+            _collisions = new List<Collider2D>();
+
+            _filter = new ContactFilter2D();
+            _filter.layerMask = _owner.GroundLayer;
+            _filter.useLayerMask = true;
         }
         public override void Enter() {
             base.Enter();
@@ -130,21 +140,34 @@ namespace Movement {
             // this cannot be fixed by returning 0 if the grounded collider is touching the ground, because sometimes the grounded collider will touch the wall when the player jumps into a wall
             // since they player will slightly clip into the wall.
 
-            int _wallSide = 0;
-            Collider2D collision;
-            if ((collision = Physics2D.OverlapBox(_owner.GroundCheckPoint.position + new Vector3(-_owner.WallCheckOffset.x, _owner.WallCheckOffset.y, 0), _owner.WallCheckSize, 0, _owner.GroundLayer))
-                && !collision.CompareTag("Ice")) {
-                _wallSide = -1;
+            //Number of colliders to our left
+            int numCollidersContacting = Physics2D.OverlapBox(_owner.GroundCheckPoint.position + new Vector3(-_owner.WallCheckOffset.x, _owner.WallCheckOffset.y, 0), _owner.WallCheckSize, 0f, _filter, _collisions);
+            int wallSide = 0;
+
+            //If the player is not touching a left wall.
+            if (numCollidersContacting == 0) {
+
+                //use right walls instead
+                numCollidersContacting = Physics2D.OverlapBox(_owner.GroundCheckPoint.position + new Vector3(_owner.WallCheckOffset.x, _owner.WallCheckOffset.y, 0), _owner.WallCheckSize, 0f, _filter, _collisions);
+                
+                //If we're still not touching a wall, then we're done.
+                if (numCollidersContacting == 0) return 0;
+                
+                wallSide = 1;
+            } else {
+                //We have walls on both sides of us, panic (don't wall jump).
+                if (Physics2D.OverlapBox(_owner.GroundCheckPoint.position + new Vector3(_owner.WallCheckOffset.x, _owner.WallCheckOffset.y, 0), _owner.WallCheckSize, 0f, _filter, new Collider2D[1]) > 0) 
+                    return 0;
+
+                wallSide = -1;
             }
-            if ((collision = Physics2D.OverlapBox(_owner.GroundCheckPoint.position + new Vector3(_owner.WallCheckOffset.x, _owner.WallCheckOffset.y, 0), _owner.WallCheckSize, 0, _owner.GroundLayer))
-                && !collision.CompareTag("Ice")) {
-                if(_wallSide == 0) {
-                    _wallSide = 1;
-                } else {
-                    _wallSide = 0;
-                }
+            
+            
+            foreach (Collider2D collision in _collisions)
+            {
+                if (collision.tag != "Ice") return wallSide;
             }
-            return _wallSide;
+            return 0;
         }
 
         /// <summary>

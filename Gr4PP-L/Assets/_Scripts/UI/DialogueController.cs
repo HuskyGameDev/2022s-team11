@@ -101,7 +101,7 @@ public class DialogueController : MonoBehaviour
                 _blockOnTextTime = Time.time;
 
                 if (_blockOn) {
-                    SetText(_text_currentString + "█");
+                    SetText(_text_currentString + "|");
                 } else SetText(_text_currentString);
             }
 

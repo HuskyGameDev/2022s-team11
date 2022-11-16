@@ -20,13 +20,15 @@ public class TimerDisplay : MonoBehaviour
         _tm = _gm.Get<Managers.TimerManager>();
 
         _currentTimeText.text = "Current Time: " + _tm.CurrentTime.ToString();
-        _bestTimeText.text = "Best Time: " + _tm.BestTime.ToString();
+
+        if (!_tm.BestTimeFollowsCurrent)
+            _bestTimeText.text = "Best Time: " + _tm.BestTime.ToString();
     }
 
     // Update is called once per frame
     void Update()
     {
-        TimeSpan time = TimeSpan.FromSeconds(_tm.CurrentTime);
+        TimeSpan time = TimeSpan.FromSeconds(_gm.Get<Managers.TimerManager>().CurrentTime);
 
         _currentTimeText.text = "Current Time: " + time.ToString(@"mm\:ss\:fff");
 
