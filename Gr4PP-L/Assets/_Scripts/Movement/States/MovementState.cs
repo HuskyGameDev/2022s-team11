@@ -173,6 +173,47 @@ namespace Movement {
         }
 
         /// <summary>
+        /// Checks if the player's wall checkboxes are contacting a wall, including an ice wall
+        /// Used to ensure player doesn't get grounded jumps when slamming into an ice wall at high speeds while buffering a jump as they clip into the wall for a miniscule amount of time
+        /// </summary>
+        /// <returns>an int, -1 if the wall is to the left of the player, 1 if it's to the right, and 0 if no contact is made or if both walls are in contact</returns>
+        protected int IceWallCheck() {
+            // _wallSide is used instead of directly returning the value. This is done to prevent the player from getting a wall jump when buffering a jump when landing on the ground.
+            // previously, the player would occasionally get a wall jump when buffering a jump while landing on the ground because they would clip slightly into the ground, making both
+            // wall jump colliders along with the ground collider register. This is fixed by returning 0 when both wall colliders are touching the ground layer.
+            // this cannot be fixed by returning 0 if the grounded collider is touching the ground, because sometimes the grounded collider will touch the wall when the player jumps into a wall
+            // since they player will slightly clip into the wall.
+
+            //Number of colliders to our left
+            int numCollidersContacting = Physics2D.OverlapBox(_owner.GroundCheckPoint.position + new Vector3(-_owner.WallCheckOffset.x, _owner.WallCheckOffset.y, 0), _owner.WallCheckSize, 0f, _filter, _collisions);
+            int wallSide = 0;
+
+            //If the player is not touching a left wall.
+            if (numCollidersContacting == 0) {
+
+                //use right walls instead
+                numCollidersContacting = Physics2D.OverlapBox(_owner.GroundCheckPoint.position + new Vector3(_owner.WallCheckOffset.x, _owner.WallCheckOffset.y, 0), _owner.WallCheckSize, 0f, _filter, _collisions);
+
+                //If we're still not touching a wall, then we're done.
+                if (numCollidersContacting == 0) return 0;
+
+                wallSide = 1;
+            } else {
+                //We have walls on both sides of us, panic (don't wall jump).
+                if (Physics2D.OverlapBox(_owner.GroundCheckPoint.position + new Vector3(_owner.WallCheckOffset.x, _owner.WallCheckOffset.y, 0), _owner.WallCheckSize, 0f, _filter, new Collider2D[1]) > 0)
+                    return 0;
+
+                wallSide = -1;
+            }
+
+
+            foreach (Collider2D collision in _collisions) {
+                if (collision.CompareTag("Ice")) return wallSide;
+            }
+            return 0;
+        }
+
+        /// <summary>
         /// Checks if the player is moving horizontally faster than the given speed
         /// </summary>
         /// <param name="v">The speed to compare to the player's</param>

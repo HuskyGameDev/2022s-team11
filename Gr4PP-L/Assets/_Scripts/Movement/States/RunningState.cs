@@ -138,7 +138,6 @@ namespace Movement {
                     && !_sm.CheckBufferedInputsFor("WallTouchTransition")) {
                     GroundedJump();
                 } else {
-                    _sm.RemoveBufferedInputsFor("WallTouchTransition");
                     _transitionToState = States.Airborne;
                 }
             }

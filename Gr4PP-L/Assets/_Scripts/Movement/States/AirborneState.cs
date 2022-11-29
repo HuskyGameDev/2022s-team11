@@ -73,7 +73,7 @@ namespace Movement {
         private bool _continuingJumpFromPrevState;
         private bool _grappleInput;
         new public States Name => States.Airborne;
-        private bool _hasJumpEnded = false, _jumpEndCalled = false;
+        private bool _hasJumpEnded = false, _jumpEndCalled = false, _clipTransition = false;
         private int _queueWallJump = 0;
         public float WallSlideSpeed => _wallSlideSpeed;
         private float _gravityScale, _horizontalInput, _acceleration, _deceleration;
@@ -95,6 +95,9 @@ namespace Movement {
             } else {
                 _hasJumpEnded = true;
             }
+
+            _clipTransition = _sm.CheckBufferedInputsFor("WallTouchTransition");
+            if (_clipTransition) Debug.Log("Clip Transition");
         }
         public override void Exit() {
             base.Exit();
@@ -122,9 +125,11 @@ namespace Movement {
         }
 
         protected override void LogicUpdate() {
-            if (IsGrounded && ((_sm.CheckBufferedInputsFor("Jump") == false) || (_sm.CheckBufferedInputsFor("Jump") == true && WallCheck() == 0))) {
-                if(WallCheck() != 0) {
-                    _sm.BufferInput("WallTouchTransition", 0.05f);
+            if (IsGrounded && ((_sm.CheckBufferedInputsFor("Jump") == false) || (_sm.CheckBufferedInputsFor("Jump") == true && (WallCheck() == 0) || IceWallCheck() != 0))) {
+                if(WallCheck() != 0 || IceWallCheck() != 0) {
+                    // prevents player from getting grounded jumps after hitting walls at high speeds and clipping into them
+                    _sm.BufferInput("WallTouchTransition", 0.1f);
+                    Debug.Log("Wall Touch Transition");
                 }
                 _transitionToState = _sm.CheckBufferedInputsFor("Down") ? States.Sliding : States.Running;
             } /**else if (!_owner.IsGrappleHeld) {
@@ -140,7 +145,8 @@ namespace Movement {
                 Debug.Log("Airborne Jump Buffered? " + _sm.CheckBufferedInputsFor("Jump"));
                 _queueWallJump = WallCheck();
             }
-            if(WallCheck() == 0 && _sm.CheckBufferedInputsFor("Jump") && _stateEnterTime > Time.time - _jumpCoyoteTime && _lastWallJump < 0 && _sm.CheckBufferedInputsFor("Ground to Air")) {
+            if(WallCheck() == 0 && _sm.CheckBufferedInputsFor("Jump") && _stateEnterTime > Time.time - _jumpCoyoteTime && _lastWallJump < 0 && _sm.CheckBufferedInputsFor("Ground to Air") 
+                && !_clipTransition) {
                 _queueCoyoteJump = true;
             }
             #endregion
@@ -248,7 +254,7 @@ namespace Movement {
             if (_queueCoyoteJump) { 
                 _queueCoyoteJump = false;
 
-                if (_rb.velocity.y < 3) {
+                if (_rb.velocity.y < 3 && !_clipTransition) {
                     _hasJumpEnded = false;
                     GroundedJump();
                 }
