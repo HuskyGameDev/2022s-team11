@@ -146,6 +146,24 @@ namespace Movement {
             int numCollidersContacting = Physics2D.OverlapBox(_owner.GroundCheckPoint.position + new Vector3(-_owner.WallCheckOffset.x, _owner.WallCheckOffset.y, 0), _owner.WallCheckSize, 0f, _filter, _collisions);
             int wallSide = 0;
 
+            /*foreach (Collider2D collision in _collisions) {
+                if(collision.CompareTag("1Way") && !(collision.GetComponent<PlatformEffector2D>().rotationalOffset == -90)) {
+                    _collisions.Remove(collision);
+                    numCollidersContacting = _collisions.Count;
+                }
+            }*/
+            int i = 0;
+            while(i < _collisions.Count) {
+                Collider2D collision = _collisions[i]; 
+                if (collision.CompareTag("1Way") && !(collision.GetComponent<PlatformEffector2D>().rotationalOffset == -90)) {
+                    _collisions.Remove(collision);
+                } else {
+                    i++;
+                }
+            }
+
+            numCollidersContacting = _collisions.Count;
+
             //If the player is not touching a left wall.
             if (numCollidersContacting == 0) {
 

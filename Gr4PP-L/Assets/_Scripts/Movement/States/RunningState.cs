@@ -51,7 +51,7 @@ namespace Movement {
             _acceleration = _givenAccel;
             _deceleration = _givenDecel;
             HandleInput();
-            _owner.CanGrapple = true;
+            _owner.CanGrapple = !_sm.CheckBufferedInputsFor("WallTouchTransition");
         }
         public override void Exit() {
             base.Exit();
