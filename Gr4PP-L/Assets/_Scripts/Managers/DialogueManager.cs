@@ -1,13 +1,10 @@
-
 using System.Text.RegularExpressions;
-using System.Net.Sockets;
 using System;
 using System.IO;
 using System.Runtime.Serialization.Json;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using Dialogue;
 
 namespace Managers {
     /** Author: Nick Zimanski
@@ -159,7 +156,7 @@ namespace Managers {
                     string temp;
 
                     while (s.Length > 0) {
-                        s = s.Trim();
+                        //s = s.Trim();
                         /*
                         *character switch
                         */

@@ -1594,7 +1594,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 15c2a751072e96d49a423027a8a0ef39, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _dialogueCanvas: {fileID: 0}
+  _dialogueBox: {fileID: 660374101}
   _dialogueText: {fileID: 1443697712}
   _characterNameText: {fileID: 381135375}
 --- !u!114 &202417012
@@ -3116,7 +3116,6 @@ GameObject:
   m_Component:
   - component: {fileID: 1311652796}
   - component: {fileID: 1311652800}
-  - component: {fileID: 1311652799}
   - component: {fileID: 1311652798}
   - component: {fileID: 1311652797}
   m_Layer: 0
@@ -3195,14 +3194,6 @@ MonoBehaviour:
   m_CropFrameX: 1
   m_CropFrameY: 1
   m_StretchFill: 0
---- !u!81 &1311652799
-AudioListener:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1311652795}
-  m_Enabled: 1
 --- !u!20 &1311652800
 Camera:
   m_ObjectHideFlags: 0
@@ -3892,7 +3883,6 @@ MonoBehaviour:
   _doesPromptPlayer: 1
   _promptController: {fileID: 1760017839}
   _npc: {fileID: 11400000, guid: 28f9743289250034a847b2a4ee531bd8, type: 2}
-  _spriteRenderer: {fileID: 0}
 --- !u!1 &1760017835
 GameObject:
   m_ObjectHideFlags: 0
@@ -4042,8 +4032,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 28e8e96d79757fe4480f40156bf35cb1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _promptText: {fileID: 0}
-  _currentInteractAxis: 
 --- !u!1 &1787196093
 GameObject:
   m_ObjectHideFlags: 0

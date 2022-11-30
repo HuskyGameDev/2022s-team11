@@ -16,7 +16,8 @@ namespace Level
         }
 
         public void Respawn() {
-            Activate();
+            p_isActive = true;
+            gameObject.SetActive(true);
         }
 
         protected void Deactivate() {
@@ -24,9 +25,9 @@ namespace Level
             gameObject.SetActive(false);
         }
 
-        protected void Activate() {
-            p_isActive = true;
-            gameObject.SetActive(true);
+        void OnDestroy()
+        {
+            Managers.InteractiveManager.OnObjectRespawn -= Respawn;
         }
     }
 }
