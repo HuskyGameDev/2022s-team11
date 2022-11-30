@@ -171,49 +171,33 @@ namespace Movement {
             }
 
             // Sprites
-            if (_movementSM.GetCurrentState() == _runningState &&
-            _playerRigidbody.velocity == Vector2.zero) {
-                animator.SetBool("Idle", true);
-                animator.SetBool("Running", false);
-                animator.SetBool("Sliding", false);
-                animator.SetBool("Jumping", false);
-                animator.SetBool("Grappling", false);
+            // Running + Idle
+            if (_movementSM.GetCurrentState() == _runningState) {
+                if (_playerRigidbody.velocity == Vector2.zero){
+                    animator.SetBool("Running", false); animator.SetBool("Idle", true);
+                }
+                else { animator.SetBool("Running", true);}
             }
-            else if (_movementSM.GetCurrentState() == _runningState) {
-                animator.SetBool("Idle", false);
-                animator.SetBool("Running", true);
-                animator.SetBool("Sliding", false);
-                animator.SetBool("Jumping", false);
-                animator.SetBool("Grappling", false);
-            }
-            else if (_movementSM.GetCurrentState() == _slidingState){
-                animator.SetBool("Idle", false);
-                animator.SetBool("Running", false);
+            else {animator.SetBool("Running", false); }
+
+            // Sliding
+            if (_movementSM.GetCurrentState() == _slidingState){
                 animator.SetBool("Sliding", true);
-                animator.SetBool("Jumping", false);
-                animator.SetBool("Grappling", false);
-            }
-            else if (_movementSM.GetCurrentState() == _airborneState){
-                animator.SetBool("Idle", false);
-                animator.SetBool("Running", false);
-                animator.SetBool("Sliding", false);
+            } 
+            else{animator.SetBool("Sliding", false); }
+
+            //Jumping
+            if (_movementSM.GetCurrentState() == _airborneState){
                 animator.SetBool("Jumping", true);
-                animator.SetBool("Grappling", false);
-                if (_airborneState.WallCheck() == 1 || _airborneState.WallCheck() == -1){
+                if (_airborneState.WallCheck() != 0){
                     animator.SetBool("Wall", true);
                 }
-                else {
-                    animator.SetBool("Wall", false);
-                }
+                else { animator.SetBool("Wall", false); }
+
             }
-            else { // Default State
-                animator.SetBool("Idle", true);
-                animator.SetBool("Running", false);
-                animator.SetBool("Sliding", false);
-                animator.SetBool("Jumping", false);
-                animator.SetBool("Grappling", false);
-            }
+            else {animator.SetBool("Jumping", false); }
         }
+
         #region Unity Callbacks
         void Start()
         {
