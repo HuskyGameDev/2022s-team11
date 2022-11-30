@@ -44,12 +44,13 @@ namespace Level {
         }
 
         private void OnTriggerExit2D(Collider2D collision) {
-            if (!wf.GetActive()) {
-                collision.gameObject.transform.SetParent(null);
-                return;
-            }
+            
             if (collision.gameObject.CompareTag("Player")) {
                 collision.gameObject.transform.SetParent(null);
+                if (!wf.GetActive()) {
+                    // platforms was not active when the player exited the trigger.
+                    return;
+                }
 
                 GameObject[] waypoints = wf.GetWaypoints();
                 int currentWaypointIndex = wf.GetCurrentIndex();
