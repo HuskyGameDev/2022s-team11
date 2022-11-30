@@ -12,7 +12,7 @@ EditorBuildSettings:
     path: Assets/Scenes/Playtesting.unity
     guid: f3ac3d0a2e91f394fbf3bbf185280ab1
   - enabled: 1
-    path: Assets/Scenes/TemplateScene.unity
+    path: Assets/Scenes/HubLevelScene.unity
     guid: a36f6b2211745fe46a8511a181b0028a
   - enabled: 1
     path: Assets/Scenes/SampleScene.unity
