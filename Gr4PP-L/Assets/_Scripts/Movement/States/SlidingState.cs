@@ -4,7 +4,7 @@ using UnityEngine;
 namespace Movement
 {
     /** Author: Nick Zimanski
-    * Version 3/21/22
+    * Version 11/29/22
     */
     [CreateAssetMenu(fileName = "SlidingStateData", menuName = "ScriptableObjects/MovementStates/SlidingStateScriptableObject")]
     public class SlidingState : MovementState
@@ -49,12 +49,15 @@ namespace Movement
         {
             HandleInput();
             base.Enter();
+
+            _gm.Get<Managers.AudioManager>().Play("Slide");
             _acceleration = _givenAccel;
             _deceleration = _givenDecel;
         }
         public override void Exit()
         {
             base.Exit();
+            _gm.Get<Managers.AudioManager>().Stop("Slide");
         }
         protected override void HandleInput()
         {
@@ -80,40 +83,25 @@ namespace Movement
         }
         protected override void LogicUpdate()
         {
-            /**
-            //calculates direction to move in and desired velocity
-            float targetSpeed = _gm.DirectionalInput.x * _maxHorizontalSpeed;
-            float speedDif = 0;
-            if (IsPlayerSpeedExceeding(targetSpeed))
-            {
-                speedDif = -1 * Mathf.Sign(_rb.velocity.x);
-            }
-            else
-            {
-                //calculates difference between current velocity and desired velocity
-                speedDif = targetSpeed - _rb.velocity.x;
-            }
-            //change acceleration rate depending on the situation
-            //when target speed is > 0.01f, use acceleration variable, else use deceleration variable
-            _accelRate = targetSpeed != 0 ? _accelRate : _deceleration;
-            //applies acceleration to speed difference, then raises to a set power so acceleration increases with higher speeds
-            //finally multiplies by sing to reapply direction
-            _movement = Mathf.Pow(Mathf.Abs(speedDif) * _accelRate, _velPower) * Mathf.Sign(speedDif);
-            */
             _movement = 0f;
 
             #region State Checks
             if (!IsGrounded)
             {
                 _transitionToState = States.Airborne;
+                return;
             }
-            else if (_hook.IsAttached)
+
+            if (_hook.IsAttached)
             {
                 _transitionToState = States.Grappling;
+                return;
             }
-            else if (!(_isCrouchingInput) || Mathf.Abs(_rb.velocity.x) < 0.01f)
+
+            if (!(_isCrouchingInput) || Mathf.Abs(_rb.velocity.x) < 0.01f)
             {
                 _transitionToState = States.Running;
+                return;
             }
             #endregion
         }
@@ -125,9 +113,10 @@ namespace Movement
             float amount = Mathf.Min(Mathf.Abs(_rb.velocity.x), Mathf.Abs(_frictionAmount));
             amount *= Mathf.Sign(_rb.velocity.x);
             _rb.AddForce(Vector2.right * -amount, ForceMode2D.Impulse);
-        
 
-            if (_jumpInput) {
+
+            if (_jumpInput)
+            {
                 _jumpInput = false;
                 GroundedJump();
             }

@@ -21,3 +21,4 @@ MonoBehaviour:
   _maxHorizontalSpeed: 13
   _jumpBufferTime: 0.15
   _hookShotForce: 30
+  _stepSoundInterval: 0.3

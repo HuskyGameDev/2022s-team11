@@ -1,8 +1,8 @@
-using System.Collections;
-using System.Collections.Generic;
+
 using UnityEngine;
 
-namespace Level {
+namespace Level
+{
     /** Author: Nick Zimanski
     *   Version: 10/25/22
     */
@@ -11,10 +11,11 @@ namespace Level {
         [SerializeField]
         private string _levelName;
 
-    
+
 
         public override void InteractCallback()
         {
+            GameManager.Instance.Get<Managers.AudioManager>().Play("Level Entry");
             GameManager.Instance.StartCoroutine(GameManager.Instance.Get<Managers.LevelManager>().LoadScene(_levelName));
         }
     }
