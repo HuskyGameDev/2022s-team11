@@ -54,7 +54,7 @@ public class GameManager : MonoBehaviour
         //Initialize();
 
         // CHANGE TESTING SCENE HERE
-        StartCoroutine(Get<LevelManager>().LoadScene("Ethan-Level"));
+        StartCoroutine(Get<LevelManager>().LoadScene("HubLevelScene"));
     }
 
     // Start is called before the first frame update
