@@ -4,6 +4,9 @@ using System.Collections.Generic;
 using UnityEngine;
 
 namespace Managers {
+    /** Author: Nick Zimanski
+    *   Version: 10/25/22
+    */
     public class InputManager : Manager
     {
 
@@ -11,7 +14,6 @@ namespace Managers {
         private Dictionary<string, ControlType[]> _inputTags;
         private Dictionary<ControlType, bool> _lockedInputs;
 
-        private bool _inputLocked = false;
         private float _horizAxisThreshold, _vertAxisThreshold;
 
         public Vector2 DirectionalInput {get; private set;}
@@ -87,6 +89,7 @@ namespace Managers {
 
         public void UnlockType(ControlType type) {
             _lockedInputs[type] = false;
+            Debug.Log("Unlocking "+ type + " inputs");
         }
 
         

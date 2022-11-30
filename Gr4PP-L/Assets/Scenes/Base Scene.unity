@@ -356,6 +356,7 @@ GameObject:
   - component: {fileID: 1391838684}
   - component: {fileID: 1391838686}
   - component: {fileID: 1391838685}
+  - component: {fileID: 1391838687}
   m_Layer: 5
   m_Name: Loading Screen Text
   m_TagString: Untagged
@@ -481,6 +482,28 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1391838683}
   m_CullTransparentMesh: 1
+--- !u!114 &1391838687
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1391838683}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0c11265b855408d42af33d62691f5194, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_ChannelMask: 1
+  m_Gain: 1
+  m_Use2DDistance: 0
+  m_UseLocalSpace: 1
+  m_ReactionSettings:
+    m_SecondaryNoise: {fileID: 0}
+    m_AmplitudeGain: 1
+    m_FrequencyGain: 1
+    m_Duration: 1
+    m_NoiseOffsets: {x: 0, y: 0, z: 0}
 --- !u!1 &1757704799
 GameObject:
   m_ObjectHideFlags: 0
@@ -490,6 +513,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1757704806}
+  - component: {fileID: 1757704807}
   - component: {fileID: 1757704803}
   m_Layer: 0
   m_Name: Managers
@@ -531,7 +555,84 @@ MonoBehaviour:
       tags: 00000000
     - name: Level Reset
       tags: 02000000
-    sounds: []
+    sounds:
+    - name: Level Entry
+      clip: {fileID: 8300000, guid: 690b2ea4056f6d24593ab35b04a5323e, type: 3}
+      volume: 1
+      pitch: 0.7
+      type: 1
+      loop: 0
+      source: {fileID: 0}
+    - name: Glass Break 0
+      clip: {fileID: 8300000, guid: dfcdd4f10755110479ed4f2bc37383f1, type: 3}
+      volume: 0.85
+      pitch: 1
+      type: 1
+      loop: 0
+      source: {fileID: 0}
+    - name: Glass Break 1
+      clip: {fileID: 8300000, guid: 6d42593d1f2f4ba4da56819566043db0, type: 3}
+      volume: 0.85
+      pitch: 1
+      type: 1
+      loop: 0
+      source: {fileID: 0}
+    - name: Death 1
+      clip: {fileID: 8300000, guid: 1e660da06e9f46d4a964a6fee025660c, type: 3}
+      volume: 1
+      pitch: 1
+      type: 1
+      loop: 0
+      source: {fileID: 0}
+    - name: Death 0
+      clip: {fileID: 8300000, guid: b97e2ee011095b64881088855f108d75, type: 3}
+      volume: 1
+      pitch: 1
+      type: 1
+      loop: 0
+      source: {fileID: 0}
+    - name: Jump Pad
+      clip: {fileID: 8300000, guid: e1b994fcd06dc4a44a2131056bee625b, type: 3}
+      volume: 1
+      pitch: 1
+      type: 1
+      loop: 0
+      source: {fileID: 0}
+    - name: Landing
+      clip: {fileID: 8300000, guid: a2d93f120bc581841adcc66ad76c8449, type: 3}
+      volume: 0.9
+      pitch: 1.1
+      type: 1
+      loop: 0
+      source: {fileID: 0}
+    - name: Slide
+      clip: {fileID: 8300000, guid: 2b346900e081eea4882938dae1232b81, type: 3}
+      volume: 1
+      pitch: 1
+      type: 1
+      loop: 1
+      source: {fileID: 0}
+    - name: Metal Footstep 1
+      clip: {fileID: 8300000, guid: 942beb32053110f4ebc92ad8a8bb90eb, type: 3}
+      volume: 1
+      pitch: 1
+      type: 1
+      loop: 0
+      source: {fileID: 0}
+    - name: Metal Footstep 0
+      clip: {fileID: 8300000, guid: f854ac7484e558d428104ab3ec83df02, type: 3}
+      volume: 1
+      pitch: 1
+      type: 1
+      loop: 0
+      source: {fileID: 0}
+    - name: Grapple Hook Fire
+      clip: {fileID: 8300000, guid: 76c750e86e4590d4abe4fed4ea40fb2b, type: 3}
+      volume: 1
+      pitch: 1
+      type: 1
+      loop: 0
+      source: {fileID: 0}
     loadingScreen: {fileID: 139671673}
 --- !u!4 &1757704806
 Transform:
@@ -548,3 +649,11 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!81 &1757704807
+AudioListener:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1757704799}
+  m_Enabled: 1
