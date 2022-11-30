@@ -2,25 +2,23 @@ using Utility;
 using Managers;
 using UnityEngine;
 using System.Collections.Generic;
-namespace Movement {
+namespace Movement
+{
     /** Author: Nick Zimanski
-    * Version 3/21/22
+    * Version 11/29/22
     */
     public abstract class MovementState : State
     {
         [Header("Movement State")]
-        [SerializeField]private float _jumpForce;
+        [SerializeField] private float _jumpForce;
         #region Variables
-        protected MovementStateMachine _sm {get; private set;}
-        protected PlayerController _owner {get; private set;}
+        protected MovementStateMachine _sm { get; private set; }
+        protected PlayerController _owner { get; private set; }
         protected bool _uncheckedInputBuffer;
         protected float _stateEnterTime;
         protected GrappleHookController _hook;
         protected Rigidbody2D _rb;
         protected GameManager _gm;
-        /// <summary>
-        /// Stores the input data on a frame. Updated automatically every frame before HandleInput()
-        /// </summary>
 
         protected States? _transitionToState;
         public States? Name => null;
@@ -49,13 +47,15 @@ namespace Movement {
             _filter.layerMask = _owner.GroundLayer;
             _filter.useLayerMask = true;
         }
-        public override void Enter() {
+        public override void Enter()
+        {
             base.Enter();
             _uncheckedInputBuffer = true;
             _stateEnterTime = Time.time;
             _transitionToState = null;
         }
-        public override void Exit() {
+        public override void Exit()
+        {
             base.Exit();
         }
         /// <summary>
@@ -65,27 +65,31 @@ namespace Movement {
         ///<summary>
         /// Processes non-physics logic that needs to be checked. Called during Update.
         /// </summary>
-        protected virtual void LogicUpdate() {}
+        protected virtual void LogicUpdate() { }
         /// <summary>
         /// Processes physics-based logic and moves the player. Called during FixedUpdate.
         /// </summary>
-        protected virtual void PhysicsUpdate() {}
+        protected virtual void PhysicsUpdate() { }
 
-        public override void Execute() {
+        public override void Execute()
+        {
             HandleInput();
             LogicUpdate();
             StateChangeUpdate();
         }
-        public override void FixedExecute() {
+        public override void FixedExecute()
+        {
             PhysicsUpdate();
         }
 
         protected abstract void CheckInputBuffer();
 
-        protected void StateChangeUpdate() {
-            if (_transitionToState != null && _transitionToState != _sm.CurrentState.Name) {
+        protected void StateChangeUpdate()
+        {
+            if (_transitionToState != null && _transitionToState != _sm.CurrentState.Name)
+            {
                 UnityEngine.Debug.Log("Changing to " + _transitionToState);
-                _sm.ChangeState(_sm.GetState((int) _transitionToState));
+                _sm.ChangeState(_sm.GetState((int)_transitionToState));
             }
         }
 
@@ -102,16 +106,20 @@ namespace Movement {
             Debug.Log("Grounded Jump");
         }
 
-        protected void HandleGrappleInput(Vector2 direction, float force) {
+        protected void HandleGrappleInput(Vector2 direction, float force)
+        {
             if (_hook.IsAttached) return;
             if (!_owner.CanGrapple) return;
-            
 
-            if (!_hook.IsHeld) {
+
+            if (!_hook.IsHeld)
+            {
                 _hook.RetractHook();
                 return;
-            } else {
-                 _hook.FireHook(direction, force);
+            }
+            else
+            {
+                _hook.FireHook(direction, force);
             }
         }
         /// <summary>
@@ -127,7 +135,8 @@ namespace Movement {
         /// Returns the ground collider, used to prevent weird jumps on jump pads
         /// </summary>
         /// <returns>The collider the ground box is touching</returns>
-        protected Collider2D GroundCollider() {
+        protected Collider2D GroundCollider()
+        {
             return (Physics2D.OverlapBox(_owner.GroundCheckPoint.position - new Vector3(0, 1, 0), _owner.GroundCheckSize, 0, _owner.GroundLayer));
         }
 
@@ -135,7 +144,8 @@ namespace Movement {
         /// Checks if the player's wall checkboxes are contacting a wall
         /// </summary>
         /// <returns>an int, -1 if the wall is to the left of the player, 1 if it's to the right, and 0 if no contact is made or if both walls are in contact</returns>
-        protected int WallCheck() {
+        protected int WallCheck()
+        {
             // _wallSide is used instead of directly returning the value. This is done to prevent the player from getting a wall jump when buffering a jump when landing on the ground.
             // previously, the player would occasionally get a wall jump when buffering a jump while landing on the ground because they would clip slightly into the ground, making both
             // wall jump colliders along with the ground collider register. This is fixed by returning 0 when both wall colliders are touching the ground layer.
@@ -165,24 +175,27 @@ namespace Movement {
             numCollidersContacting = _collisions.Count;
 
             //If the player is not touching a left wall.
-            if (numCollidersContacting == 0) {
+            if (numCollidersContacting == 0)
+            {
 
                 //use right walls instead
                 numCollidersContacting = Physics2D.OverlapBox(_owner.GroundCheckPoint.position + new Vector3(_owner.WallCheckOffset.x, _owner.WallCheckOffset.y, 0), _owner.WallCheckSize, 0f, _filter, _collisions);
-                
+
                 //If we're still not touching a wall, then we're done.
                 if (numCollidersContacting == 0) return 0;
-                
+
                 wallSide = 1;
-            } else {
+            }
+            else
+            {
                 //We have walls on both sides of us, panic (don't wall jump).
-                if (Physics2D.OverlapBox(_owner.GroundCheckPoint.position + new Vector3(_owner.WallCheckOffset.x, _owner.WallCheckOffset.y, 0), _owner.WallCheckSize, 0f, _filter, new Collider2D[1]) > 0) 
+                if (Physics2D.OverlapBox(_owner.GroundCheckPoint.position + new Vector3(_owner.WallCheckOffset.x, _owner.WallCheckOffset.y, 0), _owner.WallCheckSize, 0f, _filter, new Collider2D[1]) > 0)
                     return 0;
 
                 wallSide = -1;
             }
-            
-            
+
+
             foreach (Collider2D collision in _collisions)
             {
                 if (collision.CompareTag("Ground") || (collision.CompareTag("1Way") && collision.GetComponent<PlatformEffector2D>().rotationalOffset == 90 * wallSide)) return wallSide;
@@ -238,11 +251,12 @@ namespace Movement {
         /// <returns>A bool, whether or not the player is moving faster than v</returns>
         protected bool IsPlayerSpeedExceeding(float v)
         {
-            if (v == 0 && _rb.velocity.x != 0) return true; 
+            if (v == 0 && _rb.velocity.x != 0) return true;
             return Mathf.Abs(_rb.velocity.x) > Mathf.Abs(v) && Mathf.Sign(v) == Mathf.Sign(_rb.velocity.x);
         }
 
-        new public enum States {
+        new public enum States
+        {
             Grappling = 0,
             Airborne = 1,
             Running = 2,

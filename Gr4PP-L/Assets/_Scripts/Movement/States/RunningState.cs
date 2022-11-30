@@ -1,9 +1,10 @@
 using System;
 using UnityEngine;
 
-namespace Movement {
-    /** Author: Nick Zimanski && Noah Kolczynski
-    * Version 3/21/22
+namespace Movement
+{
+    /** Author: Nick Zimanski & Noah Kolczynski
+    * Version 11/29/22
     */
     [CreateAssetMenu(fileName = "RunningStateData", menuName = "ScriptableObjects/MovementStates/RunningStateScriptableObject")]
     //idea: change player's velocity when they enter and when they exit the trigger.
@@ -33,11 +34,16 @@ namespace Movement {
         [SerializeField]
         [Tooltip("The force with which to shoot the grappling hook while in this state")]
         private float _hookShotForce;
+        [Header("Movement")]
+        [SerializeField]
+        [Tooltip("How much time, in seconds, between step sound effects while moving")]
+        private float _stepSoundInterval = 0.5f;
         #endregion
 
         #region Variables
         private bool _isJumpingInput, _isCrouchingInput, _grappleInput;
-        private float _movement, _accelRate, _acceleration, _deceleration;
+        private float _movement, _accelRate, _acceleration, _deceleration, _lastStepSoundTime;
+        private bool _isMoving => _rb.velocity.magnitude > 0.1f;
         new public States Name => States.Running;
         #endregion
 
@@ -46,19 +52,25 @@ namespace Movement {
         {
             base.Initialize(game, player, sm);
         }
-        public override void Enter() {
+        public override void Enter()
+        {
             base.Enter();
             _acceleration = _givenAccel;
             _deceleration = _givenDecel;
             HandleInput();
             if(!_owner.CanGrapple) _owner.CanGrapple = !_sm.CheckBufferedInputsFor("WallTouchTransition");
+            _lastStepSoundTime = 0f;
         }
-        public override void Exit() {
+        public override void Exit()
+        {
             base.Exit();
         }
         #endregion
+
+
         #region MovementState Overrides
-        protected override void HandleInput() {
+        protected override void HandleInput()
+        {
             var gameTime = Time.time;
             _isCrouchingInput = _gm.DirectionalInput.y < 0;
             
@@ -69,68 +81,91 @@ namespace Movement {
                 _sm.BufferInput("Grapple", 0.1f);
             }
 
-            if (_gm.Get<Managers.InputManager>().GetButtonDown("Jump")) {
+            if (_gm.Get<Managers.InputManager>().GetButtonDown("Jump"))
+            {
                 _sm.BufferInput("Jump", _jumpBufferTime);
             }
 
-            if (_uncheckedInputBuffer) {
+            if (_uncheckedInputBuffer)
+            {
                 CheckInputBuffer();
                 _uncheckedInputBuffer = false;
             }
         }
-        protected override void LogicUpdate() {
+        protected override void LogicUpdate()
+        {
             #region Normal Movement
-                //calculates direction to move in and desired velocity
-                float targetSpeed = _gm.DirectionalInput.x * _maxHorizontalSpeed;
-                float speedDif = 0;
-                if (IsPlayerSpeedExceeding(targetSpeed))
-                {
-                    speedDif = -1 * Mathf.Sign(_rb.velocity.x);
-                }
-                else
-                {
-                    //calculates difference between current velocity and desired velocity
-                    speedDif = targetSpeed - _rb.velocity.x;
-                }
+            //calculates direction to move in and desired velocity
+            float targetSpeed = _gm.DirectionalInput.x * _maxHorizontalSpeed;
+            float speedDif = 0;
+            if (IsPlayerSpeedExceeding(targetSpeed))
+            {
+                speedDif = -1 * Mathf.Sign(_rb.velocity.x);
+            }
+            else
+            {
+                //calculates difference between current velocity and desired velocity
+                speedDif = targetSpeed - _rb.velocity.x;
+            }
 
-                //change acceleration rate depending on the situation
-                //when target speed is > 0.01f, use acceleration variable, else use deceleration variable
-                if (targetSpeed == 0) _accelRate = 0;
-                else _accelRate = (Mathf.Abs(targetSpeed) > 0.01f) ? _acceleration : _deceleration;
-                //applies acceleration to speed difference, then raises to a set power so acceleration increases with higher speeds
-                //finally multiplies by sing to reapply direction
-                _movement = Mathf.Pow(Mathf.Abs(speedDif) * _accelRate, _velPower) * Mathf.Sign(speedDif);
+            //change acceleration rate depending on the situation
+            //when target speed is > 0.01f, use acceleration variable, else use deceleration variable
+            if (targetSpeed == 0) _accelRate = 0;
+            else _accelRate = (Mathf.Abs(targetSpeed) > 0.01f) ? _acceleration : _deceleration;
+            //applies acceleration to speed difference, then raises to a set power so acceleration increases with higher speeds
+            //finally multiplies by sing to reapply direction
+            _movement = Mathf.Pow(Mathf.Abs(speedDif) * _accelRate, _velPower) * Mathf.Sign(speedDif);
 
             #endregion
 
-            #region StateChecks
-            if (!IsGrounded && !_sm.CheckBufferedInputsFor("WallTouchTransition")) {
+            #region Sound
+            if (_isMoving && _lastStepSoundTime + _stepSoundInterval < Time.time)
+            {
+                //TODO: Play different sounds for material beneath player
+                _gm.Get<Managers.AudioManager>().PlayVariantPitch("Metal Footstep " + GameManager.Random.Next(2));
+                _lastStepSoundTime = Time.time;
+            }
+            #endregion
+
+            #region State Checks
+            if (!IsGrounded && !_sm.CheckBufferedInputsFor("WallTouchTransition"))
+            {
                 _sm.BufferInput("Ground to Air", 0.1f);
                 _owner.CanGrapple = true;
                 _transitionToState = States.Airborne;
-            } else if (_hook.IsAttached) {
+                return;
+            }
+
+            if (_hook.IsAttached)
+            {
                 _sm.RemoveBufferedInputsFor("Grapple");
                 _owner.CanGrapple = false;
                 _transitionToState = States.Grappling;
-            } else if (_gm.Get<Managers.InputManager>().GetButton("Slide") && !_sm.CheckBufferedInputsFor("WallTouchTransition"))
+                return;
+            }
+
+            if (Mathf.Abs(_rb.velocity.x) <= _maxHorizontalSpeed + 0.01f) return;
+            if ((_gm.Get<Managers.InputManager>().GetButton("Slide") || _gm.DirectionalInput.y < 0) && !_sm.CheckBufferedInputsFor("WallTouchTransition"))
             {
                 _owner.CanGrapple = true;
                 _transitionToState = States.Sliding;
+                return;
             }
             #endregion
         }
-        protected override void PhysicsUpdate() {
+        protected override void PhysicsUpdate()
+        {
             //applies force to rigidbody, multiplying by Vector2.right so that it only affects X axis
             if (_movement != 0) _rb.AddForce(_movement * Vector2.right);
-        
+
 
             #region Friction
-                if (Mathf.Abs(_gm.DirectionalInput.x) < 0.01f)
-                {
-                    float amount = Mathf.Min(Mathf.Abs(_rb.velocity.x), Mathf.Abs(_frictionAmount));
-                    amount *= Mathf.Sign(_rb.velocity.x);
-                    _rb.AddForce(Vector2.right * -amount, ForceMode2D.Impulse);
-                }
+            if (Mathf.Abs(_gm.DirectionalInput.x) < 0.01f)
+            {
+                float amount = Mathf.Min(Mathf.Abs(_rb.velocity.x), Mathf.Abs(_frictionAmount));
+                amount *= Mathf.Sign(_rb.velocity.x);
+                _rb.AddForce(Vector2.right * -amount, ForceMode2D.Impulse);
+            }
             #endregion
 
             if (_sm.CheckBufferedInputsFor("Jump") && (GroundCollider() == null || !GroundCollider().CompareTag("Jump Pad"))) {
@@ -154,7 +189,8 @@ namespace Movement {
             }
         }
 
-        protected override void CheckInputBuffer() {
+        protected override void CheckInputBuffer()
+        {
             _isCrouchingInput = _isCrouchingInput || _sm.CheckBufferedInputsFor("Slide");
             _uncheckedInputBuffer = false;
         }

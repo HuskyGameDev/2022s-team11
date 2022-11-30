@@ -16,6 +16,7 @@ TagManager:
   - Powerup
   - 1Way
   - GO
+  - Text
   layers:
   - Default
   - TransparentFX

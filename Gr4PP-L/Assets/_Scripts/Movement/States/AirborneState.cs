@@ -1,7 +1,8 @@
 using UnityEngine;
-namespace Movement {
+namespace Movement
+{
     /** Author: Nick Zimanski
-    * Version 9/16/22
+    * Version 11/29/22
     */
     [CreateAssetMenu(fileName = "AirborneStateData", menuName = "ScriptableObjects/MovementStates/AirborneStateScriptableObject")]
     public class AirborneState : MovementState
@@ -13,12 +14,15 @@ namespace Movement {
         [SerializeField]
         [Tooltip("How long, in seconds, a jump input will be valid for if entered before touching the ground")]
         private float _jumpBufferTime;
+        /*
+        * UNUSED
+        */
         [SerializeField]
         [Tooltip("How long, in seconds, a player must wait after jumping before they can wall jump")]
         private float _groundJumpToWallJumpDelay;
         [SerializeField]
         [Tooltip("How hard to push the player back down when they end their jump")]
-        [Range(0,1)]
+        [Range(0, 1)]
         private float _jumpCutMultiplier;
         [SerializeField]
         [Tooltip("How much force to apply to the player when jumping them off a wall.")]
@@ -26,6 +30,9 @@ namespace Movement {
         [SerializeField]
         [Tooltip("How long after a wall jump before the player regains control of the character")]
         private float _wallJumpPreservationTime;
+        /*
+        * UNUSED
+        */
         [SerializeField]
         [Tooltip("How long between a grounded jump and a wall jump is acceptable")]
         private float _jumpWallJumpSpacing;
@@ -51,7 +58,11 @@ namespace Movement {
         [SerializeField]
         [Tooltip("Max horizontal velocity in the air.")]
         private float _maxHorizontalAirSpeed;
-        
+        [Header("Audio")]
+        [SerializeField]
+        [Tooltip("How fast the player must fall to play the landing sound on impact with the ground")]
+        private float _landingSoundThresholdSpeed;
+
         //variables used for calculating 
         private float _horizontalMovement, _accelRate;
 
@@ -77,11 +88,13 @@ namespace Movement {
         private int _queueWallJump = 0;
         public float WallSlideSpeed => _wallSlideSpeed;
         private float _gravityScale, _horizontalInput, _acceleration, _deceleration;
-        public override void Initialize(GameManager game, PlayerController player, MovementStateMachine sm) {
+        public override void Initialize(GameManager game, PlayerController player, MovementStateMachine sm)
+        {
             base.Initialize(game, player, sm);
             _gravityScale = _rb.gravityScale;
         }
-        public override void Enter() {
+        public override void Enter()
+        {
             base.Enter();
             HandleInput();
 
@@ -99,26 +112,44 @@ namespace Movement {
             _clipTransition = _sm.CheckBufferedInputsFor("WallTouchTransition");
             if (_clipTransition) Debug.Log("Clip Transition");
         }
-        public override void Exit() {
+        public override void Exit()
+        {
             base.Exit();
             _rb.gravityScale = _gravityScale;
+
+            switch (_transitionToState)
+            {
+                case null:
+                    break;
+                case States.Running:
+                    if (_rb.velocity.y <= _landingSoundThresholdSpeed && _gm.Get<Managers.TimerManager>().CurrentTimeSeconds > 0.1f)
+                        _gm.Get<Managers.AudioManager>().PlayVariantPitch("Landing");
+                    break;
+                default:
+                    break;
+            }
         }
-        protected override void HandleInput() {
-            if(_gm.DirectionalInput.y < 0) {
+        protected override void HandleInput()
+        {
+            if (_gm.DirectionalInput.y < 0)
+            {
                 _sm.BufferInput("Down", 0.1f);
             }
-            if (_gm.Get<Managers.InputManager>().GetButtonDown("Jump")) {
+            if (_gm.Get<Managers.InputManager>().GetButtonDown("Jump"))
+            {
                 _sm.BufferInput("Jump", _jumpBufferTime);
             }
 
             _jumpPressed = _gm.Get<Managers.InputManager>().GetButton("Jump");
-            
-            if (_gm.Get<Managers.InputManager>().GetButtonDown("Grapple")) {
+
+            if (_gm.Get<Managers.InputManager>().GetButtonDown("Grapple"))
+            {
                 _sm.BufferInput("Grapple", 0.1f);
                 _grappleInput = true;
             }
 
-            if (_uncheckedInputBuffer) {
+            if (_uncheckedInputBuffer)
+            {
                 _uncheckedInputBuffer = false;
                 CheckInputBuffer();
             }
@@ -129,20 +160,19 @@ namespace Movement {
                 if(WallCheck() != 0 || IceWallCheck() != 0) {
                     // prevents player from getting grounded jumps after hitting walls at high speeds and clipping into them
                     _sm.BufferInput("WallTouchTransition", 0.1f);
-                    Debug.Log("Wall Touch Transition");
                 }
                 _transitionToState = _sm.CheckBufferedInputsFor("Down") ? States.Sliding : States.Running;
             } /**else if (!_owner.IsGrappleHeld) {
                 _transitionToState = States.Grappling;
             }*/
 
-            if(!_jumpPressed && !_hasJumpEnded) {
+            if (!_jumpPressed && !_hasJumpEnded)
+            {
                 _jumpEndCalled = true;
             }
 
             #region Jump
             if (WallCheck() != 0 && _sm.CheckBufferedInputsFor("Jump")) {
-                Debug.Log("Airborne Jump Buffered? " + _sm.CheckBufferedInputsFor("Jump"));
                 _queueWallJump = WallCheck();
             }
             if(WallCheck() == 0 && _sm.CheckBufferedInputsFor("Jump") && _stateEnterTime > Time.time - _jumpCoyoteTime && _lastWallJump < 0 && _sm.CheckBufferedInputsFor("Ground to Air") 
@@ -153,14 +183,18 @@ namespace Movement {
 
             #region Air Control
             //calculates direction to move in and desired velocity
-            if (_lastWallJump < 0) {
+            if (_lastWallJump < 0)
+            {
                 float targetSpeed = _gm.DirectionalInput.x * _maxHorizontalAirSpeed;
                 float speedDif = 0;
-                if (IsPlayerSpeedExceeding(targetSpeed)) {
+                if (IsPlayerSpeedExceeding(targetSpeed))
+                {
                     //when the character is exceeding our maximum velocity, speed dif will have a value of 1 in the opposite horizontal direction
                     //so if the character is going fast to the right, this will give a -1, if going fast to the left, it'll give a 1
                     speedDif = -1 * Mathf.Sign(_rb.velocity.x);
-                } else {
+                }
+                else
+                {
                     //calculates difference between current velocity and desired velocity
                     speedDif = targetSpeed - _rb.velocity.x;
                 }
@@ -170,32 +204,38 @@ namespace Movement {
                 //applies acceleration to speed difference, then raises to a set power so acceleration increases with higher speeds
                 //finally multiplies by sing to reapply direction
                 _horizontalMovement = Mathf.Pow(Mathf.Abs(speedDif) * _accelRate, _velPower) * Mathf.Sign(speedDif);
-            } else {
+            }
+            else
+            {
                 _horizontalMovement = 0;
             }
             #endregion
 
             #region Cooldown Timers
-            if (_lastWallJump > -1) {
+            if (_lastWallJump > -1)
+            {
                 _lastWallJump -= Time.deltaTime;
             }
             #endregion
 
-            if (_hook.IsAttached) {
+            if (_hook.IsAttached)
+            {
                 _sm.RemoveBufferedInputsFor("Grapple");
                 _owner.CanGrapple = false;
                 _hasJumpEnded = true;
                 _transitionToState = States.Grappling;
             }
         }
-        protected override void PhysicsUpdate() {
+        protected override void PhysicsUpdate()
+        {
             #region Horizontal Movement
             //applies force to rigidbody, multiplying by Vector2.right so that it only affects X axis
             _rb.AddForce(_horizontalMovement * Vector2.right);
             #endregion
 
             #region Jump Cut
-            if(!_hasJumpEnded && _jumpEndCalled) {
+            if (!_hasJumpEnded && _jumpEndCalled)
+            {
                 OnJumpEnd();
                 _hasJumpEnded = true;
             }
@@ -213,7 +253,7 @@ namespace Movement {
             #endregion
 
             #region Terminal Velocity
-            if(_rb.velocity.y < -_terminalVelocity)
+            if (_rb.velocity.y < -_terminalVelocity)
             {
                 //_rb.velocity = new Vector2(_rb.velocity.x, -_terminalVelocity);
                 _rb.gravityScale = _gravityScale * 0.5f;
@@ -221,7 +261,8 @@ namespace Movement {
             #endregion
 
             #region Wall Interaction
-            if (WallCheck() != 0) {
+            if (WallCheck() != 0)
+            {
                 //wall friction
                 if (_rb.velocity.y < -_wallSlideSpeed)
                 {
@@ -230,20 +271,23 @@ namespace Movement {
                         _rb.velocity = new Vector2(_rb.velocity.x, -_wallSlideSpeed);
                     }
                 }
-            } else
+            }
+            else
             {
                 _acceleration = _givenAccel;
                 _deceleration = _givenDecel;
             }
             #endregion
 
-            if (_grappleInput) {
+            if (_grappleInput)
+            {
                 HandleGrappleInput(_gm.DirectionalInput, _hookShotForce);
-                _grappleInput = false;    
+                _grappleInput = false;
             }
-            
+
             #region WallJump
-            if (_queueWallJump != 0) {
+            if (_queueWallJump != 0)
+            {
                 WallJump(_queueWallJump);
                 _queueWallJump = 0;
                 return;
@@ -271,7 +315,7 @@ namespace Movement {
         /// </summary>
         private void OnJumpEnd()
         {
-            if(_rb.velocity.y > 0)
+            if (_rb.velocity.y > 0)
             {
                 _rb.AddForce(Vector2.down * _rb.velocity.y * (1 - _jumpCutMultiplier), ForceMode2D.Impulse);
             }
@@ -298,13 +342,12 @@ namespace Movement {
                 _rb.velocity = new Vector2(0, 0);
                 //_rb.velocity = new Vector2(0, _rb.velocity.y);
                 _rb.AddForce(new Vector2(-1 * wallSide, 1) * _wallJumpForce, ForceMode2D.Impulse);
-                Debug.Log("WJ");
             } else {
                 _rb.velocity = new Vector2(0, _rb.velocity.y);
                 _rb.AddForce(new Vector2(-1 * wallSide, 0.5f) * _wallJumpForce, ForceMode2D.Impulse);
                 Debug.Log("Multiplying WJ");
             }
-            
+
             _sm.RemoveBufferedInputsFor("Jump");
             _hasJumpEnded = false;
         }

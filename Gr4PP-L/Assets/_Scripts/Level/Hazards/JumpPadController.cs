@@ -18,12 +18,15 @@ public class JumpPadController : MonoBehaviour
         if (collision.gameObject.CompareTag("Player"))
         {
             Rigidbody2D player = collision.gameObject.GetComponent<Rigidbody2D>();
-            foreach(ContactPoint2D hitPos in collision.contacts)
+            foreach (ContactPoint2D hitPos in collision.contacts)
             {
                 // Gets the data from the grapplestate script and sets the isrefreshed value to true
                 PlayerController playerScript = collision.gameObject.GetComponent<PlayerController>();
                 playerScript.CanGrapple = true;
 
+                // Debug.Log(hitPos.normal);
+
+                GameManager.Instance.Get<Managers.AudioManager>().Play("Jump Pad");
                 // Handling the direction of the bounce
                 if (hitPos.normal.y < -0.1) // from top
                 {
