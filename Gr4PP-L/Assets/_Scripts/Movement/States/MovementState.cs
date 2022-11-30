@@ -133,7 +133,7 @@ namespace Movement {
         /// Checks if the player's wall checkboxes are contacting a wall
         /// </summary>
         /// <returns>an int, -1 if the wall is to the left of the player, 1 if it's to the right, and 0 if no contact is made or if both walls are in contact</returns>
-        protected int WallCheck() {
+        public int WallCheck() {
             // _wallSide is used instead of directly returning the value. This is done to prevent the player from getting a wall jump when buffering a jump when landing on the ground.
             // previously, the player would occasionally get a wall jump when buffering a jump while landing on the ground because they would clip slightly into the ground, making both
             // wall jump colliders along with the ground collider register. This is fixed by returning 0 when both wall colliders are touching the ground layer.

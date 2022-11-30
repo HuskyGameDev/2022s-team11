@@ -21,10 +21,10 @@ namespace Movement {
         public Rigidbody2D GrappleHookRigidbody {get; private set;}
 
         [Header("States")]
-        [SerializeField]private RunningState _runningState;
-        [SerializeField]private SlidingState _slidingState;
-        [SerializeField]private GrapplingState _grapplingState;
-        [SerializeField]private AirborneState _airborneState;
+        [SerializeField]public RunningState _runningState;
+        [SerializeField]public SlidingState _slidingState;
+        [SerializeField]public GrapplingState _grapplingState;
+        [SerializeField]public AirborneState _airborneState;
         [SerializeField]private LayerMask _groundLayer;
         public LayerMask GroundLayer => _groundLayer;
 
@@ -79,6 +79,14 @@ namespace Movement {
 
         public bool CanGrapple;
         private GameManager _gm;
+
+        /// <summary>
+        /// Variables used for animating purposes
+        /// </summary>
+        [SerializeField]private Animator animator;
+        private bool facingRight = true;
+        float hori;
+
         #endregion
 
         #region User Methods
@@ -125,6 +133,7 @@ namespace Movement {
         public void SetPosition(Vector2 pos) {
             transform.position = pos;
             _playerRigidbody.velocity = Vector2.zero;
+            animator.SetBool("Flipped", false);
         }
 
         /// <summary>
@@ -140,6 +149,71 @@ namespace Movement {
         }
         #endregion
         
+        private void Flip(){
+            facingRight = !facingRight;
+            if (facingRight == true){
+                animator.SetBool("Flipped", false);
+            }
+            else {
+                animator.SetBool("Flipped", true);
+            }
+        }
+
+        private void animate(){
+            // Directional
+            hori = Input.GetAxisRaw("Horizontal");
+
+            if (hori > 0 && !facingRight){
+                Flip();
+            }
+            if (hori < 0 && facingRight){
+                Flip();
+            }
+
+            // Sprites
+            if (_movementSM.GetCurrentState() == _runningState &&
+            _playerRigidbody.velocity == Vector2.zero) {
+                animator.SetBool("Idle", true);
+                animator.SetBool("Running", false);
+                animator.SetBool("Sliding", false);
+                animator.SetBool("Jumping", false);
+                animator.SetBool("Grappling", false);
+            }
+            else if (_movementSM.GetCurrentState() == _runningState) {
+                animator.SetBool("Idle", false);
+                animator.SetBool("Running", true);
+                animator.SetBool("Sliding", false);
+                animator.SetBool("Jumping", false);
+                animator.SetBool("Grappling", false);
+            }
+            else if (_movementSM.GetCurrentState() == _slidingState){
+                animator.SetBool("Idle", false);
+                animator.SetBool("Running", false);
+                animator.SetBool("Sliding", true);
+                animator.SetBool("Jumping", false);
+                animator.SetBool("Grappling", false);
+            }
+            else if (_movementSM.GetCurrentState() == _airborneState){
+                animator.SetBool("Idle", false);
+                animator.SetBool("Running", false);
+                animator.SetBool("Sliding", false);
+                animator.SetBool("Jumping", true);
+                animator.SetBool("Grappling", false);
+                if (_airborneState.WallCheck() == 1 || _airborneState.WallCheck() == -1){
+                    animator.SetBool("Wall", true);
+                }
+                else {
+                    animator.SetBool("Wall", false);
+                }
+            }
+            else { // Default State
+                animator.SetBool("Idle", true);
+                animator.SetBool("Running", false);
+                animator.SetBool("Sliding", false);
+                animator.SetBool("Jumping", false);
+                animator.SetBool("Grappling", false);
+            }
+        }
         #region Unity Callbacks
         void Start()
         {
@@ -157,6 +231,13 @@ namespace Movement {
         void Update()
         {
             _movementSM.Update();
+            
+            // Animator Lines
+            
+            animate();
+
+            
+            
             //print(_movementSM.CurrentState.Name + " " + _movementSM.PreviousState);
         }
 

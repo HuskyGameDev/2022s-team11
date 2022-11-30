@@ -10968,7 +10968,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a4264c68e51f4ce4f863f1b26a1b234f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _character: {fileID: 1957512801}
   _threshold: 26
   _isHorizontal: 0
 --- !u!483693784 &491113399
@@ -40137,7 +40136,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a4264c68e51f4ce4f863f1b26a1b234f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _character: {fileID: 1957512801}
   _threshold: 26
   _isHorizontal: 1
 --- !u!483693784 &1196743234
@@ -42809,9 +42807,9 @@ MonoBehaviour:
   _parent: {fileID: 1957512801}
   _grappleTether: {fileID: 1239482504}
   _defaultDirectionVector: {x: 1, y: 1}
-  _layerMask:
+  _validGrappleLayers:
     serializedVersion: 2
-    m_Bits: 8
+    m_Bits: 0
 --- !u!120 &1539925566
 LineRenderer:
   m_ObjectHideFlags: 0
@@ -44263,7 +44261,7 @@ MonoBehaviour:
   _wallCheckOffset: {x: 0.47, y: 0.16}
   _groundCheckPoint: {fileID: 1957512802}
   _groundCheckSize: {x: 1.14, y: 0.05}
-  _canGrapple: 0
+  CanGrapple: 0
 --- !u!114 &1759654101
 MonoBehaviour:
   m_ObjectHideFlags: 0
