@@ -111,3 +111,12 @@ BoxCollider2D:
   serializedVersion: 2
   m_Size: {x: 0.75, y: 0.5}
   m_EdgeRadius: 0
+  m_Points:
+  - {x: 0.375, y: -0.5}
+  - {x: 0.375, y: -0.125}
+  - {x: -0.375, y: -0.125}
+  - {x: -0.375, y: -0.5}
+  m_AdjacentStartPoint: {x: 0, y: 0}
+  m_AdjacentEndPoint: {x: 0, y: 0}
+  m_UseAdjacentStartPoint: 0
+  m_UseAdjacentEndPoint: 0

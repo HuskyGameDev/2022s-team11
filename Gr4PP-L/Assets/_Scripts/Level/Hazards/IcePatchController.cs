@@ -54,7 +54,7 @@ public class IcePatchController : MonoBehaviour
             // Debug.Log(_directionMove);
 
             // Controls players movement when not pressing anything
-            if (_directionInput == 0)
+            if (_directionInput == 0 && _rigBody.velocity.y < 0)
             {
                 _rigBody.velocity = new Vector2 (_constVelocity.x, _rigBody.velocity.y);
                 slip = 0f;

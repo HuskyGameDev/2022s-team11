@@ -614,15 +614,15 @@ MonoBehaviour:
       source: {fileID: 0}
     - name: Metal Footstep 1
       clip: {fileID: 8300000, guid: 942beb32053110f4ebc92ad8a8bb90eb, type: 3}
-      volume: 1
-      pitch: 1
+      volume: 0.25
+      pitch: 2
       type: 1
       loop: 0
       source: {fileID: 0}
     - name: Metal Footstep 0
       clip: {fileID: 8300000, guid: f854ac7484e558d428104ab3ec83df02, type: 3}
-      volume: 1
-      pitch: 1
+      volume: 0.25
+      pitch: 2
       type: 1
       loop: 0
       source: {fileID: 0}
