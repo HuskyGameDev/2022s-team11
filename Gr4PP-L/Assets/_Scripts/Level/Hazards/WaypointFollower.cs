@@ -21,9 +21,9 @@ namespace Level
         private bool active;
         private bool finished;
 
-        private void Start()
+        private new void Start()
         {
-            //Managers.InteractiveManager.OnObjectRespawn += Respawn;
+            Managers.InteractiveManager.OnObjectRespawn += Respawn;
             active = startActive;
             finished = false;
         }
