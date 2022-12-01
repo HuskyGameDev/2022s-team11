@@ -7,6 +7,8 @@ namespace Movement
     * Version 11/29/22
     */
     [CreateAssetMenu(fileName = "RunningStateData", menuName = "ScriptableObjects/MovementStates/RunningStateScriptableObject")]
+    //idea: change player's velocity when they enter and when they exit the trigger.
+    //specifically, reduce the velocity by the "velocity" of the platform on enter and increase the velocity by the velocity of the platform on exit
     public class RunningState : MovementState
     {
         #region Serialized Variables
@@ -56,7 +58,7 @@ namespace Movement
             _acceleration = _givenAccel;
             _deceleration = _givenDecel;
             HandleInput();
-            _owner.CanGrapple = true;
+            if(!_owner.CanGrapple) _owner.CanGrapple = !_sm.CheckBufferedInputsFor("WallTouchTransition");
             _lastStepSoundTime = 0f;
         }
         public override void Exit()
@@ -71,9 +73,10 @@ namespace Movement
         {
             var gameTime = Time.time;
             _isCrouchingInput = _gm.DirectionalInput.y < 0;
-
-            if (_gm.Get<Managers.InputManager>().GetButtonDown("Grapple"))
-            {
+            
+            if (_gm.Get<Managers.InputManager>().GetButtonDown("Grapple") && !_sm.CheckBufferedInputsFor("WallTouchTransition")) {
+                Debug.Log("Should Grapple");
+                _owner.CanGrapple = true;
                 _grappleInput = true;
                 _sm.BufferInput("Grapple", 0.1f);
             }
@@ -125,9 +128,10 @@ namespace Movement
             #endregion
 
             #region State Checks
-            if (!IsGrounded)
+            if (!IsGrounded && !_sm.CheckBufferedInputsFor("WallTouchTransition"))
             {
                 _sm.BufferInput("Ground to Air", 0.1f);
+                _owner.CanGrapple = true;
                 _transitionToState = States.Airborne;
                 return;
             }
@@ -141,8 +145,9 @@ namespace Movement
             }
 
             if (Mathf.Abs(_rb.velocity.x) <= _maxHorizontalSpeed + 0.01f) return;
-            if (_gm.Get<Managers.InputManager>().GetButton("Slide") || _gm.DirectionalInput.y < 0)
+            if ((_gm.Get<Managers.InputManager>().GetButton("Slide") || _gm.DirectionalInput.y < 0) && !_sm.CheckBufferedInputsFor("WallTouchTransition"))
             {
+                _owner.CanGrapple = true;
                 _transitionToState = States.Sliding;
                 return;
             }
@@ -163,26 +168,22 @@ namespace Movement
             }
             #endregion
 
-            if (_sm.CheckBufferedInputsFor("Jump") && !GroundCollider().CompareTag("Jump Pad"))
-            {
+            if (_sm.CheckBufferedInputsFor("Jump") && (GroundCollider() == null || !GroundCollider().CompareTag("Jump Pad"))) {
                 // this ugly if statement checks to see if the player is either not touching a wall, not holding a direction, or touching the wall, but holding in the direction of the wall.
                 // this allows the player while grounded to jump up the side of a wall if they're touching it.
                 // the second line of the if statement ensures that the player only gets a grounded jump when touching the wall if they've been in the grounded state for more than 0.1 seconds.
                 // this ensures that, should the player clip into the wall momentarily when trying to wall jump, they don't get a grounded jump.
-                if ((WallCheck() == 0 || _gm.DirectionalInput.x == 0 || (WallCheck() != 0 && Mathf.Sign(WallCheck()) == Mathf.Sign(_gm.DirectionalInput.x)))
-                    && !_sm.CheckBufferedInputsFor("WallTouchTransition"))
-                {
+                if ((WallCheck() == 0 || _gm.DirectionalInput.x == 0 ||(WallCheck() != 0 && Mathf.Sign(WallCheck()) == Mathf.Sign(_gm.DirectionalInput.x)))
+                    && !_sm.CheckBufferedInputsFor("WallTouchTransition")) {
+                    _owner.CanGrapple = true;
                     GroundedJump();
-                }
-                else
-                {
-                    _sm.RemoveBufferedInputsFor("WallTouchTransition");
+                } else {
                     _transitionToState = States.Airborne;
                 }
             }
 
-            if (_sm.CheckBufferedInputsFor("Grapple"))
-            {
+            if(_sm.CheckBufferedInputsFor("Grapple") && !_sm.CheckBufferedInputsFor("WallTouchTransition")) {
+                _owner.CanGrapple = true;
                 HandleGrappleInput(_gm.DirectionalInput, _hookShotForce);
                 _grappleInput = false;
             }
