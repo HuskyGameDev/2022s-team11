@@ -86,7 +86,7 @@ namespace Movement
             _movement = 0f;
 
             #region State Checks
-            if (!IsGrounded)
+            if (!IsGrounded && !_sm.CheckBufferedInputsFor("WallTouchTransition"))
             {
                 _transitionToState = States.Airborne;
                 return;
@@ -118,6 +118,7 @@ namespace Movement
             if (_jumpInput)
             {
                 _jumpInput = false;
+                _owner.CanGrapple = true;
                 GroundedJump();
             }
         }

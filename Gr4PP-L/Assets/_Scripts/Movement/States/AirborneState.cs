@@ -167,7 +167,8 @@ namespace Movement
                     // prevents player from getting grounded jumps after hitting walls at high speeds and clipping into them
                     _sm.BufferInput("WallTouchTransition", 0.1f);
                 }
-                _transitionToState = _sm.CheckBufferedInputsFor("Down") ? States.Sliding : States.Running;
+                //_transitionToState = _sm.CheckBufferedInputsFor("Down") ? States.Sliding : States.Running;
+                _transitionToState = States.Running;
             } /**else if (!_owner.IsGrappleHeld) {
                 _transitionToState = States.Grappling;
             }*/
