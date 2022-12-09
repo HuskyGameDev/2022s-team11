@@ -4,13 +4,13 @@ _Gr4PP-L_ is a fast-paced precision platformer built for speedrunning. Evade the
 
 ## Controls
 
-**A** and **D** - Move left and right
-**S** - Hold to slide across the ground (if you're moving fast enough)
-**Space** - Jump (Hold to jump higher)
+- **A** and **D** - Move left and right
+- **S** - Hold to slide across the ground (if you're moving fast enough)
+- **Space** - Jump (Hold to jump higher)
 
-**W**, **A**, **S**, and **D** - Aim the grappling hook
-**J** - Hold to fire the grappling hook, let go to release.
-**=** - Reset the level, spawning back at the beginning.
+- **W**, **A**, **S**, and **D** - Aim the grappling hook
+- **J** - Hold to fire the grappling hook, let go to release.
+- **=** - Reset the level, spawning back at the beginning.
 
 ## Installation Instructions
 
