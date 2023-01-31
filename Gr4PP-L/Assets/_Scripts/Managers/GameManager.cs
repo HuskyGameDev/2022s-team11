@@ -1,11 +1,13 @@
 using System;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.InputSystem;
 using Managers;
 
 /** Author: Nick Zimanski
     *   Version: 10/25/22
     */
+[RequireComponent(typeof(PlayerInput))]
 public class GameManager : MonoBehaviour
 {
     public Vector2 DirectionalInput => Get<InputManager>().DirectionalInput;
@@ -15,12 +17,14 @@ public class GameManager : MonoBehaviour
     [SerializeField]
     private ParameterContainer _parameters;
     public ParameterContainer Parameters => _parameters;
-
     public static event Action updateCallback;
     public static System.Random Random;
-
     private Movement.PlayerController _player;
-
+    private PlayerInput _playerInput = null;
+    /// <summary>
+    /// If you're thinking of using this member, don't. It's not for you :). Use InputManager's methods instead
+    /// </summary>
+    public PlayerInput RawPlayerInput => _playerInput;
     private readonly Dictionary<string, Manager> _services = new Dictionary<string, Manager>();
 
     public Movement.PlayerController FindPlayer()
@@ -53,7 +57,7 @@ public class GameManager : MonoBehaviour
         Register<AudioManager>(new AudioManager());
         //Initialize();
 
-        // CHANGE TESTING SCENE HERE
+        //! CHANGE TESTING SCENE HERE
         StartCoroutine(Get<LevelManager>().LoadScene("HubLevelScene"));
     }
 
@@ -68,6 +72,10 @@ public class GameManager : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        if (_playerInput == null)
+        {
+            _playerInput = GetComponent<PlayerInput>();
+        }
         updateCallback?.Invoke();
     }
 
