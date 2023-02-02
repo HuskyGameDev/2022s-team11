@@ -64,9 +64,9 @@ namespace Movement
             var gameTime = Time.time;
             _isCrouchingInput = _gm.Get<Managers.InputManager>().GetButton("Slide") || _gm.DirectionalInput.y < 0;
 
-            if (_gm.Get<Managers.InputManager>().GetButtonDown("Grapple"))
+            if (_gm.Get<Managers.InputManager>().GetButtonDown("fire"))
             {
-                _sm.BufferInput("Grapple", 0.1f);
+                _sm.BufferInput("fire", 0.1f);
             }
 
             if (_gm.Get<Managers.InputManager>().GetButtonDown("Jump"))

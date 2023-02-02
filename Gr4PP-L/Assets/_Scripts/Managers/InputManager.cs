@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.InputSystem;
+using Utility;
 
 namespace Managers
 {
@@ -24,8 +25,6 @@ namespace Managers
         private InputActionMap _uiActionMap;
 
         private InputData[] _inputAxes;
-        private Dictionary<string, ControlType[]> _inputTags;
-        private Dictionary<ControlType, bool> _lockedInputs;
 
         private float _horizAxisThreshold, _vertAxisThreshold;
 
@@ -38,11 +37,8 @@ namespace Managers
             if (_pi == null)
             {
                 _pi = GameManager.Instance.RawPlayerInput;
-                _fireAction = _pi.actions["fire"];
-                _resetAction = _pi.actions["reset"];
-                _moveAction = _pi.actions["move"];
-                _submitAction = _pi.actions["submit"];
             }
+            DirectionalInput = _pi.actions["move"].ReadValue<Vector2>();
         }
 
         /// <summary>
@@ -50,10 +46,9 @@ namespace Managers
         /// </summary>
         /// <param name="axisName">The unity name for this axis</param>
         /// <returns>A value between -1 and 1 representing this input axis</returns>
-        public float GetAxisRaw(string axisName)
+        public T GetAxis<T>(string axisName) where T : struct
         {
-            if (IsLocked(axisName)) return 0;
-            return Input.GetAxisRaw(axisName);
+            return _pi.actions[axisName].ReadValue<T>();
         }
 
         /// <summary>
@@ -63,8 +58,7 @@ namespace Managers
         /// <returns>true if the button is depressed</returns>
         public bool GetButton(string inputName)
         {
-            if (IsLocked(inputName)) return false;
-            return Input.GetButton(inputName);
+            return _pi.actions[inputName].GetButton();
         }
 
         /// <summary>
@@ -74,8 +68,7 @@ namespace Managers
         /// <returns>true if the button was released on this frame</returns>
         public bool GetButtonUp(string inputName)
         {
-            if (IsLocked(inputName)) return false;
-            return Input.GetButtonUp(inputName);
+            return _pi.actions[inputName].GetButtonUp();
         }
 
         /// <summary>
@@ -85,43 +78,25 @@ namespace Managers
         /// <returns>true if the button was first depressed this frame</returns>
         public bool GetButtonDown(string inputName)
         {
-            if (IsLocked(inputName)) return false;
-            return Input.GetButtonDown(inputName);
+            return _pi.actions[inputName].GetButtonDown();
         }
 
-        private void RegisterInputs()
+        public void LockInput(string inputName)
         {
-            foreach (var input in _inputAxes)
-            {
-                _inputTags.Add(input.name, input.tags);
-            }
-
-            foreach (var item in Enum.GetNames(typeof(ControlType)))
-            {
-                _lockedInputs.Add(((ControlType)Enum.Parse(typeof(ControlType), item)), false);
-            }
+            _pi.actions[inputName].Disable();
+        }
+        public void LockInputType(string inputTypeName)
+        {
+            _pi.actions.FindActionMap(inputTypeName).Disable();
         }
 
-        public void LockType(ControlType type)
+        public void UnlockInput(string inputName)
         {
-            _lockedInputs[type] = true;
-            Debug.Log("Locking " + type + " inputs");
+            _pi.actions[inputName].Enable();
         }
-
-        public void UnlockType(ControlType type)
+        public void UnlockInputType(string inputTypeName)
         {
-            _lockedInputs[type] = false;
-            Debug.Log("Unlocking " + type + " inputs");
-        }
-
-
-        public bool IsLocked(string inputName)
-        {
-            foreach (var item in _inputTags[inputName])
-            {
-                if (_lockedInputs[item]) return true;
-            }
-            return false;
+            _pi.actions.FindActionMap(inputTypeName).Enable();
         }
 
         /*
@@ -154,10 +129,6 @@ namespace Managers
             _horizAxisThreshold = GameManager.Instance.Parameters.horizAxisThreshold;
             _vertAxisThreshold = GameManager.Instance.Parameters.vertAxisThreshold;
             _inputAxes = GameManager.Instance.Parameters.inputAxes;
-
-            _lockedInputs = new Dictionary<ControlType, bool>();
-            _inputTags = new Dictionary<string, ControlType[]>();
-            RegisterInputs();
 
             GameManager.updateCallback += Update;
         }
