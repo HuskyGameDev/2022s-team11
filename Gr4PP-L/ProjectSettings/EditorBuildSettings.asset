@@ -44,4 +44,7 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Scenes/Ethan-Level.unity
     guid: cfa02cb34b03aa343b8b41bb48f5bde2
+  - enabled: 1
+    path: Assets/Scenes/NoahMidlevel.unity
+    guid: 4dc142bb79b518c4eaa103bba15b7ef5
   m_configObjects: {}
