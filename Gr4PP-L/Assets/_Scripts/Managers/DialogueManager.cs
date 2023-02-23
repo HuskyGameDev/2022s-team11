@@ -13,6 +13,10 @@ namespace Managers
     */
     public class DialogueManager : Manager
     {
+        private static Regex _regexCharacterChangeMatch = new Regex("\\[(?<=\\[)[^\\[\\]]*(?=\\])\\]");
+        private static Regex _regexCharacterChangeNameGrab = new Regex("(?<=\\[)[^\\[\\]]*(?=\\])");
+        private static Regex _regexInstructionMatch = new Regex("{(?<={)[^{}]*(?=})}");
+        private static Regex _regexInstructionGrabContent = new Regex("(?<={)[^{}]*(?=})");
         private ConversationCollection _allConversations;
         public UsableConversation CurrentConversation = null;
         public ConvInstruction CurrentConvInstruction;
@@ -165,10 +169,6 @@ namespace Managers
             /// <returns>the formatted steps</returns>
             private LinkedList<ConvInstruction> ParseTextIntoSteps(string s)
             {
-                Regex characterChangeMatch = new Regex("\\[(?<=\\[)[^\\[\\]]*(?=\\])\\]");
-                Regex characterChangeNameGrab = new Regex("(?<=\\[)[^\\[\\]]*(?=\\])");
-                Regex instructionMatch = new Regex("{(?<={)[^{}]*(?=})}");
-                Regex instructionGrabContent = new Regex("(?<={)[^{}]*(?=})");
                 LinkedList<ConvInstruction> list = new LinkedList<ConvInstruction>();
                 string temp;
 
@@ -180,9 +180,9 @@ namespace Managers
                     */
                     if (s.StartsWith("["))
                     {
-                        temp = characterChangeMatch.Match(s).Value;
+                        temp = _regexCharacterChangeMatch.Match(s).Value;
                         s = s.Remove(0, temp.Length);
-                        temp = characterChangeNameGrab.Match(temp).Value;
+                        temp = _regexCharacterChangeNameGrab.Match(temp).Value;
 
                         if (temp == null) temp = "";
                         list.AddLast(new LinkedListNode<ConvInstruction>(new ConvInstruction(ConvInstruction.InstructionType.CHARACTER_CHANGE, temp)));
@@ -195,9 +195,9 @@ namespace Managers
                     */
                     if (s.StartsWith("{"))
                     {
-                        temp = instructionMatch.Match(s).ToString();
+                        temp = _regexInstructionMatch.Match(s).ToString();
                         s = s.Remove(0, temp.Length);
-                        temp = instructionGrabContent.Match(temp).ToString();
+                        temp = _regexInstructionGrabContent.Match(temp).ToString();
                         string[] args = temp.Split("=");
 
                         switch (args[0].ToLower())

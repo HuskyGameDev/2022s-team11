@@ -24,8 +24,6 @@ namespace Managers
         private InputActionMap _playerActionMap;
         private InputActionMap _uiActionMap;
 
-        private InputData[] _inputAxes;
-
         private float _horizAxisThreshold, _vertAxisThreshold;
 
         public Vector2 DirectionalInput { get; private set; }
@@ -99,25 +97,24 @@ namespace Managers
             _pi.actions.FindActionMap(inputTypeName).Enable();
         }
 
+        public void StartRebind(string axisName)
+        {
+            _pi.actions[axisName].PerformInteractiveRebinding()
+                .WithControlsExcluding("Mouse")
+                .OnMatchWaitForAnother(0.1f)
+                .OnComplete(operation => RebindComplete())
+                .Start();
+        }
+
+        private void RebindComplete()
+        {
+
+        }
         /*
         *
         *   Other Classes
         *
         */
-
-        [System.Serializable]
-        public class InputData
-        {
-            public string name;
-            public ControlType[] tags;
-        }
-
-        public enum ControlType
-        {
-            MOVEMENT,
-            INTERACTION,
-            SYSTEM
-        }
         public new void Initialize()
         {
             base.Initialize();
@@ -128,7 +125,6 @@ namespace Managers
 
             _horizAxisThreshold = GameManager.Instance.Parameters.horizAxisThreshold;
             _vertAxisThreshold = GameManager.Instance.Parameters.vertAxisThreshold;
-            _inputAxes = GameManager.Instance.Parameters.inputAxes;
 
             GameManager.updateCallback += Update;
         }

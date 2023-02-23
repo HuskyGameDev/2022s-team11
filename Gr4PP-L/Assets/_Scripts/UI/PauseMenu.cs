@@ -7,14 +7,22 @@ public class PauseMenu : MonoBehaviour
 {
     public static bool GameIsPaused = false;
     public GameObject pauseMenuUI;
+    private Managers.InputManager _im;
 
-
+    /// <summary>
+    /// Start is called on the frame when a script is enabled just before
+    /// any of the Update methods is called the first time.
+    /// </summary>
+    private void Start()
+    {
+        _im = GameManager.Instance.Get<Managers.InputManager>();
+    }
 
 
     // Update is called once per frame
     void Update()
     {
-        if (Input.GetKeyDown(KeyCode.Escape))
+        if (_im.GetButtonDown("Cancel"))
         {
             if (GameIsPaused)
             {

@@ -20,6 +20,8 @@ public class GameManager : MonoBehaviour
     public static event Action updateCallback;
     public static System.Random Random;
     private Movement.PlayerController _player;
+    private bool _isPaused = false;
+    private bool _firstFrame = true;
     private PlayerInput _playerInput = null;
     /// <summary>
     /// If you're thinking of using this member, don't. It's not for you :). Use InputManager's methods instead
@@ -72,11 +74,39 @@ public class GameManager : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        if (_firstFrame)
+        {
+            _firstFrame = false;
+            updateCallback?.Invoke();
+            return;
+        }
+
         if (_playerInput == null)
         {
             _playerInput = GetComponent<PlayerInput>();
         }
+        if (Get<InputManager>().GetButtonUp("cancel"))
+        {
+            if (_isPaused) Resume();
+            else Pause();
+        }
+        if (_isPaused) return;
+
         updateCallback?.Invoke();
+    }
+
+    void Pause()
+    {
+        _parameters.pauseScreen.SetActive(true);
+        Time.timeScale = 0f;
+        _isPaused = true;
+    }
+
+    void Resume()
+    {
+        _parameters.pauseScreen.SetActive(false);
+        Time.timeScale = 1f;
+        _isPaused = false;
     }
 
     /// <summary>
@@ -146,10 +176,10 @@ public class GameManager : MonoBehaviour
         [Header("Input")]
         public float horizAxisThreshold;
         public float vertAxisThreshold;
-        public InputManager.InputData[] inputAxes;
         [Header("Audio")]
         public Audio.Sound[] sounds;
         [Header("UI")]
         public GameObject loadingScreen;
+        public GameObject pauseScreen;
     }
 }
