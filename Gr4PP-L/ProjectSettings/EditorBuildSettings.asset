@@ -47,4 +47,7 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Scenes/NoahMidlevel.unity
     guid: 4dc142bb79b518c4eaa103bba15b7ef5
+  - enabled: 1
+    path: Assets/Scenes/Tutorial.unity
+    guid: 4a96ffe1be4a646468318141058170a9
   m_configObjects: {}

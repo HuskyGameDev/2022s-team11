@@ -54,7 +54,7 @@ public class GameManager : MonoBehaviour
         //Initialize();
 
         // CHANGE TESTING SCENE HERE
-        StartCoroutine(Get<LevelManager>().LoadScene("NoahMidlevel"));
+        StartCoroutine(Get<LevelManager>().LoadScene("Tutorial"));
     }
 
     // Start is called before the first frame update
