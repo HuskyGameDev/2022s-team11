@@ -24,7 +24,7 @@ public class PauseMenu : MonoBehaviour
     {
         if (_im.GetButtonDown("Cancel"))
         {
-            if (GameIsPaused)
+            if (GameManager.Instance.IsPaused)
             {
                 Resume();
             }

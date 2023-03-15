@@ -13,6 +13,7 @@ namespace Managers
         private SceneManager _sm;
         private GameManager _gm;
         private GameObject _loadingScreen;
+        private GameObject _uiContainer;
 
         public Vector2 LevelOrigin { get; private set; }
         public bool IsSceneLoaded { get; private set; }
@@ -41,6 +42,7 @@ namespace Managers
             base.Initialize();
             _gm = GameManager.Instance;
             _loadingScreen = _gm.Parameters.loadingScreen;
+            _uiContainer = _gm.Parameters.uiContainer;
 
             OnLevelEnter = () => { };
             OnLevelExit = () => { };
@@ -148,6 +150,8 @@ namespace Managers
 
             IsSceneLoaded = false;
             _loadingScreen.SetActive(true);
+            _uiContainer.SetActive(true);
+            _uiContainer.GetComponent<Camera>().enabled = true;
             //Lock Movement inputs
             _gm.Get<Managers.InputManager>().LockInputType("player");
         }
@@ -163,6 +167,8 @@ namespace Managers
 
             IsSceneLoaded = true;
             _loadingScreen.SetActive(false);
+            _uiContainer.SetActive(false);
+            _uiContainer.GetComponent<Camera>().enabled = false;
             //Unlock Movement inputs
             _gm.Get<Managers.InputManager>().UnlockInputType("player");
             SceneManager.SetActiveScene(newScene);

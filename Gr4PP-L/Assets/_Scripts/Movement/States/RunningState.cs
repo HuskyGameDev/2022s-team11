@@ -74,12 +74,12 @@ namespace Movement
             var gameTime = Time.time;
             _isCrouchingInput = _gm.DirectionalInput.y < 0;
 
-            if (_gm.Get<Managers.InputManager>().GetButtonDown("fire") && !_sm.CheckBufferedInputsFor("WallTouchTransition"))
+            if (_gm.Get<Managers.InputManager>().GetButtonDown("Fire") && !_sm.CheckBufferedInputsFor("WallTouchTransition"))
             {
                 Debug.Log("Should Grapple");
                 _owner.CanGrapple = true;
                 _grappleInput = true;
-                _sm.BufferInput("fire", 0.1f);
+                _sm.BufferInput("Fire", 0.1f);
             }
 
             if (_gm.Get<Managers.InputManager>().GetButtonDown("Jump"))

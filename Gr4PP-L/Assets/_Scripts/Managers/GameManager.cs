@@ -27,6 +27,7 @@ public class GameManager : MonoBehaviour
     /// If you're thinking of using this member, don't. It's not for you :). Use InputManager's methods instead
     /// </summary>
     public PlayerInput RawPlayerInput => _playerInput;
+    public bool IsPaused => _isPaused;
     private readonly Dictionary<string, Manager> _services = new Dictionary<string, Manager>();
 
     public Movement.PlayerController FindPlayer()
@@ -74,18 +75,18 @@ public class GameManager : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        if (_playerInput == null)
+        {
+            _playerInput = GetComponent<PlayerInput>();
+        }
+
         if (_firstFrame)
         {
             _firstFrame = false;
             updateCallback?.Invoke();
             return;
         }
-
-        if (_playerInput == null)
-        {
-            _playerInput = GetComponent<PlayerInput>();
-        }
-        if (Get<InputManager>().GetButtonUp("cancel"))
+        if (Get<InputManager>().GetButtonDown("Cancel"))
         {
             if (_isPaused) Resume();
             else Pause();
@@ -97,6 +98,7 @@ public class GameManager : MonoBehaviour
 
     void Pause()
     {
+        _parameters.uiContainer.SetActive(true);
         _parameters.pauseScreen.SetActive(true);
         Time.timeScale = 0f;
         _isPaused = true;
@@ -104,6 +106,7 @@ public class GameManager : MonoBehaviour
 
     void Resume()
     {
+        _parameters.uiContainer.SetActive(false);
         _parameters.pauseScreen.SetActive(false);
         Time.timeScale = 1f;
         _isPaused = false;
@@ -181,5 +184,6 @@ public class GameManager : MonoBehaviour
         [Header("UI")]
         public GameObject loadingScreen;
         public GameObject pauseScreen;
+        public GameObject uiContainer;
     }
 }
