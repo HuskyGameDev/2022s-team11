@@ -64,9 +64,9 @@ namespace Movement
             var gameTime = Time.time;
             _isCrouchingInput = _gm.Get<Managers.InputManager>().GetButton("Slide") || _gm.DirectionalInput.y < 0;
 
-            if (_gm.Get<Managers.InputManager>().GetButtonDown("Grapple"))
+            if (_gm.Get<Managers.InputManager>().GetButtonDown("fire"))
             {
-                _sm.BufferInput("Grapple", 0.1f);
+                _sm.BufferInput("fire", 0.1f);
             }
 
             if (_gm.Get<Managers.InputManager>().GetButtonDown("Jump"))
@@ -86,7 +86,7 @@ namespace Movement
             _movement = 0f;
 
             #region State Checks
-            if (!IsGrounded)
+            if (!IsGrounded && !_sm.CheckBufferedInputsFor("WallTouchTransition"))
             {
                 _transitionToState = States.Airborne;
                 return;
@@ -118,6 +118,7 @@ namespace Movement
             if (_jumpInput)
             {
                 _jumpInput = false;
+                _owner.CanGrapple = true;
                 GroundedJump();
             }
         }
