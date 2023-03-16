@@ -19,7 +19,7 @@ public class TimerDisplay : MonoBehaviour
         _gm = GameManager.Instance;
         _tm = _gm.Get<Managers.TimerManager>();
 
-        _currentTimeText.text = "Current Time: " + _tm.CurrentTime.ToString();
+        _currentTimeText.text = "Current Time: " + _tm.CurrentTimeSeconds.ToString();
 
         if (!_tm.BestTimeFollowsCurrent)
             _bestTimeText.text = "Best Time: " + _tm.BestTime.ToString();
@@ -28,7 +28,7 @@ public class TimerDisplay : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        TimeSpan time = TimeSpan.FromSeconds(_gm.Get<Managers.TimerManager>().CurrentTime);
+        TimeSpan time = TimeSpan.FromSeconds(_gm.Get<Managers.TimerManager>().CurrentTimeSeconds);
 
         _currentTimeText.text = "Current Time: " + time.ToString(@"mm\:ss\:fff");
 

@@ -1,9 +1,10 @@
 
 using System;
 using UnityEngine;
-namespace Movement {
+namespace Movement
+{
     /** Author: Nick Zimanski
-    * Version 2/20/22
+    * Version 11/29/22
     */
     [CreateAssetMenu(fileName = "GrapplingStateData", menuName = "ScriptableObjects/MovementStates/GrapplingStateScriptableObject")]
     public class GrapplingState : MovementState
@@ -20,14 +21,14 @@ namespace Movement {
         [SerializeField]
         private float _grappleTimeOut;
         [SerializeField]
-        [Range(0,1)]
+        [Range(0, 1)]
         private float _downwardPullMagnitude;
         [SerializeField]
         [Tooltip("The percentage of the force vector to change the pull by according to the player's input")]
-        [Range(0,50)]
+        [Range(0, 50)]
         private float _playerInputMagnitude;
         [SerializeField]
-        [Range(1,3)]
+        [Range(1, 3)]
         private float _tensionSpeedMultiplier;
         private float _lastDistance = 0;
         private bool _grappleInput = false;
@@ -37,46 +38,68 @@ namespace Movement {
         #endregion
 
         new public States Name => States.Grappling;
-        
+
         public override void Initialize(GameManager game, PlayerController player, MovementStateMachine sm)
         {
             base.Initialize(game, player, sm);
             _hookController = player.GrappleHookCtrl;
             _hookRb = player.GrappleHookRigidbody;
         }
-        public override void Enter() {
+        public override void Enter()
+        {
             base.Enter();
             HandleInput();
             _lastDistance = 0;
         }
-        public override void Exit() {
+        public override void Exit()
+        {
             base.Exit();
             _hookController.RetractHook();
-        }
-        protected override void HandleInput() {
-            _grappleInput = _gm.Get<Managers.InputManager>().GetButtonDown("Grapple");
 
-            if (_gm.DirectionalInput.y < 0) {
+            switch (_transitionToState)
+            {
+                case null:
+                    break;
+                case States.Running:
+                    _gm.Get<Managers.AudioManager>().PlayVariantPitch("Landing");
+                    break;
+                default:
+                    break;
+            }
+        }
+        protected override void HandleInput()
+        {
+            _grappleInput = _gm.Get<Managers.InputManager>().GetButtonDown("fire");
+
+            if (_gm.DirectionalInput.y < 0)
+            {
                 _sm.BufferInput("Down", 0.1f);
             }
 
-            if (_uncheckedInputBuffer) {
+            if (_uncheckedInputBuffer)
+            {
                 CheckInputBuffer();
                 _uncheckedInputBuffer = false;
             }
 
-            if (_gm.Get<Managers.InputManager>().GetButtonDown("Jump")) {
+            if (_gm.Get<Managers.InputManager>().GetButtonDown("Jump"))
+            {
                 _sm.BufferInput("Jump", 0.15f);
             }
         }
 
-        
-        protected override void LogicUpdate() {
 
-            if (_hookController.IsHeld) {
-                if (IsGrounded) {
+        protected override void LogicUpdate()
+        {
+
+            if (_hookController.IsHeld)
+            {
+                if (IsGrounded)
+                {
                     _transitionToState = States.Running;
-                } else {
+                }
+                else
+                {
                     _sm.BufferInput("From Grapple", 1);
                     _transitionToState = States.Airborne;
                 }
@@ -84,18 +107,20 @@ namespace Movement {
             }
 
             //Check for retraction
-            if (!_gm.Get<Managers.InputManager>().GetButton("Grapple")) {
+            if (!_gm.Get<Managers.InputManager>().GetButton("fire"))
+            {
                 _hookController.RetractHook();
             }
 
-            
+
             if (isRefreshed)
             {
                 isRefreshed = false;
                 _transitionToState = States.Airborne;
             }
-            
-            if(IsGrounded && _sm.CheckBufferedInputsFor("Jump")) {
+
+            if (IsGrounded && _sm.CheckBufferedInputsFor("Jump"))
+            {
                 GroundedJump();
             }
 
@@ -103,10 +128,12 @@ namespace Movement {
 
             //if (_hookController.IsAttached) return;
         }
-        protected override void PhysicsUpdate() {
+        protected override void PhysicsUpdate()
+        {
             if (!_grappleInput && !_hookController.IsAttached) return;
 
-            if (_grappleInput) {
+            if (_grappleInput)
+            {
                 //Fire the hook
                 //if (_hookController.IsHeld) _hookController.FireHook(_gm.Input, _grappleFireForce);
                 //Retract the hook
@@ -114,15 +141,17 @@ namespace Movement {
                 return;
             }
 
-            if (_hookController.IsAttached) {
+            if (_hookController.IsAttached)
+            {
                 Grapple();
                 return;
             }
         }
-        protected override void CheckInputBuffer() {
-            //_grappleInput = _sm.CheckBufferedInputsFor("Grapple") || _grappleInput;
+        protected override void CheckInputBuffer()
+        {
         }
-        private void Grapple() {
+        private void Grapple()
+        {
             var tetherVector = (_hookController.TetherPosition - _hookController.Position) * -1;
             var distance = Mathf.Abs(tetherVector.magnitude);
             if (_lastDistance == 0) _lastDistance = distance;
@@ -135,7 +164,8 @@ namespace Movement {
             newVel = playerVelocity;
 
             var tetherToVelAngle = Vector2.SignedAngle(playerVelocity, tetherVector);
-            if (Mathf.Abs(tetherToVelAngle) > 90) {
+            if (Mathf.Abs(tetherToVelAngle) > 90)
+            {
                 Vector2 tangentVector = Vector2.Perpendicular(tetherVector);
 
                 if (Mathf.Sign(tetherToVelAngle) == 1) tangentVector *= -1;
@@ -151,9 +181,9 @@ namespace Movement {
             pullVector = (pullVector - tetherPlayerDifference).normalized;
             float _vertPullStrengthAdjusted = (!_sm.CheckBufferedInputsFor("Jumped")) ? _vertPullStrength : 0;
             //Debug.Log(new Vector2(pullVector.x * _horizPullStrength, pullVector.y * _vertPullStrength));
-            _rb.AddForce(new Vector2(pullVector.x * _horizPullStrength, pullVector.y * _vertPullStrengthAdjusted) , ForceMode2D.Force);
+            _rb.AddForce(new Vector2(pullVector.x * _horizPullStrength, pullVector.y * _vertPullStrengthAdjusted), ForceMode2D.Force);
             _rb.AddForce(new Vector2(_gm.DirectionalInput.x * _playerInputMagnitude, 0));
-            
+
             _lastDistance = distance < _lastDistance ? distance : _lastDistance;
         }
 

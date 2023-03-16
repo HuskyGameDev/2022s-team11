@@ -4,22 +4,27 @@ using Level;
 using System;
 using static Level.Respawnable;
 
-namespace Managers {
+namespace Managers
+{
     public class InteractiveManager : Manager
     {
         public static event Action OnObjectRespawn;
 
-        public new void Initialize() {
+        public new void Initialize()
+        {
             base.Initialize();
 
-            OnObjectRespawn = () => {};
+            OnObjectRespawn = () => { };
+            Managers.LevelManager.OnLevelExit += DestroyRespawnableReferences;
         }
 
-        public InteractiveManager() {
+        public InteractiveManager()
+        {
             Initialize();
         }
 
-        public static void RespawnAll() {
+        public static void RespawnAll()
+        {
             OnObjectRespawn();
         }
 
@@ -30,7 +35,12 @@ namespace Managers {
 
         public override void Destroy()
         {
-            
+
+        }
+
+        public void DestroyRespawnableReferences()
+        {
+            OnObjectRespawn = () => { };
         }
     }
 }

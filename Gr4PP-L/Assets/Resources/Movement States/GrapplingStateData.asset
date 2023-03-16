@@ -13,9 +13,7 @@ MonoBehaviour:
   m_Name: GrapplingStateData
   m_EditorClassIdentifier: 
   _jumpForce: 20
-  _horizAxisThreshold: 0.1
-  _vertAxisThreshold: 0.1
-  _canGrapple: 0
+  CanGrapple: 0
   _grappleFireForce: 30
   _horizPullStrength: 60.6
   _vertPullStrength: 100

@@ -5,10 +5,11 @@ using UnityEngine.UI;
 using System;
 using UnityEngine.SceneManagement;
 
-namespace Managers {
-    //Author:        Ethan Hohman
+namespace Managers
+{
+    //Author: Ethan Hohman
     //Author: Nick Zimanski
-    //Last Updated:  10/20/2022
+    //Last Updated:  11/30/2022
     public class TimerManager : Manager
     {
         private Text[] _texts;
@@ -17,8 +18,10 @@ namespace Managers {
         // Plan on using this so timer doesn't tick up during dialogue bits (if any) or room changes
         private bool _timerActive;
 
-
-        public float CurrentTime = 0;
+        /// <summary>
+        /// The time, in seconds, since the beginning of the level
+        /// </summary>
+        public float CurrentTimeSeconds = 0;
         public bool BestTimeFollowsCurrent = false;
         public float BestTime = float.MaxValue; // Large Default value so new bestTime is set on level completion. THIS NUMBER SHOULD NEVER BEEN SEEN IN GAME
 
@@ -26,39 +29,45 @@ namespace Managers {
         void Update()
         {
             if (!_timerActive) return;
-            
-            CurrentTime = CurrentTime + Time.deltaTime;
-            if (BestTimeFollowsCurrent) BestTime = CurrentTime;
+
+            CurrentTimeSeconds = CurrentTimeSeconds + Time.deltaTime;
+            if (BestTimeFollowsCurrent) BestTime = CurrentTimeSeconds;
 
 
         }
 
-        public void Pause() {
+        public void Pause()
+        {
             _timerActive = false;
         }
 
-        public void Resume() {
+        public void Resume()
+        {
             _timerActive = true;
         }
 
-        public void LevelExit() {
+        public void LevelExit()
+        {
             // Updates BestTime number for current scene
-            if (CurrentTime < BestTime)
+            if (CurrentTimeSeconds < BestTime)
             {
-                PlayerPrefs.SetFloat(SceneManager.GetActiveScene().name, CurrentTime);
+                PlayerPrefs.SetFloat(SceneManager.GetActiveScene().name, CurrentTimeSeconds);
             }
 
             Pause();
         }
 
-        public void LevelEnter() {
+        public void LevelEnter()
+        {
+            CurrentTimeSeconds = 0;
             Resume();
         }
 
-        public new void Initialize() {
+        public new void Initialize()
+        {
             base.Initialize();
 
-            CurrentTime = 0;
+            CurrentTimeSeconds = 0;
             Pause();
 
             //TODO: THIS IS ONLY FOR EDITOR TESTING. REMOVE BEFORE FINAL RELEASE
@@ -78,11 +87,13 @@ namespace Managers {
             return new TimerManager();
         }
 
-        public TimerManager() {
+        public TimerManager()
+        {
             Initialize();
         }
 
-        public override void Destroy() {
+        public override void Destroy()
+        {
             GameManager.updateCallback -= Update;
             LevelManager.OnLevelExit -= LevelExit;
             LevelManager.OnLevelEnter -= LevelEnter;
