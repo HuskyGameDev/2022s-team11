@@ -145,9 +145,9 @@ namespace Movement
 
             _jumpPressed = _gm.Get<Managers.InputManager>().GetButton("Jump");
 
-            if (_gm.Get<Managers.InputManager>().GetButtonDown("Grapple"))
+            if (_gm.Get<Managers.InputManager>().GetButtonDown("fire"))
             {
-                _sm.BufferInput("Grapple", 0.1f);
+                _sm.BufferInput("fire", 0.1f);
                 _grappleInput = true;
             }
 
@@ -230,7 +230,7 @@ namespace Movement
 
             if (_hook.IsAttached)
             {
-                _sm.RemoveBufferedInputsFor("Grapple");
+                _sm.RemoveBufferedInputsFor("fire");
                 _owner.CanGrapple = false;
                 _hasJumpEnded = true;
                 _transitionToState = States.Grappling;

@@ -176,7 +176,7 @@ namespace Movement
         private void animate()
         {
             // Directional
-            hori = Input.GetAxisRaw("Horizontal");
+            hori = _gm.DirectionalInput.x;
 
             if (hori > 0 && !facingRight)
             {

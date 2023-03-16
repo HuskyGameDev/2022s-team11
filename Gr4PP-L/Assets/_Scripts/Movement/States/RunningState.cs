@@ -58,7 +58,7 @@ namespace Movement
             _acceleration = _givenAccel;
             _deceleration = _givenDecel;
             HandleInput();
-            if(!_owner.CanGrapple) _owner.CanGrapple = !_sm.CheckBufferedInputsFor("WallTouchTransition");
+            if (!_owner.CanGrapple) _owner.CanGrapple = !_sm.CheckBufferedInputsFor("WallTouchTransition");
             _lastStepSoundTime = 0f;
         }
         public override void Exit()
@@ -73,12 +73,13 @@ namespace Movement
         {
             var gameTime = Time.time;
             _isCrouchingInput = _gm.DirectionalInput.y < 0;
-            
-            if (_gm.Get<Managers.InputManager>().GetButtonDown("Grapple") && !_sm.CheckBufferedInputsFor("WallTouchTransition")) {
+
+            if (_gm.Get<Managers.InputManager>().GetButtonDown("Fire") && !_sm.CheckBufferedInputsFor("WallTouchTransition"))
+            {
                 Debug.Log("Should Grapple");
                 _owner.CanGrapple = true;
                 _grappleInput = true;
-                _sm.BufferInput("Grapple", 0.1f);
+                _sm.BufferInput("Fire", 0.1f);
             }
 
             if (_gm.Get<Managers.InputManager>().GetButtonDown("Jump"))
@@ -138,7 +139,7 @@ namespace Movement
 
             if (_hook.IsAttached)
             {
-                _sm.RemoveBufferedInputsFor("Grapple");
+                _sm.RemoveBufferedInputsFor("fire");
                 _owner.CanGrapple = false;
                 _transitionToState = States.Grappling;
                 return;
@@ -168,21 +169,26 @@ namespace Movement
             }
             #endregion
 
-            if (_sm.CheckBufferedInputsFor("Jump") && (GroundCollider() == null || !GroundCollider().CompareTag("Jump Pad"))) {
+            if (_sm.CheckBufferedInputsFor("Jump") && (GroundCollider() == null || !GroundCollider().CompareTag("Jump Pad")))
+            {
                 // this ugly if statement checks to see if the player is either not touching a wall, not holding a direction, or touching the wall, but holding in the direction of the wall.
                 // this allows the player while grounded to jump up the side of a wall if they're touching it.
                 // the second line of the if statement ensures that the player only gets a grounded jump when touching the wall if they've been in the grounded state for more than 0.1 seconds.
                 // this ensures that, should the player clip into the wall momentarily when trying to wall jump, they don't get a grounded jump.
-                if ((WallCheck() == 0 || _gm.DirectionalInput.x == 0 ||(WallCheck() != 0 && Mathf.Sign(WallCheck()) == Mathf.Sign(_gm.DirectionalInput.x)))
-                    && !_sm.CheckBufferedInputsFor("WallTouchTransition")) {
+                if ((WallCheck() == 0 || _gm.DirectionalInput.x == 0 || (WallCheck() != 0 && Mathf.Sign(WallCheck()) == Mathf.Sign(_gm.DirectionalInput.x)))
+                    && !_sm.CheckBufferedInputsFor("WallTouchTransition"))
+                {
                     _owner.CanGrapple = true;
                     GroundedJump();
-                } else {
+                }
+                else
+                {
                     _transitionToState = States.Airborne;
                 }
             }
 
-            if(_sm.CheckBufferedInputsFor("Grapple") && !_sm.CheckBufferedInputsFor("WallTouchTransition")) {
+            if (_sm.CheckBufferedInputsFor("fire") && !_sm.CheckBufferedInputsFor("WallTouchTransition"))
+            {
                 _owner.CanGrapple = true;
                 HandleGrappleInput(_gm.DirectionalInput, _hookShotForce);
                 _grappleInput = false;

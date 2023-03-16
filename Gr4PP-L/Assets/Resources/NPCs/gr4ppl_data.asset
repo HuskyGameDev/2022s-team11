@@ -14,6 +14,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _character: 0
   _randomConversations: 01000000
-  _orderedConversations: 
+  _orderedConversations: 28230000
   _sprite: {fileID: 7482667652216324306, guid: 3fb9d33e4b5ff8540b761296bb1ba9e5, type: 3}
   _dialogueSounds: 
