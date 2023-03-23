@@ -1,11 +1,13 @@
 using System;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.InputSystem;
 using Managers;
 
 /** Author: Nick Zimanski
     *   Version: 10/25/22
     */
+[RequireComponent(typeof(PlayerInput))]
 public class GameManager : MonoBehaviour
 {
     public Vector2 DirectionalInput => Get<InputManager>().DirectionalInput;
@@ -15,12 +17,17 @@ public class GameManager : MonoBehaviour
     [SerializeField]
     private ParameterContainer _parameters;
     public ParameterContainer Parameters => _parameters;
-
     public static event Action updateCallback;
     public static System.Random Random;
-
     private Movement.PlayerController _player;
-
+    private bool _isPaused = false;
+    private bool _firstFrame = true;
+    private PlayerInput _playerInput = null;
+    /// <summary>
+    /// If you're thinking of using this member, don't. It's not for you :). Use InputManager's methods instead
+    /// </summary>
+    public PlayerInput RawPlayerInput => _playerInput;
+    public bool IsPaused => _isPaused;
     private readonly Dictionary<string, Manager> _services = new Dictionary<string, Manager>();
 
     public Movement.PlayerController FindPlayer()
@@ -54,7 +61,7 @@ public class GameManager : MonoBehaviour
         //Initialize();
 
         // CHANGE TESTING SCENE HERE
-        StartCoroutine(Get<LevelManager>().LoadScene("HubLevelScene"));
+        StartCoroutine(Get<LevelManager>().LoadScene("Tutorial"));
     }
 
     // Start is called before the first frame update
@@ -68,7 +75,41 @@ public class GameManager : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        if (_playerInput == null)
+        {
+            _playerInput = GetComponent<PlayerInput>();
+        }
+
+        if (_firstFrame)
+        {
+            _firstFrame = false;
+            updateCallback?.Invoke();
+            return;
+        }
+        if (Get<InputManager>().GetButtonDown("Cancel"))
+        {
+            if (_isPaused) Resume();
+            else Pause();
+        }
+        if (_isPaused) return;
+
         updateCallback?.Invoke();
+    }
+
+    void Pause()
+    {
+        _parameters.uiContainer.SetActive(true);
+        _parameters.pauseScreen.SetActive(true);
+        Time.timeScale = 0f;
+        _isPaused = true;
+    }
+
+    void Resume()
+    {
+        _parameters.uiContainer.SetActive(false);
+        _parameters.pauseScreen.SetActive(false);
+        Time.timeScale = 1f;
+        _isPaused = false;
     }
 
     /// <summary>
@@ -138,10 +179,11 @@ public class GameManager : MonoBehaviour
         [Header("Input")]
         public float horizAxisThreshold;
         public float vertAxisThreshold;
-        public InputManager.InputData[] inputAxes;
         [Header("Audio")]
         public Audio.Sound[] sounds;
         [Header("UI")]
         public GameObject loadingScreen;
+        public GameObject pauseScreen;
+        public GameObject uiContainer;
     }
 }

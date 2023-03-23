@@ -34,8 +34,7 @@ public class PromptController : MonoBehaviour
     {
         OnInteract += callback;
         _currentInteractAxis = axis;
-        //TODO: Reimplement the commented line, sorry - Nick, 3 hours before playtests.
-        //UpdateText("Press " + axis + " to interact");
+        UpdateText("Press " + axis + " to interact");
 
         UpdateText("Press ENTER to interact");
 

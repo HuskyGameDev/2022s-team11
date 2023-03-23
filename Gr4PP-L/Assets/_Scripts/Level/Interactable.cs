@@ -2,7 +2,8 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace Level {
+namespace Level
+{
     public abstract class Interactable : MonoBehaviour
     {
         [SerializeField]
@@ -12,11 +13,13 @@ namespace Level {
         [SerializeField]
         private PromptController _promptController;
 
-        private void PromptPlayer() {
+        private void PromptPlayer()
+        {
             _promptController.AssignInteractable(_interactionAxis, InteractCallback);
         }
 
-        private void UnpromptPlayer() {
+        private void UnpromptPlayer()
+        {
             _promptController.UnassignInteractable();
         }
 
@@ -24,6 +27,7 @@ namespace Level {
 
         void OnTriggerEnter2D(Collider2D other)
         {
+            Debug.Log("entered " + other.tag);
             if (other.tag != "Player") return;
             if (_doesPromptPlayer) PromptPlayer();
         }

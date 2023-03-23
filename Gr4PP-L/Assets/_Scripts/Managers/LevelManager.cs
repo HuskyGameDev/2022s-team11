@@ -3,7 +3,8 @@ using UnityEngine.SceneManagement;
 using System.Collections;
 using System;
 
-namespace Managers {
+namespace Managers
+{
     /** Author: Nick Zimanski
     *   Version: 10/25/22
     */
@@ -12,9 +13,10 @@ namespace Managers {
         private SceneManager _sm;
         private GameManager _gm;
         private GameObject _loadingScreen;
+        private GameObject _uiContainer;
 
-        public Vector2 LevelOrigin {get; private set;}
-        public bool IsSceneLoaded {get; private set;}
+        public Vector2 LevelOrigin { get; private set; }
+        public bool IsSceneLoaded { get; private set; }
         public static event Action OnLevelExit;
         public static event Action OnLevelEnter;
         private Vector2 _lastCheckpoint;
@@ -23,23 +25,27 @@ namespace Managers {
         {
 
             #region Scene Resetting
-            if (_gm.Get<InputManager>().GetButtonDown("Level Reset")) {
+            if (_gm.Get<InputManager>().GetButtonDown("reset"))
+            {
                 ResetLevel();
             }
             #endregion
         }
 
-        public LevelManager() {
+        public LevelManager()
+        {
             Initialize();
         }
 
-        public new void Initialize() {
+        public new void Initialize()
+        {
             base.Initialize();
             _gm = GameManager.Instance;
             _loadingScreen = _gm.Parameters.loadingScreen;
+            _uiContainer = _gm.Parameters.uiContainer;
 
-            OnLevelEnter = () => {};
-            OnLevelExit = () => {};
+            OnLevelEnter = () => { };
+            OnLevelExit = () => { };
 
             GameManager.updateCallback += Update;
         }
@@ -54,18 +60,22 @@ namespace Managers {
             GameManager.updateCallback -= Update;
         }
 
-        public void ResetLevel() {
+        public void ResetLevel()
+        {
             _gm.FindPlayer().ResetPositionToCheckpoint();
             InteractiveManager.RespawnAll();
         }
 
-        private void ReloadScene() {
+        private void ReloadScene()
+        {
             GameManager.Instance.StartCoroutine(LoadScene(SceneManager.GetActiveScene().buildIndex));
             GameManager.Instance.Initialize();
         }
 
-        public IEnumerator LoadScene(int buildIndex) {
-            if (buildIndex == 0) {
+        public IEnumerator LoadScene(int buildIndex)
+        {
+            if (buildIndex == 0)
+            {
                 Debug.Log($"Resetting");
                 buildIndex = 1;
             }
@@ -76,18 +86,21 @@ namespace Managers {
 
             StartLoadScreen();
 
-            while (SceneManager.sceneCount > 1) {
+            while (SceneManager.sceneCount > 1)
+            {
                 ao = SceneManager.UnloadSceneAsync(SceneManager.GetSceneAt(SceneManager.sceneCount - 1));
 
-                while (!(ao.isDone)){
+                while (!(ao.isDone))
+                {
                     yield return null;
                 }
             }
-            
+
             ao = SceneManager.LoadSceneAsync(buildIndex, LoadSceneMode.Additive);
             ao.allowSceneActivation = true;
 
-            while(!ao.isDone) {
+            while (!ao.isDone)
+            {
                 UpdateLoadProgress(ao.progress);
                 yield return null;
             }
@@ -95,8 +108,10 @@ namespace Managers {
             EndLoadScreen(SceneManager.GetSceneAt(SceneManager.sceneCount - 1));
         }
 
-        public IEnumerator LoadScene(string buildName) {
-            if (buildName == "Base Scene") {
+        public IEnumerator LoadScene(string buildName)
+        {
+            if (buildName == "Base Scene")
+            {
                 Debug.Log($"Resetting");
                 buildName = "HubScene";
             }
@@ -107,18 +122,21 @@ namespace Managers {
 
             StartLoadScreen();
 
-            while (SceneManager.sceneCount > 1) {
+            while (SceneManager.sceneCount > 1)
+            {
                 ao = SceneManager.UnloadSceneAsync(SceneManager.GetSceneAt(SceneManager.sceneCount - 1));
 
-                while (!(ao.isDone)){
+                while (!(ao.isDone))
+                {
                     yield return null;
                 }
             }
-            
+
             ao = SceneManager.LoadSceneAsync(buildName, LoadSceneMode.Additive);
             ao.allowSceneActivation = true;
 
-            while(!ao.isDone) {
+            while (!ao.isDone)
+            {
                 UpdateLoadProgress(ao.progress);
                 yield return null;
             }
@@ -126,26 +144,34 @@ namespace Managers {
             EndLoadScreen(SceneManager.GetSceneAt(SceneManager.sceneCount - 1));
         }
 
-        private void StartLoadScreen() {
+        private void StartLoadScreen()
+        {
             OnLevelExit();
 
             IsSceneLoaded = false;
             _loadingScreen.SetActive(true);
-            _gm.Get<InputManager>().LockType(InputManager.ControlType.MOVEMENT);
+            _uiContainer.SetActive(true);
+            _uiContainer.GetComponent<Camera>().enabled = true;
+            //Lock Movement inputs
+            _gm.Get<Managers.InputManager>().LockInputType("player");
         }
 
-        private void UpdateLoadProgress(float progressPercentage) {
+        private void UpdateLoadProgress(float progressPercentage)
+        {
 
         }
 
-        private void EndLoadScreen(Scene newScene) {
+        private void EndLoadScreen(Scene newScene)
+        {
             OnLevelEnter();
-            
+
             IsSceneLoaded = true;
             _loadingScreen.SetActive(false);
-            _gm.Get<InputManager>().UnlockType(InputManager.ControlType.MOVEMENT);
+            _uiContainer.SetActive(false);
+            _uiContainer.GetComponent<Camera>().enabled = false;
+            //Unlock Movement inputs
+            _gm.Get<Managers.InputManager>().UnlockInputType("player");
             SceneManager.SetActiveScene(newScene);
-
         }
 
         /// <summary>
@@ -153,12 +179,14 @@ namespace Managers {
         /// </summary>
         /// <param name="pos">The checkpoint to set</param>
         /// <returns>Whether or not the change was successful</returns>
-        public void SetCheckpoint(Vector2 pos) {
+        public void SetCheckpoint(Vector2 pos)
+        {
             _lastCheckpoint = pos;
         }
 
 
-        public Vector2 GetLastCheckpoint() {
+        public Vector2 GetLastCheckpoint()
+        {
             return _lastCheckpoint;
         }
 
@@ -167,20 +195,24 @@ namespace Managers {
         /// </summary>
         /// <param name="pos">The position to check</param>
         /// <returns>true if the position is the player's current checkpoint</returns>
-        public bool IsAtCheckpoint(Vector2 pos) {
+        public bool IsAtCheckpoint(Vector2 pos)
+        {
             return _lastCheckpoint == pos;
         }
 
-        public void RegisterOrigin(GameObject go) {
+        public void RegisterOrigin(GameObject go)
+        {
             RegisterOrigin(go.transform);
-        } 
+        }
 
-        public void RegisterOrigin(Transform tsf) {
+        public void RegisterOrigin(Transform tsf)
+        {
             RegisterOrigin(tsf.position);
-        } 
+        }
 
-        public void RegisterOrigin(Vector2 pos) {
+        public void RegisterOrigin(Vector2 pos)
+        {
             LevelOrigin = pos;
-        } 
+        }
     }
 }
