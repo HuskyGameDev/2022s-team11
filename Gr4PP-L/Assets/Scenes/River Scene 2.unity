@@ -45693,6 +45693,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   virtualCam: {fileID: 867289977}
+  _roomNumber: 2
 --- !u!1 &324062541
 GameObject:
   m_ObjectHideFlags: 0
@@ -45845,6 +45846,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   virtualCam: {fileID: 1916830958}
+  _roomNumber: 4
 --- !u!1 &451625274
 GameObject:
   m_ObjectHideFlags: 0
@@ -46441,6 +46443,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   virtualCam: {fileID: 915129607}
+  _roomNumber: 5
 --- !u!1 &1353253229
 GameObject:
   m_ObjectHideFlags: 0
@@ -46579,6 +46582,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   virtualCam: {fileID: 1776978309}
+  _roomNumber: 1
 --- !u!1 &1623461544
 GameObject:
   m_ObjectHideFlags: 0
@@ -47027,6 +47031,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   virtualCam: {fileID: 58216796}
+  _roomNumber: 3
 --- !u!1 &1978376189
 GameObject:
   m_ObjectHideFlags: 0

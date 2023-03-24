@@ -173,6 +173,14 @@ namespace Movement
             }
         }
 
+        public void OnIce() {
+            _runningState.OnIce();
+        }
+
+        public void OffIce() {
+            _runningState.OffIce();
+        }
+
         private void animate()
         {
             // Directional

@@ -8,6 +8,7 @@ namespace Level {
         public GameObject virtualCam;
         private GameManager _gm;
         private Vector2 _pos;
+        [SerializeField] private int _roomNumber;
 
         private void Start() {
             _gm = GameManager.Instance;
@@ -27,7 +28,7 @@ namespace Level {
             if (other.CompareTag("Player") && !other.isTrigger)
             {
                 virtualCam.SetActive(true);
-                _gm.Get<Managers.LevelManager>().SetCheckpoint(_pos);
+                _gm.Get<Managers.LevelManager>().SetCheckpoint(_pos, _roomNumber);
             }
         }
 
