@@ -25,6 +25,7 @@ namespace Managers
         private InputActionMap _uiActionMap;
 
         private float _horizAxisThreshold, _vertAxisThreshold;
+        private readonly float DIRECTIONAL_KEYBOARD_THRESHOLD = 0.7f;
 
         public Vector2 DirectionalInput { get; private set; }
 
@@ -37,6 +38,20 @@ namespace Managers
                 _pi = GameManager.Instance.RawPlayerInput;
             }
             DirectionalInput = _pi.actions["move"].ReadValue<Vector2>();
+
+            if (_pi.currentControlScheme == "Keyboard&Mouse")
+            {
+                Vector2 newVec = new Vector2(0, 0);
+                if (Math.Abs(DirectionalInput.x) > DIRECTIONAL_KEYBOARD_THRESHOLD)
+                {
+                    newVec.x = 1 * Math.Sign(DirectionalInput.x);
+                }
+                if (Math.Abs(DirectionalInput.y) > DIRECTIONAL_KEYBOARD_THRESHOLD)
+                {
+                    newVec.y = 1 * Math.Sign(DirectionalInput.y);
+                }
+                DirectionalInput = newVec;
+            }
         }
 
         /// <summary>
