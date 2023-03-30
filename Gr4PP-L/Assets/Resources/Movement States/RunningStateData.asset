@@ -16,7 +16,7 @@ MonoBehaviour:
   CanGrapple: 0
   _givenAccel: 20
   _givenDecel: 8
-  _frictionAmount: 3
+  _frictionAmount: 2
   _velPower: 0.96
   _maxHorizontalSpeed: 13
   _jumpBufferTime: 0.15
