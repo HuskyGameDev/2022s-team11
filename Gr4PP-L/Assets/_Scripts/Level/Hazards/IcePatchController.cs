@@ -1,3 +1,4 @@
+using Movement;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -30,10 +31,12 @@ public class IcePatchController : MonoBehaviour
     {
         if (collision.gameObject.CompareTag("Player"))
         {
-            _rigBody = collision.gameObject.GetComponent<Rigidbody2D>();
-            _constVelocity = _rigBody.velocity;
-            _collide = true;
-            slip = _startSlip;
+            /*            _rigBody = collision.gameObject.GetComponent<Rigidbody2D>();
+                        _constVelocity = _rigBody.velocity;
+                        _collide = true;
+                        slip = _startSlip;*/
+
+            collision.gameObject.GetComponent<PlayerController>().OnIce();
         }
     }
 
@@ -42,12 +45,13 @@ public class IcePatchController : MonoBehaviour
     {
         if (collision.gameObject.CompareTag("Player"))
         {
-            _collide = false;
+            //_collide = false;
+            collision.gameObject.GetComponent<PlayerController>().OffIce();
         }
     }
 
     // Update function
-    void FixedUpdate()
+    /*void FixedUpdate()
     {
         if (!_collide) return;
 
@@ -69,5 +73,5 @@ public class IcePatchController : MonoBehaviour
         //If the player tries to move away from the direction they're sliding in, reduce that movement
         _rigBody.AddForce(new Vector2(_directionMove * 0.1f, 0), ForceMode2D.Impulse);
         _constVelocity = _rigBody.velocity;
-    }
+    }*/
 }

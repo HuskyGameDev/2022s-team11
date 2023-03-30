@@ -96,7 +96,7 @@ public class GameManager : MonoBehaviour
         updateCallback?.Invoke();
     }
 
-    void Pause()
+    public void Pause()
     {
         _parameters.uiContainer.SetActive(true);
         _parameters.pauseScreen.SetActive(true);
@@ -104,7 +104,7 @@ public class GameManager : MonoBehaviour
         _isPaused = true;
     }
 
-    void Resume()
+    public void Resume()
     {
         _parameters.uiContainer.SetActive(false);
         _parameters.pauseScreen.SetActive(false);

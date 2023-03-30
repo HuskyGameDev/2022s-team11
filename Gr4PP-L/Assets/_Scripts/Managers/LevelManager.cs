@@ -20,6 +20,7 @@ namespace Managers
         public static event Action OnLevelExit;
         public static event Action OnLevelEnter;
         private Vector2 _lastCheckpoint;
+        private int _checkpointNum;
 
         public void Update()
         {
@@ -141,6 +142,8 @@ namespace Managers
                 yield return null;
             }
 
+            _checkpointNum = 0;
+
             EndLoadScreen(SceneManager.GetSceneAt(SceneManager.sceneCount - 1));
         }
 
@@ -179,9 +182,14 @@ namespace Managers
         /// </summary>
         /// <param name="pos">The checkpoint to set</param>
         /// <returns>Whether or not the change was successful</returns>
-        public void SetCheckpoint(Vector2 pos)
+        public void SetCheckpoint(Vector2 pos, int checkpointNum)
         {
-            _lastCheckpoint = pos;
+            Debug.Log("current _checkpointNum: " + _checkpointNum + ", given checkpointNum: " + checkpointNum);
+            if (checkpointNum >= _checkpointNum) {
+                Debug.Log("checkpoint changed");
+                _checkpointNum = checkpointNum;
+                _lastCheckpoint = pos;
+            }
         }
 
 
@@ -197,6 +205,7 @@ namespace Managers
         /// <returns>true if the position is the player's current checkpoint</returns>
         public bool IsAtCheckpoint(Vector2 pos)
         {
+            
             return _lastCheckpoint == pos;
         }
 
