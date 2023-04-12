@@ -42,7 +42,7 @@ namespace Movement
 
         #region Variables
         private bool _isJumpingInput, _isCrouchingInput, _grappleInput;
-        private float _movement, _accelRate, _acceleration, _deceleration, _lastStepSoundTime;
+        private float _movement, _accelRate, _acceleration, _deceleration, _friction, _lastStepSoundTime;
         private bool _isMoving => _rb.velocity.magnitude > 0.1f;
         new public States Name => States.Running;
         #endregion
@@ -57,6 +57,7 @@ namespace Movement
             base.Enter();
             _acceleration = _givenAccel;
             _deceleration = _givenDecel;
+            _friction = _frictionAmount;
             HandleInput();
             if (!_owner.CanGrapple) _owner.CanGrapple = !_sm.CheckBufferedInputsFor("WallTouchTransition");
             _lastStepSoundTime = 0f;
@@ -67,6 +68,16 @@ namespace Movement
         }
         #endregion
 
+        public void OnIce() {
+            _acceleration = 1.5f;
+            _deceleration = 1.5f;
+            _friction = 0.1f;
+        }
+        public void OffIce() {
+            _acceleration = _givenAccel;
+            _deceleration = _givenDecel;
+            _friction = _frictionAmount;
+        }
 
         #region MovementState Overrides
         protected override void HandleInput()
@@ -163,7 +174,7 @@ namespace Movement
             #region Friction
             if (Mathf.Abs(_gm.DirectionalInput.x) < 0.01f)
             {
-                float amount = Mathf.Min(Mathf.Abs(_rb.velocity.x), Mathf.Abs(_frictionAmount));
+                float amount = Mathf.Min(Mathf.Abs(_rb.velocity.x), Mathf.Abs(_friction));
                 amount *= Mathf.Sign(_rb.velocity.x);
                 _rb.AddForce(Vector2.right * -amount, ForceMode2D.Impulse);
             }
@@ -187,7 +198,7 @@ namespace Movement
                 }
             }
 
-            if (_sm.CheckBufferedInputsFor("fire") && !_sm.CheckBufferedInputsFor("WallTouchTransition"))
+            if (_sm.CheckBufferedInputsFor("Fire") && !_sm.CheckBufferedInputsFor("WallTouchTransition"))
             {
                 _owner.CanGrapple = true;
                 HandleGrappleInput(_gm.DirectionalInput, _hookShotForce);

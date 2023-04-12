@@ -83481,6 +83481,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   virtualCam: {fileID: 1234886188}
+  _roomNumber: 1
 --- !u!1001 &1472769568
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -87928,6 +87929,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   virtualCam: {fileID: 2121924717}
+  _roomNumber: 2
 --- !u!1001 &1712889959
 PrefabInstance:
   m_ObjectHideFlags: 0

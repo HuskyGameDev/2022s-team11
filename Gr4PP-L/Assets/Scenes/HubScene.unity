@@ -1945,6 +1945,7 @@ MonoBehaviour:
   _groundCheckPoint: {fileID: 274641602}
   _groundCheckSize: {x: 1.14, y: 0.05}
   CanGrapple: 0
+  animator: {fileID: 0}
 --- !u!61 &274641604
 BoxCollider2D:
   m_ObjectHideFlags: 0
@@ -3313,6 +3314,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   virtualCam: {fileID: 46466273}
+  _roomNumber: 1
 --- !u!1 &1367757882
 GameObject:
   m_ObjectHideFlags: 0
@@ -4198,6 +4200,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   virtualCam: {fileID: 754719949}
+  _roomNumber: 1
 --- !u!1 &1940755639
 GameObject:
   m_ObjectHideFlags: 0

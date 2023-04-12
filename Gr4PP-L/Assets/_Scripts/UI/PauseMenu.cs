@@ -6,7 +6,7 @@ using UnityEngine.SceneManagement;
 public class PauseMenu : MonoBehaviour
 {
     public static bool GameIsPaused = false;
-    public GameObject pauseMenuUI;
+    public GameObject UI;
     private Managers.InputManager _im;
 
     /// <summary>
@@ -37,21 +37,25 @@ public class PauseMenu : MonoBehaviour
 
     public void Resume()
     {
-        pauseMenuUI.SetActive(false);
+        UI.SetActive(false);
         Time.timeScale = 1f;
         GameIsPaused = false;
     }
 
-    void Pause()
+    public void Pause()
     {
-        pauseMenuUI.SetActive(true);
+        UI.SetActive(true);
         Time.timeScale = 0f;
         GameIsPaused = true;
     }
 
-    public void LoadMenu()
+    public void LoadHub()
     {
-        SceneManager.LoadScene("Main Menu");
+
+            GameManager.Instance.Get<Managers.AudioManager>().Play("Level Entry");
+            GameManager.Instance.StartCoroutine(GameManager.Instance.Get<Managers.LevelManager>().LoadScene("HubLevelScene"));
+            GameManager.Instance.Resume();
+
     }
 
     public void QuitGame()
