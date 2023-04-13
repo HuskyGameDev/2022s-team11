@@ -62,6 +62,7 @@
     "Mathf",
     "Powerup",
     "Powerups",
+    "Prefs",
     "Respawn",
     "Respawnable",
     "Rigidbody",

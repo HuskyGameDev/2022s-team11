@@ -396,6 +396,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _playerRigidbody: {fileID: 1482292352927207356}
   _grappleHook: {fileID: 1482292352625215534}
+  _reticle: {fileID: 4021529566374996282}
   _runningState: {fileID: 11400000, guid: 6a78ca1108cdff24fa16231b2db27ff2, type: 2}
   _slidingState: {fileID: 11400000, guid: 68e52ca9d6495134ca6f976b8c3ebb13, type: 2}
   _grapplingState: {fileID: 11400000, guid: e72cafe1a06d5bf48aab072907737bca, type: 2}

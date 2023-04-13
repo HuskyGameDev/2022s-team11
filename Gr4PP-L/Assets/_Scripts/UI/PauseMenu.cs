@@ -1,13 +1,19 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 using UnityEngine.SceneManagement;
 
+/** Author: Nick Zimanski
+*   Author: River Dallas
+*   Version: 4/13/23
+*
+*/
 public class PauseMenu : MonoBehaviour
 {
-    public static bool GameIsPaused = false;
-    public GameObject UI;
     private Managers.InputManager _im;
+    [SerializeField]
+    private Selectable _resumeButton;
 
     /// <summary>
     /// Start is called on the frame when a script is enabled just before
@@ -18,44 +24,30 @@ public class PauseMenu : MonoBehaviour
         _im = GameManager.Instance.Get<Managers.InputManager>();
     }
 
+    /// <summary>
+    /// This function is called when the object becomes enabled and active.
+    /// </summary>
+    private void OnEnable()
+    {
+        if (GameManager.Instance.Get<Managers.InputManager>().GetControlType() != "Keyboard&Mouse")
+            _resumeButton.Select();
+    }
+
 
     // Update is called once per frame
     void Update()
     {
-        if (_im.GetButtonDown("Cancel"))
-        {
-            if (GameManager.Instance.IsPaused)
-            {
-                Resume();
-            }
-            else
-            {
-                Pause();
-            }
-        }
-    }
-
-    public void Resume()
-    {
-        UI.SetActive(false);
-        Time.timeScale = 1f;
-        GameIsPaused = false;
-    }
-
-    public void Pause()
-    {
-        UI.SetActive(true);
-        Time.timeScale = 0f;
-        GameIsPaused = true;
     }
 
     public void LoadHub()
     {
+        Resume();
+        GameManager.Instance.StartCoroutine(GameManager.Instance.Get<Managers.LevelManager>().LoadScene("HubLevelScene"));
+    }
 
-            GameManager.Instance.Get<Managers.AudioManager>().Play("Level Entry");
-            GameManager.Instance.StartCoroutine(GameManager.Instance.Get<Managers.LevelManager>().LoadScene("HubLevelScene"));
-            GameManager.Instance.Resume();
-
+    public void Resume()
+    {
+        GameManager.Instance.Resume();
     }
 
     public void QuitGame()
@@ -65,26 +57,6 @@ public class PauseMenu : MonoBehaviour
 
     public void LoadOptions()
     {
-        SceneManager.LoadScene("Options");
+        GameManager.Instance.Get<Managers.UIManager>().NavigateToMenu("Options");
     }
-
-
-    /*void Start ()
-        {
-            pauseMenu.SetActive(false);
-        }
-
-    void Resume()
-    {
-        pauseMenu.SetActive(false);
-        Time.timeScale = 1f;
-        Paused = false;
-    }
-
-    void Pause()
-    {
-        pauseMenu.SetActive(true);
-        Time.timeScale = 0f;
-        Paused = true;
-    }*/
 }

@@ -133,8 +133,19 @@ namespace Managers
         /// <returns>The player's volume setting</returns>
         private float getVolumeAdjustment(SoundType type)
         {
-            //TODO: Integrate this with player settings
-            return 0.5f;
+            float val;
+            switch (type)
+            {
+                case SoundType.SFX:
+                    val = PlayerPrefs.GetFloat("SFXVolume");
+                    break;
+                case SoundType.MUSIC:
+                    val = PlayerPrefs.GetFloat("MusicVolume");
+                    break;
+                default:
+                    return PlayerPrefs.GetFloat("MainVolume");
+            }
+            return val * PlayerPrefs.GetFloat("MainVolume");
         }
 
         /// <summary>
@@ -148,7 +159,6 @@ namespace Managers
             if (_soundSrc.TryGetValue(soundName, out s))
             {
                 bool isPlaying = s.source.isPlaying;
-                //Adjust the volume for this sound based on the player's audio settings
                 s.source.Stop();
                 return isPlaying;
             }

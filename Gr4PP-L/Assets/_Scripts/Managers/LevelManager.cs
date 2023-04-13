@@ -156,7 +156,7 @@ namespace Managers
             _uiContainer.SetActive(true);
             _uiContainer.GetComponent<Camera>().enabled = true;
             //Lock Movement inputs
-            _gm.Get<Managers.InputManager>().LockInputType("player");
+            //_gm.Get<Managers.InputManager>().LockInputType("player");
         }
 
         private void UpdateLoadProgress(float progressPercentage)
@@ -173,7 +173,7 @@ namespace Managers
             _uiContainer.SetActive(false);
             _uiContainer.GetComponent<Camera>().enabled = false;
             //Unlock Movement inputs
-            _gm.Get<Managers.InputManager>().UnlockInputType("player");
+            //_gm.Get<Managers.InputManager>().UnlockInputType("player");
             SceneManager.SetActiveScene(newScene);
         }
 
@@ -185,7 +185,8 @@ namespace Managers
         public void SetCheckpoint(Vector2 pos, int checkpointNum)
         {
             Debug.Log("current _checkpointNum: " + _checkpointNum + ", given checkpointNum: " + checkpointNum);
-            if (checkpointNum >= _checkpointNum) {
+            if (checkpointNum >= _checkpointNum)
+            {
                 Debug.Log("checkpoint changed");
                 _checkpointNum = checkpointNum;
                 _lastCheckpoint = pos;
@@ -205,7 +206,7 @@ namespace Managers
         /// <returns>true if the position is the player's current checkpoint</returns>
         public bool IsAtCheckpoint(Vector2 pos)
         {
-            
+
             return _lastCheckpoint == pos;
         }
 

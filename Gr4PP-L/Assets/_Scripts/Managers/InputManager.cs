@@ -121,6 +121,11 @@ namespace Managers
                 .Start();
         }
 
+        public String GetControlType()
+        {
+            return _pi.currentControlScheme;
+        }
+
         private void RebindComplete()
         {
 

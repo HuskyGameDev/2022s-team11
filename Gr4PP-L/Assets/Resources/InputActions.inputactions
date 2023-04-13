@@ -702,6 +702,17 @@
                 },
                 {
                     "name": "",
+                    "id": "9795e074-3e1d-47fc-a47c-7c08ea2ddfcc",
+                    "path": "<Gamepad>/start",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "Gamepad",
+                    "action": "Cancel",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
                     "id": "463851d4-e07b-4cb1-9739-d4ec980a70b8",
                     "path": "<Mouse>/position",
                     "interactions": "",
@@ -860,6 +871,11 @@
                     "devicePath": "<Gamepad>",
                     "isOptional": false,
                     "isOR": false
+                },
+                {
+                    "devicePath": "<Mouse>",
+                    "isOptional": true,
+                    "isOR": false
                 }
             ]
         },
@@ -881,6 +897,11 @@
                 {
                     "devicePath": "<Joystick>",
                     "isOptional": false,
+                    "isOR": false
+                },
+                {
+                    "devicePath": "<Mouse>",
+                    "isOptional": true,
                     "isOR": false
                 }
             ]

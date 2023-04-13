@@ -58,6 +58,7 @@ public class GameManager : MonoBehaviour
         Register<InteractiveManager>(new InteractiveManager());
         Register<TimerManager>(new TimerManager());
         Register<AudioManager>(new AudioManager());
+        Register<UIManager>(new UIManager());
         //Initialize();
 
         // CHANGE TESTING SCENE HERE
@@ -86,30 +87,33 @@ public class GameManager : MonoBehaviour
             updateCallback?.Invoke();
             return;
         }
+        if (_isPaused) return;
+
         if (Get<InputManager>().GetButtonDown("Cancel"))
         {
-            if (_isPaused) Resume();
-            else Pause();
+            Pause();
         }
-        if (_isPaused) return;
 
         updateCallback?.Invoke();
     }
 
     public void Pause()
     {
-        _parameters.uiContainer.SetActive(true);
-        _parameters.pauseScreen.SetActive(true);
+        Get<UIManager>().Pause();
         Time.timeScale = 0f;
         _isPaused = true;
     }
 
     public void Resume()
     {
-        _parameters.uiContainer.SetActive(false);
-        _parameters.pauseScreen.SetActive(false);
+        Get<UIManager>().Resume();
         Time.timeScale = 1f;
         _isPaused = false;
+    }
+
+    public void Quit()
+    {
+        Application.Quit();
     }
 
     /// <summary>
@@ -184,6 +188,7 @@ public class GameManager : MonoBehaviour
         [Header("UI")]
         public GameObject loadingScreen;
         public GameObject pauseScreen;
+        public GameObject optionsScreen;
         public GameObject uiContainer;
     }
 }

@@ -17,6 +17,8 @@ namespace Movement
         public Rigidbody2D PlayerRigidbody => _playerRigidbody;
 
         [SerializeField] private GameObject _grappleHook;
+        [SerializeField] private GameObject _reticle;
+        public GameObject Reticle => _reticle;
 
         public GrappleHookController GrappleHookCtrl { get; private set; }
         public Rigidbody2D GrappleHookRigidbody { get; private set; }
@@ -173,11 +175,13 @@ namespace Movement
             }
         }
 
-        public void OnIce() {
+        public void OnIce()
+        {
             _runningState.OnIce();
         }
 
-        public void OffIce() {
+        public void OffIce()
+        {
             _runningState.OffIce();
         }
 

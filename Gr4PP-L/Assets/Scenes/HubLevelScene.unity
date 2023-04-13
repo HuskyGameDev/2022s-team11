@@ -2885,6 +2885,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   virtualCam: {fileID: 186367385}
+  _roomNumber: 0
 --- !u!1 &732036392
 GameObject:
   m_ObjectHideFlags: 0
@@ -4431,6 +4432,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   virtualCam: {fileID: 1856493018}
+  _roomNumber: 0
 --- !u!1 &1272949977
 GameObject:
   m_ObjectHideFlags: 0

@@ -14,6 +14,7 @@ public class GrapplingDirectionIndicatorController : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
+        this.gameObject.SetActive(PlayerPrefs.GetInt("ShowReticle") == 1);
         _currPos = Vector2.zero;
         _currRot = new Quaternion(0, 0, 0, 0);
         transform.localPosition = _currPos;
