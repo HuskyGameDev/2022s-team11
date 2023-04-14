@@ -50,4 +50,9 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Scenes/Tutorial.unity
     guid: 4a96ffe1be4a646468318141058170a9
-  m_configObjects: {}
+  - enabled: 1
+    path: Assets/Scenes/River Scene 2.unity
+    guid: 77c5fce8552d2154b9f3fdf3fd356be5
+  m_configObjects:
+    com.unity.input.settings: {fileID: 11400000, guid: 5b21b3d5c04728f4e8ad732fdf470d4a,
+      type: 2}
