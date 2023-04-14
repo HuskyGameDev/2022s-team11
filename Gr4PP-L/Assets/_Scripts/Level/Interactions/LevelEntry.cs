@@ -16,6 +16,7 @@ namespace Level
         public override void InteractCallback()
         {
             GameManager.Instance.Get<Managers.AudioManager>().Play("Level Entry");
+            GameManager.Instance.Get<Managers.TimerManager>().LevelExit();
             GameManager.Instance.StartCoroutine(GameManager.Instance.Get<Managers.LevelManager>().LoadScene(_levelName));
         }
     }

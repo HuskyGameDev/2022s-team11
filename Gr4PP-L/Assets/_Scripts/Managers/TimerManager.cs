@@ -49,7 +49,7 @@ namespace Managers
         public void LevelExit()
         {
             // Updates BestTime number for current scene
-            if (CurrentTimeSeconds < BestTime)
+            if (CurrentTimeSeconds <= BestTime)
             {
                 PlayerPrefs.SetFloat(SceneManager.GetActiveScene().name, CurrentTimeSeconds);
             }
@@ -71,9 +71,14 @@ namespace Managers
             Pause();
 
             //TODO: THIS IS ONLY FOR EDITOR TESTING. REMOVE BEFORE FINAL RELEASE
-            PlayerPrefs.DeleteKey(SceneManager.GetActiveScene().name);
+            //PlayerPrefs.DeleteKey(SceneManager.GetActiveScene().name);
 
-            BestTime = PlayerPrefs.GetFloat(SceneManager.GetActiveScene().name, 9999999f);
+            string sceneName = SceneManager.GetActiveScene().name;
+            if (sceneName == "Base Scene") { sceneName = "Tutorial"; }
+
+            BestTime = PlayerPrefs.GetFloat(sceneName, 9999999f);
+            Debug.Log(BestTime);
+            Debug.Log(SceneManager.GetActiveScene().name);
             BestTimeFollowsCurrent = (BestTime == 9999999f);
 
             GameManager.updateCallback += Update;
