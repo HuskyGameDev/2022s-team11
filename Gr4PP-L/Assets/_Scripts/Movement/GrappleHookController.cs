@@ -114,7 +114,7 @@ namespace Movement
         {
             ;
 
-            RaycastHit2D hit = Physics2D.Raycast(_parent.transform.position + new Vector3(0, 0.75f, 0), direction, distance, layerMask);
+            RaycastHit2D hit = Physics2D.Raycast(_parent.transform.position + new Vector3(0, 0, 0), direction, distance, layerMask);
             if (ValidHit(hit, direction)) return hit;
 
             int width = 30;
@@ -126,18 +126,18 @@ namespace Movement
 
             for (float i = 1 / fidelity; i <= width; i += 1 / fidelity)
             {
-                hit = Physics2D.Raycast(_parent.transform.position + new Vector3(0, 0.75f, 0), getVectorFromAngle(Vector2.SignedAngle(Vector2.right, direction) + i), distance, layerMask);
+                hit = Physics2D.Raycast(_parent.transform.position + new Vector3(0, 0, 0), getVectorFromAngle(Vector2.SignedAngle(Vector2.right, direction) + i), distance, layerMask);
                 if (ValidHit(hit, direction)) {
                     direction = getVectorFromAngle(Vector2.SignedAngle(Vector2.right, direction) + i);
                     return hit;
                 }
-                hit = Physics2D.Raycast(_parent.transform.position + new Vector3(0, 0.75f, 0), getVectorFromAngle(Vector2.SignedAngle(Vector2.right, direction) - i), distance, layerMask);
+                hit = Physics2D.Raycast(_parent.transform.position + new Vector3(0, 00, 0), getVectorFromAngle(Vector2.SignedAngle(Vector2.right, direction) - i), distance, layerMask);
                 if (ValidHit(hit, direction)) {
                     direction = getVectorFromAngle(Vector2.SignedAngle(Vector2.right, direction) - i);
                     return hit;
                 }
             }
-            return Physics2D.Raycast(_parent.transform.position + new Vector3(0, 0.75f, 0), direction, 0, layerMask);
+            return Physics2D.Raycast(_parent.transform.position + new Vector3(0, 0, 0), direction, 0, layerMask);
         }
 
         private bool ValidHit(RaycastHit2D hit, Vector2 direction) {
