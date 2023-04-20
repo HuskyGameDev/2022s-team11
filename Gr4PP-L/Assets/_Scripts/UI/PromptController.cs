@@ -34,10 +34,7 @@ public class PromptController : MonoBehaviour
     {
         OnInteract += callback;
         _currentInteractAxis = axis;
-        UpdateText("Press " + axis + " to interact");
-
-        UpdateText("Press ENTER to interact");
-
+        UpdateText("Press " + _im.GetAxisName(axis) + " to interact");
     }
 
     public void UnassignInteractable()

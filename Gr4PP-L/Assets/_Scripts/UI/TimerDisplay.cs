@@ -3,13 +3,14 @@ using System.Collections.Generic;
 using UnityEngine;
 using System;
 using UnityEngine.UI;
+using TMPro;
 
 public class TimerDisplay : MonoBehaviour
 {
     [SerializeField]
-    private Text _currentTimeText;
+    private TextMeshProUGUI _currentTimeText;
     [SerializeField]
-    private Text _bestTimeText;
+    private TextMeshProUGUI _bestTimeText;
 
     private GameManager _gm;
     private Managers.TimerManager _tm;

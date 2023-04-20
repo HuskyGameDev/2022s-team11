@@ -112,12 +112,17 @@ namespace Managers
             _pi.actions.FindActionMap(inputTypeName).Enable();
         }
 
-        public void StartRebind(string axisName)
+        public void StartRebind(string axisName, Action callback)
         {
+            _pi.actions[axisName].Disable();
             _pi.actions[axisName].PerformInteractiveRebinding()
                 .WithControlsExcluding("Mouse")
                 .OnMatchWaitForAnother(0.1f)
-                .OnComplete(operation => RebindComplete())
+                .OnComplete(operation =>
+                {
+                    _pi.actions[axisName].Enable();
+                    callback();
+                })
                 .Start();
         }
 
@@ -126,10 +131,16 @@ namespace Managers
             return _pi.currentControlScheme;
         }
 
-        private void RebindComplete()
+        public String GetAxisName(string axisName)
         {
-
+            var action = _pi.actions[axisName];
+            foreach (var control in action.controls)
+            {
+                return control.displayName;
+            }
+            return string.Empty;
         }
+
         /*
         *
         *   Other Classes

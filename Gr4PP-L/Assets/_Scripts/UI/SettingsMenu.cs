@@ -21,6 +21,9 @@ public class SettingsMenu : MonoBehaviour
     void OnEnable()
     {
         _cancelButton.Select();
+        _mainVolumeSlider.value = PlayerPrefs.GetFloat("MainVolume", 1f);
+        _sfxVolumeSlider.value = PlayerPrefs.GetFloat("SFXVolume", 1f);
+        _musicVolumeSlider.value = PlayerPrefs.GetFloat("MusicVolume", 1f);
     }
     public void UpdatePrefs()
     {

@@ -32,8 +32,13 @@ public class GameManager : MonoBehaviour
 
     public Movement.PlayerController FindPlayer()
     {
-        if (_player == null && Get<LevelManager>().IsSceneLoaded) _player = GameObject.FindGameObjectWithTag("Player").GetComponent<Movement.PlayerController>();
+        if (_player == null && Get<LevelManager>().IsSceneLoaded) LocatePlayer();
         return _player;
+    }
+
+    public void LocatePlayer()
+    {
+        _player = GameObject.FindGameObjectWithTag("Player").GetComponent<Movement.PlayerController>();
     }
 
     public static Camera MainCamera { get; private set; }
@@ -69,7 +74,7 @@ public class GameManager : MonoBehaviour
     void Start()
     {
         FindPlayer();
-
+        LevelManager.OnLevelEnter += LocatePlayer;
         MainCamera = Camera.main;
     }
 

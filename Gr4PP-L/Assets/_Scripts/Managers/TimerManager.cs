@@ -14,6 +14,7 @@ namespace Managers
     {
         private Text[] _texts;
         private GameObject _timerCanvas;
+        private LevelManager _lm = null;
 
         // Plan on using this so timer doesn't tick up during dialogue bits (if any) or room changes
         private bool _timerActive;
@@ -28,6 +29,11 @@ namespace Managers
 
         void Update()
         {
+            if (_lm == null)
+            {
+                _lm = GameManager.Instance.Get<Managers.LevelManager>();
+            }
+
             if (!_timerActive) return;
 
             CurrentTimeSeconds = CurrentTimeSeconds + Time.deltaTime;
@@ -46,7 +52,7 @@ namespace Managers
             _timerActive = true;
         }
 
-        public void LevelExit()
+        public void LevelCompleted()
         {
             // Updates BestTime number for current scene
             if (CurrentTimeSeconds <= BestTime)
@@ -59,6 +65,10 @@ namespace Managers
 
         public void LevelEnter()
         {
+            string sceneName = _lm.GetCurrentSceneName;
+
+            BestTime = PlayerPrefs.GetFloat(sceneName, 9999999f);
+            BestTimeFollowsCurrent = (BestTime == 9999999f);
             CurrentTimeSeconds = 0;
             Resume();
         }
@@ -67,22 +77,8 @@ namespace Managers
         {
             base.Initialize();
 
-            CurrentTimeSeconds = 0;
-            Pause();
-
-            //TODO: THIS IS ONLY FOR EDITOR TESTING. REMOVE BEFORE FINAL RELEASE
-            //PlayerPrefs.DeleteKey(SceneManager.GetActiveScene().name);
-
-            string sceneName = SceneManager.GetActiveScene().name;
-            if (sceneName == "Base Scene") { sceneName = "Tutorial"; }
-
-            BestTime = PlayerPrefs.GetFloat(sceneName, 9999999f);
-            Debug.Log(BestTime);
-            Debug.Log(SceneManager.GetActiveScene().name);
-            BestTimeFollowsCurrent = (BestTime == 9999999f);
-
             GameManager.updateCallback += Update;
-            LevelManager.OnLevelExit += LevelExit;
+            LevelManager.OnLevelComplete += LevelCompleted;
             LevelManager.OnLevelEnter += LevelEnter;
 
         }
@@ -100,7 +96,7 @@ namespace Managers
         public override void Destroy()
         {
             GameManager.updateCallback -= Update;
-            LevelManager.OnLevelExit -= LevelExit;
+            LevelManager.OnLevelComplete -= LevelCompleted;
             LevelManager.OnLevelEnter -= LevelEnter;
         }
     }

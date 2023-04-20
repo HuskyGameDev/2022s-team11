@@ -19,6 +19,7 @@ namespace Managers
         public bool IsSceneLoaded { get; private set; }
         public static event Action OnLevelExit;
         public static event Action OnLevelEnter;
+        public static event Action OnLevelComplete;
         private Vector2 _lastCheckpoint;
         private int _checkpointNum;
 
@@ -47,6 +48,7 @@ namespace Managers
 
             OnLevelEnter = () => { };
             OnLevelExit = () => { };
+            OnLevelComplete = () => { };
 
             GameManager.updateCallback += Update;
         }
@@ -107,6 +109,17 @@ namespace Managers
             }
 
             EndLoadScreen(SceneManager.GetSceneAt(SceneManager.sceneCount - 1));
+        }
+
+        public String GetCurrentSceneName => SceneManager.GetSceneAt(SceneManager.sceneCount - 1).name;
+
+        public IEnumerator LoadScene(string buildName, bool wasCompleted)
+        {
+            if (wasCompleted)
+            {
+                OnLevelComplete();
+            }
+            return LoadScene(buildName);
         }
 
         public IEnumerator LoadScene(string buildName)
@@ -172,8 +185,6 @@ namespace Managers
             _loadingScreen.SetActive(false);
             _uiContainer.SetActive(false);
             _uiContainer.GetComponent<Camera>().enabled = false;
-            //Unlock Movement inputs
-            //_gm.Get<Managers.InputManager>().UnlockInputType("player");
             SceneManager.SetActiveScene(newScene);
         }
 
