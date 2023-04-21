@@ -73,6 +73,7 @@ public class GameManager : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
+        PlayerPrefs.SetInt("ShowReticle", 1);
         FindPlayer();
         LevelManager.OnLevelEnter += LocatePlayer;
         MainCamera = Camera.main;

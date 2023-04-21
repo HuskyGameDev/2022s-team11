@@ -62,7 +62,7 @@ public class BestTimeDisplayer : MonoBehaviour
             _3Text.text = "--:--:---";
         }
 
-        float fourTime = PlayerPrefs.GetFloat("NoahMidLevel", 0);
+        float fourTime = PlayerPrefs.GetFloat("NoahMidlevel", 0);
         if (fourTime > 0) {
             _4Text.text = TimeSpan.FromSeconds(fourTime).ToString(@"mm\:ss\:fff");
         } else {
